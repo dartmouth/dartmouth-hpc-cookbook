@@ -1,0 +1,124 @@
+# site_name is overridden at build time by hooks/macros.py using the
+# institution.short_name value from site.yml.  The placeholder below
+# satisfies MkDocs' config validation (which runs before plugins load).
+site_name: HPC Cookbook
+# site_url: https://mydomain.org/mysite
+
+extra_css:
+  - stylesheets/dartmouth.css
+
+# Institution-specific variables (cluster name, institution name, etc.)
+# are loaded from site.yml by the macros plugin — see hooks/macros.py.
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/dartmouth
+
+theme:
+  name: material
+  logo: assets/d-pine_rev.png
+  favicon: assets/d-pine.png
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: dartmouth-light
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: dartmouth-dark
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+
+  font:
+      code: JetBrains Mono
+  features:
+    - navigation.instant          # XHR-based page loading (no full reload)
+    - navigation.instant.progress # Show loading progress bar
+    - navigation.tabs           # Top-level sections as tabs
+    - navigation.tabs.sticky    # Tabs stay visible on scroll
+    - navigation.sections       # Bold section headers in sidebar
+    - navigation.expand         # Auto-expand sections
+    - navigation.indexes        # Section index pages
+    - navigation.top            # Back-to-top button
+    - navigation.footer         # Prev/next page links
+    - search.suggest            # Search autocomplete
+    - search.highlight          # Highlight search terms on page
+    - content.tooltips           # Improved tooltips on hover
+    - content.code.copy         # Copy button on code blocks
+    - content.code.annotate     # Inline code annotations
+    - content.tabs.link         # Sync content tabs across page
+    - toc.follow                # TOC follows scroll position
+
+  icon:
+    repo: fontawesome/brands/github
+    admonition:
+      tip: material/lightbulb-on
+      warning: material/alert
+      danger: material/fire
+
+markdown_extensions:
+  # Python Markdown core
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+  # PyMdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys                # Render keyboard keys like ++ctrl+c++
+  - pymdownx.mark
+  - pymdownx.snippets:
+      auto_append:
+        - includes/glossary.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+plugins:
+  - search
+  - macros:
+      module_name: hooks/macros
+      include_dir: includes
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: timeago
+  - tags:
+      tags_file: tags.md
+  - minify:
+      minify_html: true

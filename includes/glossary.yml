@@ -1,0 +1,152 @@
+# Glossary — single source of truth for all terms and abbreviations
+#
+# Each entry produces:
+#   1. A definition on the docs/reference/glossary.md page
+#   2. A tooltip (the *[term]: ... syntax) auto-appended to every page
+#
+# Fields:
+#   term        — the word or abbreviation (used as heading and tooltip trigger)
+#   definition  — explanation shown on the glossary page and in the tooltip
+#   full        — what an abbreviation stands for (optional; omit for plain terms)
+#   tooltip     — override tooltip text (optional; auto-generated from full + definition)
+#   plurals     — alternate forms that should also get tooltips (optional)
+#   no_tooltip  — set to true to skip tooltip generation (optional)
+#
+# You can use {{ variable }} placeholders from site.yml in definitions.
+# They are resolved at build time by hooks/macros.py.
+
+- term: CI/CD
+  full: Continuous Integration / Continuous Deployment
+  definition: Automated build, test, and deployment pipelines.
+
+- term: compute node
+  definition: >-
+    A node dedicated to running jobs — where your code actually executes.
+  plurals: [compute nodes]
+
+- term: core
+  definition: >-
+    A general-purpose processor. A modern CPU contains many cores, each
+    capable of running work independently. In HPC contexts (and throughout
+    this cookbook), "CPU" and "core" are used interchangeably to mean one
+    unit of processing power. When you request "4 CPUs" for a job, you're
+    asking for 4 cores.
+  plurals: [cores]
+
+- term: CPU
+  full: Central Processing Unit
+  definition: >-
+    A general-purpose processor. A modern CPU contains many cores, each
+    capable of running work independently. In HPC contexts (and throughout
+    this cookbook), "CPU" and "core" are used interchangeably to mean one
+    unit of processing power. When you request "4 CPUs" for a job, you're
+    asking for 4 cores.
+  plurals: [CPUs]
+
+- term: CUDA
+  full: Compute Unified Device Architecture
+  definition: NVIDIA's GPU programming toolkit.
+
+- term: distributed memory
+  definition: >-
+    An architecture where many nodes each have private memory, communicating
+    over a high-speed network.
+
+- term: GPU
+  full: Graphics Processing Unit
+  definition: Used for parallel computation and AI/ML.
+  plurals: [GPUs]
+
+- term: HPC
+  full: High-Performance Computing
+  definition: The practice of aggregating computing power for large-scale workloads.
+
+- term: job
+  definition: >-
+    A unit of work that a user submits to a scheduler. A job script specifies
+    what to run and what resources are needed.
+  plurals: [jobs]
+
+- term: login node
+  definition: >-
+    The node you connect to via SSH — used for preparing and submitting jobs,
+    not running them.
+
+- term: memory
+  definition: >-
+    The fast but volatile working memory (RAM) available to a node,
+    used by running processes to hold data and code while a job
+    executes. Memory is different from storage because it is cleared
+    when power is removed, but is much faster to access for the CPU
+    or GPU.
+
+- term: MPI
+  full: Message Passing Interface
+  definition: Standard for distributed computing across nodes.
+
+- term: node
+  definition: >-
+    An individual machine within a cluster. Each node has its own CPUs,
+    memory, and (sometimes) GPUs.
+  plurals: [nodes]
+
+- term: OOD
+  full: Open OnDemand
+  definition: Web portal for cluster access.
+
+- term: OOM
+  full: Out of Memory
+  definition: When a job exceeds its allocated memory.
+
+- term: partition
+  definition: >-
+    A logical grouping of nodes, often organized by hardware type or intended
+    use (e.g., standard CPU nodes, GPU nodes).
+  plurals: [partitions]
+
+- term: PBS
+  full: Portable Batch System
+  definition: A legacy job scheduler (this site uses {{ cluster.scheduler }}).
+
+- term: QOS
+  full: Quality of Service
+  definition: Slurm mechanism for priority and limits.
+
+- term: scheduler
+  definition: >-
+    A program that receives job submissions from users, keeps track of the
+    cluster's available resources, and decides when and where each job should
+    run. This site's cluster uses {{ cluster.scheduler }}.
+
+- term: shared memory
+  definition: >-
+    An architecture where all processors share a single pool of RAM — like
+    your laptop, but bigger.
+
+- term: SIF
+  full: Singularity Image Format
+  definition: Container image format used by Apptainer.
+
+- term: SLURM
+  full: Simple Linux Utility for Resource Management
+  definition: The job scheduler used on the {{ cluster.name }} cluster.
+
+- term: Slurm
+  full: Simple Linux Utility for Resource Management
+  definition: The job scheduler used on the {{ cluster.name }} cluster.
+
+- term: SSH
+  full: Secure Shell
+  definition: Encrypted protocol for remote access.
+
+- term: storage
+  definition: >-
+    The persistent, non-volatile data repositories that jobs read
+    from and write to. This includes parallel file systems (e.g.,
+    Lustre, GPFS) shared across many nodes, local scratch disks on
+    individual nodes, and longer-term archives. Unlike memory,
+    storage retains its contents after power is removed.
+
+- term: venv
+  full: Python virtual environment
+  definition: A bundle of Python packages of specific versions.

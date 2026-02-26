@@ -1,0 +1,64 @@
+<!-- includes/site/systems-overview.md
+     Institution-specific: describes the HPC systems available at your site.
+     Replace this file with your own systems when forking the cookbook.
+     You can use any Jinja2 variables from site.yml, e.g. {{ cluster.name }}.
+-->
+
+## {{ institution.short_name }}'s HPC Systems
+
+{{ institution.short_name }} provides several HPC systems, each suited to different kinds of work. Andes, Polaris, and {{ cluster.name }} are available to all researchers on campus, while the Babylon servers are operated by Thayer School of Engineering and Computer Science for their users.
+
+### Andes & Polaris (Shared Memory)
+
+**Andes** and **Polaris** are large-scale shared memory systems available to all {{ institution.short_name }} researchers. Unlike {{ cluster.name }}, they work more like a powerful version of your personal computer: You log in and run programs interactively, with all processors sharing the same memory space.
+
+These systems are well suited for workloads that need large amounts of memory on a single machine, or for interactive data analysis and development. The limitation of these systems is that all resources are shared at all times. Your workloads might have to compete with other users' workloads for CPU time and memory, causing unnecessary slowdowns. Since they are stand-alone machines, you may also hit their resource ceiling.
+
+To give you a sense of scale, here's how much memory these machines have compared to a typical laptop with 16 GB:
+
+{{ system_stats(["andes.dartmouth.edu", "polaris.dartmouth.edu"]) }}
+
+!!! tip "Live data from the cluster"
+    The table above shows real data pulled directly from {{ institution.short_name }}'s systems. Throughout this cookbook, you'll see expandable **"Show me the commands"** sections that reveal exactly what was run and where. Don't worry about running them yourself just yet — you'll learn how to get an account and connect in the next sections.
+
+### Babylon (Thayer/CS — Shared Memory)
+
+Thayer School of Engineering and Computer Science operate a set of shared memory compute servers named **babylon1** through **babylon12** (`babylon1.thayer.dartmouth.edu`, etc.). Like Andes and Polaris, these are standalone shared memory machines, but they are only available to Thayer and CS users. You can log in interactively via SSH.
+
+The Babylon servers are a good stepping stone between your laptop and the full HPC cluster. They have faster processors and more memory than lab workstations, and they're convenient for engineering-specific software (MATLAB, Abaqus, Mathematica, etc.) that's pre-installed on the Thayer infrastructure. However, like Andes and Polaris, they are shared — your processes run alongside other users' work with no scheduler to guarantee dedicated resources.
+
+{{ system_stats(["babylon1.thayer.dartmouth.edu", "babylon2.thayer.dartmouth.edu", "babylon3.thayer.dartmouth.edu", "babylon4.thayer.dartmouth.edu", "babylon5.thayer.dartmouth.edu", "babylon6.thayer.dartmouth.edu", "babylon7.thayer.dartmouth.edu", "babylon8.thayer.dartmouth.edu", "babylon9.thayer.dartmouth.edu", "babylon10.thayer.dartmouth.edu", "babylon11.thayer.dartmouth.edu", "babylon12.thayer.dartmouth.edu"]) }}
+
+!!! note "Thayer/CS credentials"
+    The Babylon servers authenticate using your NetID and password and are only accessible to Thayer and CS users. See the [Thayer Linux documentation](https://kb.thayer.dartmouth.edu/article/361-linux-services) for full details.
+
+### {{ cluster.name }} (Campus-Wide HPC Cluster)
+
+**{{ cluster.name }}** is {{ institution.short_name }}'s primary HPC cluster, available to all researchers on campus. It consists of many compute nodes connected by a high-speed network, and jobs are managed by the **{{ cluster.scheduler }}** scheduler. You write a script describing what resources you need (CPUs, memory, time, GPUs), submit it, and {{ cluster.scheduler }} runs it on the appropriate hardware when resources are available.
+
+This is the system you'll use most often, and the one this cookbook focuses on.
+
+Here's a snapshot of the total resources available across {{ cluster.name }}:
+
+{{ cluster_stats("discovery.dartmouth.edu", label="Discovery") }}
+
+## Which System Should I Use?
+
+With multiple systems available, it's natural to wonder which one is right for your work. Here's a quick guide:
+
+**Use Andes or Polaris if** your work fits on a single large machine and you want to run it interactively. These are good for exploratory data analysis, prototyping code, or running jobs that need a lot of memory but not a lot of scheduling overhead. You log in, run your program, and see the results in real time — much like working on your own computer, just with far more resources.
+
+**Use the Babylon servers if** you're in Thayer or CS and need quick access to a more powerful machine for interactive work, especially if your workflow depends on engineering software available on the Thayer infrastructure.
+
+**Use {{ cluster.name }} if** your work needs dedicated resources, GPUs, long runtimes, or the ability to run many jobs at once. Because {{ cluster.name }} uses a scheduler, your jobs get exclusive access to the resources you request — no competing with other users for CPU time. This is the right choice for production runs, batch processing, GPU-accelerated workloads like deep learning, and any workflow where you want to submit a job and walk away.
+
+**When in doubt, use {{ cluster.name }}.** It's the most versatile system, it's open to everyone at {{ institution.short_name }}, and it's the one this cookbook focuses on. The scheduler may feel like an extra step at first, but it ensures fair access for everyone and gives you predictable, reproducible performance.
+
+| | Andes / Polaris | Babylon | {{ cluster.name }} |
+|:--|:--|:--|:--|
+| **Best for** | Large-memory single-machine tasks | Quick interactive work for Thayer/CS users | Batch jobs, GPU workloads, long-running or multi-job workflows |
+| **How you run work** | Directly on the command line | Directly on the command line | Submit via the {{ cluster.scheduler }} scheduler |
+| **Resource sharing** | Shared with other users in real time | Shared with other users in real time | Dedicated resources for your job |
+| **Who can access** | All {{ institution.short_name }} users | Thayer and CS users | All {{ institution.short_name }} users |
+| **GPUs** | No | No | Yes |
+| **Scheduler** | No | No | Yes ({{ cluster.scheduler }}) |

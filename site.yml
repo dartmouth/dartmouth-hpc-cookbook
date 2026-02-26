@@ -1,0 +1,27 @@
+# site.yml — Institution-specific configuration
+# ============================================================================
+# Fork this repo and edit this file to customize the cookbook for your
+# HPC center. Every variable defined here is available in Markdown pages
+# via Jinja2 syntax, e.g. {{ institution.name }} or {{ cluster.scheduler }}.
+#
+# For detailed instructions, see CUSTOMIZING.md.
+# ============================================================================
+
+institution:
+  name: Dartmouth College            # Full institution name
+  short_name: Dartmouth              # Used inline where brevity matters
+  support_team: Research Computing   # Name of HPC support group
+  support_url: https://rc.dartmouth.edu
+  github_url: https://github.com/dartmouth
+
+cluster:
+  name: Discovery                    # Primary HPC cluster name
+  scheduler: Slurm                   # Job scheduler (e.g., Slurm, PBS)
+  login_node: discovery.dartmouth.edu
+  default_partition: standard
+
+# Build-time settings used by hooks/macros.py for SSH-based live data.
+# If your site doesn't use the remote_cmd / system_stats / cluster_stats
+# macros, you can ignore this section.
+build:
+  kerberos_realm: KIEWIT.DARTMOUTH.EDU
