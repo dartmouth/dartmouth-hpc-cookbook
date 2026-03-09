@@ -2,7 +2,7 @@
 # institution.short_name value from site.yml.  The placeholder below
 # satisfies MkDocs' config validation (which runs before plugins load).
 site_name: HPC Cookbook
-# site_url: https://mydomain.org/mysite
+site_url: https://dartmouth.github.io/dartmouth-hpc-cookbook/
 
 extra_css:
   - stylesheets/dartmouth.css
