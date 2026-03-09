@@ -14,12 +14,12 @@
 
 These systems are well suited for workloads that need large amounts of memory on a single machine, or for interactive data analysis and development. The limitation of these systems is that all resources are shared at all times. Your workloads might have to compete with other users' workloads for CPU time and memory, causing unnecessary slowdowns. Since they are stand-alone machines, you may also hit their resource ceiling.
 
-To give you a sense of scale, here's how much memory these machines have compared to a typical laptop with 16 GB:
+<!-- To give you a sense of scale, here's how much memory these machines have compared to a typical laptop with 16 GB:
 
 {{ system_stats(["andes.dartmouth.edu", "polaris.dartmouth.edu"]) }}
 
 !!! tip "Live data from the cluster"
-    The table above shows real data pulled directly from {{ institution.short_name }}'s systems. Throughout this cookbook, you'll see expandable **"Show me the commands"** sections that reveal exactly what was run and where. Don't worry about running them yourself just yet — you'll learn how to get an account and connect in the next sections.
+    The table above shows real data pulled directly from {{ institution.short_name }}'s systems. Throughout this cookbook, you'll see expandable **"Show me the commands"** sections that reveal exactly what was run and where. Don't worry about running them yourself just yet — you'll learn how to get an account and connect in the next sections. -->
 
 ### Babylon (Thayer/CS — Shared Memory)
 
@@ -27,7 +27,7 @@ Thayer School of Engineering and Computer Science operate a set of shared memory
 
 The Babylon servers are a good stepping stone between your laptop and the full HPC cluster. They have faster processors and more memory than lab workstations, and they're convenient for engineering-specific software (MATLAB, Abaqus, Mathematica, etc.) that's pre-installed on the Thayer infrastructure. However, like Andes and Polaris, they are shared — your processes run alongside other users' work with no scheduler to guarantee dedicated resources.
 
-{{ system_stats(["babylon1.thayer.dartmouth.edu", "babylon2.thayer.dartmouth.edu", "babylon3.thayer.dartmouth.edu", "babylon4.thayer.dartmouth.edu", "babylon5.thayer.dartmouth.edu", "babylon6.thayer.dartmouth.edu", "babylon7.thayer.dartmouth.edu", "babylon8.thayer.dartmouth.edu", "babylon9.thayer.dartmouth.edu", "babylon10.thayer.dartmouth.edu", "babylon11.thayer.dartmouth.edu", "babylon12.thayer.dartmouth.edu"]) }}
+<!-- {{ system_stats(["babylon1.thayer.dartmouth.edu", "babylon2.thayer.dartmouth.edu", "babylon3.thayer.dartmouth.edu", "babylon4.thayer.dartmouth.edu", "babylon5.thayer.dartmouth.edu", "babylon6.thayer.dartmouth.edu", "babylon7.thayer.dartmouth.edu", "babylon8.thayer.dartmouth.edu", "babylon9.thayer.dartmouth.edu", "babylon10.thayer.dartmouth.edu", "babylon11.thayer.dartmouth.edu", "babylon12.thayer.dartmouth.edu"]) }} -->
 
 !!! note "Thayer/CS credentials"
     The Babylon servers authenticate using your NetID and password and are only accessible to Thayer and CS users. See the [Thayer Linux documentation](https://kb.thayer.dartmouth.edu/article/361-linux-services) for full details.
@@ -38,9 +38,9 @@ The Babylon servers are a good stepping stone between your laptop and the full H
 
 This is the system you'll use most often, and the one this cookbook focuses on.
 
-Here's a snapshot of the total resources available across {{ cluster.name }}:
+<!-- Here's a snapshot of the total resources available across {{ cluster.name }}:
 
-{{ cluster_stats("discovery.dartmouth.edu", label="Discovery") }}
+{{ cluster_stats("discovery.dartmouth.edu", label="Discovery") }} -->
 
 ## Which System Should I Use?
 

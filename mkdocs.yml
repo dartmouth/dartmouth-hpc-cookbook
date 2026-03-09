@@ -127,20 +127,20 @@ nav:
   - Getting Started:
     - getting-started/what-is-hpc.md
     - getting-started/account.md
-  - Fundamentals:
-    - fundamentals/index.md
-    - fundamentals/linux-basics.md
-    - fundamentals/storage.md
-  - Recipes:
-    - recipes/index.md
-    - Python:
-      - recipes/python/venv.md
-  - Reference:
-    - reference/index.md
-    - reference/glossary.md
-    - reference/tags.md
-  - Troubleshooting:
-    - troubleshooting/index.md
+  # - Fundamentals:
+  #   - fundamentals/index.md
+  #   - fundamentals/linux-basics.md
+  #   - fundamentals/storage.md
+  # - Recipes:
+  #   - recipes/index.md
+  #   - Python:
+  #     - recipes/python/venv.md
+  # - Reference:
+  #   - reference/index.md
+  #   - reference/glossary.md
+  #   - reference/tags.md
+  # - Troubleshooting:
+  #   - troubleshooting/index.md
 
 
 plugins:

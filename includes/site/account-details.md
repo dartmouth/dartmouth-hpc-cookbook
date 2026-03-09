@@ -18,10 +18,67 @@ When your account is created, you get a **50 GB home directory** on {{ storage.s
 Home directory paths follow a specific pattern based on the last character of your NetID. For example, if your NetID is `f1234x5`, your home directory would be:
 
 ```
-/dartfs-hpc/rc/home/5/f1234x5
+/dartfs/rc/home/5/f1234x5
 ```
 
-### Check Your Understanding
+!!! note "Legacy locations"
+    There used to be two DartFS systems: One regular one and one intended for use with the HPC systems. For that reason, there are still some users and labs that are under `/dartfs-hpc/...`. Going forward, this location will be phased out, however, and we recommend putting everything under `/dartfs/...`.
+
+
+### Mounting Your Home Directory on a Personal Computer
+
+You can access your {{ storage.shared_name }} home directory directly from your laptop or desktop, as long as you're on the {{ institution.short_name }} network (or connected through the VPN).
+
+=== "macOS"
+
+    Open **Finder**, press ++cmd+k++, and enter your mount path:
+
+    ```
+    smb://netid@dartfs.dartmouth.edu/rc/home/<last-char>/<netid>
+    ```
+
+    Replace `<last-char>` with the last character of your NetID and `<netid>` with your full NetID. For example, NetID `f1234x5` would use:
+
+    ```
+    smb://f1234x5@dartfs.dartmouth.edu/rc/home/5/f1234x5
+    ```
+
+=== "Windows"
+
+    Open **File Explorer**, click the address bar, and enter your UNC path:
+
+    ```
+    \\dartfs.dartmouth.edu\rc\home\<last-char>\<netid>
+    ```
+
+    For example, NetID `f1234x5` would use:
+
+    ```
+    \\dartfs.dartmouth.edu\rc\home\5\f1234x5
+    ```
+
+!!! tip "You must be on the {{ institution.short_name }} network"
+    Home directory mounting only works when you're connected to the campus network or running the {{ institution.short_name }} VPN. If you're off campus and can't connect, start the VPN first.
+
+## Additional Storage
+
+Your 50 GB home directory is great for scripts, configuration files, and small datasets, but research often requires more space. All faculty are entitled to a free **1 TB lab volume** on {{ storage.shared_name }} to support their research — additional storage beyond that can be purchased through the [Storage Request page](https://rcweb.dartmouth.edu/storagerequests/).
+
+!!! note "Lab volumes are faculty-only"
+    Lab volumes are provisioned for faculty principal investigators, not for individual students or staff. If you're a student or postdoc, your advisor's lab volume is where shared research data typically lives. Ask your PI for the path.
+
+Lab volumes live under `/dartfs/rc/lab/` and default to the PI's last name and first initial, grouped by the first letter. For example, Professor Charles Xavier's lab share would be at:
+
+```
+/dartfs/rc/lab/X/XavierC
+```
+
+Like home directories, lab volumes can be mounted from a personal computer using the same pattern — just replace `/rc/home/<last-char>/<netid>` with `/rc/lab/<first-letter>/<labname>` in the mount paths described above.
+
+For a full overview of the available storage tiers, see the [Storage Fundamentals](../fundamentals/storage.md) article.
+
+
+## Check Your Understanding
 
 Enter your name and NetID below to see your actual paths — or leave the defaults to practice with a fictional researcher. The lab share path is included too, though note that lab volumes are only available to faculty.
 
@@ -177,15 +234,13 @@ Enter your name and NetID below to see your actual paths — or leave the defaul
     color: #856404;
     display: block;
   }
-  #path-quiz .score {
-    font-size: .8rem;
-    color: var(--md-default-fg-color--light);
-    margin-top: .6rem;
-  }
   #path-quiz .quiz-divider {
     border: none;
     border-top: 1px solid var(--md-default-fg-color--lightest);
     margin: 1rem 0;
+  }
+  #path-quiz .tabbed-set {
+    margin: 0 0 .5rem;
   }
 </style>
 
@@ -208,17 +263,35 @@ Enter your name and NetID below to see your actual paths — or leave the defaul
 
 <div class="quiz-field">
   <label for="answer-path">Home directory path (Linux):</label>
-  <input type="text" id="answer-path" placeholder="/dartfs-hpc/rc/home/…" autocomplete="off" spellcheck="false">
+  <input type="text" id="answer-path" placeholder="/dartfs/rc/home/…" autocomplete="off" spellcheck="false">
 </div>
 
-<div class="quiz-field">
-  <label for="answer-mount">Home directory mount path (macOS Finder):</label>
-  <input type="text" id="answer-mount" placeholder="smb://…" autocomplete="off" spellcheck="false">
+<div class="tabbed-set tabbed-alternate" data-tabs="quiz-mount:2">
+  <input checked="checked" id="__quiz_mount_1" name="__quiz_mount" type="radio">
+  <input id="__quiz_mount_2" name="__quiz_mount" type="radio">
+  <div class="tabbed-labels tabbed-labels--linked">
+    <label for="__quiz_mount_1">macOS</label>
+    <label for="__quiz_mount_2">Windows</label>
+  </div>
+  <div class="tabbed-content">
+    <div class="tabbed-block">
+      <div class="quiz-field">
+        <label for="answer-mount-mac">Home directory mount path (macOS Finder):</label>
+        <input type="text" id="answer-mount-mac" placeholder="smb://…" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+    <div class="tabbed-block">
+      <div class="quiz-field">
+        <label for="answer-mount-win">Home directory mount path (Windows Explorer):</label>
+        <input type="text" id="answer-mount-win" placeholder="\\…" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="quiz-field">
   <label for="answer-lab">Lab share path (Linux): <span class="faculty-badge">faculty only</span></label>
-  <input type="text" id="answer-lab" placeholder="/dartfs-hpc/rc/lab/…" autocomplete="off" spellcheck="false">
+  <input type="text" id="answer-lab" placeholder="/dartfs/rc/lab/…" autocomplete="off" spellcheck="false">
 </div>
 
 <div class="quiz-buttons">
@@ -228,13 +301,14 @@ Enter your name and NetID below to see your actual paths — or leave the defaul
 </div>
 
 <div class="quiz-feedback" id="quiz-feedback"></div>
-<div class="score" id="quiz-score"></div>
 
 <script>
 (function() {
-  var correct = 0, attempts = 0;
   var currentNetID = '';
-  var currentLastName = '';
+  var currentLabName = '';
+  /* Stored random values so they survive keystrokes in identity fields */
+  var storedRandomName = '';
+  var storedRandomNetID = '';
 
   /* ---------- helpers ---------- */
 
@@ -254,55 +328,61 @@ Enter your name and NetID below to see your actual paths — or leave the defaul
     return sampleNames[Math.floor(Math.random() * sampleNames.length)];
   }
 
-  function lastName(fullName) {
+  /* Build the lab volume name: LastNameFirstInitial in title case.
+     E.g. "Charles Xavier" → "XavierC", grouped under "X". */
+  function labName(fullName) {
     var parts = fullName.trim().split(/\s+/);
-    return parts[parts.length - 1].toLowerCase();
+    var first = parts[0] || '';
+    var last  = parts[parts.length - 1] || '';
+    var cap   = function(s) { return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); };
+    return cap(last) + first.charAt(0).toUpperCase();
   }
 
-  function expected(netid, lname) {
+  function expected(netid, labname) {
     var last = netid[netid.length - 1];
+    var groupLetter = labname.charAt(0).toUpperCase();
     return {
-      path:  '/dartfs-hpc/rc/home/' + last + '/' + netid,
-      mount: 'smb://KIEWIT.DARTMOUTH.EDU\\' + netid +
-             '@dartfs-hpc.dartmouth.edu/rc/home/' + last + '/' + netid,
-      lab:   '/dartfs-hpc/rc/lab/' + lname
+      path:     '/dartfs/rc/home/' + last + '/' + netid,
+      mountMac: 'smb://' + netid +
+                '@dartfs.dartmouth.edu/rc/home/' + last + '/' + netid,
+      mountWin: '\\\\dartfs.dartmouth.edu\\rc\\home\\' + last + '\\' + netid,
+      lab:      '/dartfs/rc/lab/' + groupLetter + '/' + labname
     };
   }
 
-  function updateScore() {
-    var el = document.getElementById('quiz-score');
-    if (attempts > 0) {
-      el.textContent = correct + ' of ' + attempts + ' correct';
-    }
+  function activeTab() {
+    var winRadio = document.getElementById('__quiz_mount_2');
+    return winRadio && winRadio.checked ? 'win' : 'mac';
   }
 
   /* ---------- quiz logic ---------- */
 
-  /* Light refresh: update the prompt text and expected answers based on
-     the current identity fields, but do NOT clear the answer inputs or
-     steal focus. This is what runs on every keystroke in the name/NetID
-     fields so the reader can keep typing uninterrupted. */
+  /* Refresh the prompt text using the current identity fields.
+     Falls back to the stored random name/NetID (generated once per
+     question) so typing in the identity fields doesn't cause new
+     random values to appear on every keystroke. */
   function refreshPrompt() {
     var userName  = document.getElementById('quiz-name').value.trim();
     var userNetID = document.getElementById('quiz-netid').value.trim();
 
-    var name  = userName  || randomName();
-    currentNetID     = userNetID || randomNetID();
-    currentLastName  = lastName(name);
+    var name     = userName  || storedRandomName;
+    currentNetID    = userNetID || storedRandomNetID;
+    currentLabName  = labName(name);
 
-    var display = userName ? 'Your' : name + '\'s';
+    var display  = userName ? 'Your' : name + '\u2019s';
+    var question = userName ? 'What are your paths?' : 'What are their paths?';
     document.getElementById('quiz-question').innerHTML =
-      display + ' NetID is <code>' + currentNetID + '</code>. ' +
-      'What are their paths?';
+      display + ' NetID is <code>' + currentNetID + '</code>. ' + question;
   }
 
-  /* Full reset: pick new random values (if identity fields are empty),
-     clear all answer fields, dismiss feedback, and focus the first
-     answer input. Used by "New question", "Reset", and initial load. */
+  /* Pick fresh random values (when identity fields are empty),
+     clear answer fields, dismiss feedback, and focus the first input. */
   function generate() {
+    storedRandomName  = randomName();
+    storedRandomNetID = randomNetID();
     refreshPrompt();
 
-    ['answer-path', 'answer-mount', 'answer-lab'].forEach(function(id) {
+    ['answer-path', 'answer-mount-mac', 'answer-mount-win', 'answer-lab'].forEach(function(id) {
       document.getElementById(id).value = '';
     });
     var fb = document.getElementById('quiz-feedback');
@@ -312,27 +392,32 @@ Enter your name and NetID below to see your actual paths — or leave the defaul
   }
 
   function check() {
+    var tab = activeTab();
+    var mountId = tab === 'win' ? 'answer-mount-win' : 'answer-mount-mac';
+    var mountVal = document.getElementById(mountId).value.trim().replace(/[\\/]+$/, '');
+
     var ans = {
       path:  document.getElementById('answer-path').value.trim().replace(/\/+$/, ''),
-      mount: document.getElementById('answer-mount').value.trim().replace(/\/+$/, ''),
+      mount: mountVal,
       lab:   document.getElementById('answer-lab').value.trim().replace(/\/+$/, '')
     };
-    var exp = expected(currentNetID, currentLastName);
+    var exp = expected(currentNetID, currentLabName);
     var fb  = document.getElementById('quiz-feedback');
 
+    var mountLabel = tab === 'win' ? 'Windows mount' : 'Mac mount';
+    var expMount   = tab === 'win' ? exp.mountWin : exp.mountMac;
+
     var results = [
-      { label: 'Home path',  ok: ans.path  === exp.path,  exp: exp.path  },
-      { label: 'Mac mount',  ok: ans.mount === exp.mount, exp: exp.mount },
+      { label: 'Home path',  ok: ans.path  === exp.path, exp: exp.path  },
+      { label: mountLabel,   ok: ans.mount === expMount,  exp: expMount  },
       { label: 'Lab share',  ok: ans.lab   === exp.lab,   exp: exp.lab   }
     ];
 
     var nCorrect = results.filter(function(r) { return r.ok; }).length;
-    attempts++;
 
     if (nCorrect === 3) {
-      correct++;
       fb.className = 'quiz-feedback correct';
-      fb.innerHTML = 'All three correct — nice work!';
+      fb.innerHTML = 'All three correct \u2014 nice work!';
     } else {
       var rows = results.map(function(r) {
         var icon = r.ok ? '&#10003;' : '&#10007;';
@@ -345,26 +430,23 @@ Enter your name and NetID below to see your actual paths — or leave the defaul
       fb.innerHTML = rows.join('');
     }
     fb.style.display = 'block';
-    updateScore();
   }
 
   function reset() {
-    correct = 0;
-    attempts = 0;
-    document.getElementById('quiz-score').textContent = '';
     generate();
   }
 
   /* ---------- keyboard support ---------- */
 
-  var inputs = document.querySelectorAll('#path-quiz input[type="text"]');
-  for (var i = 0; i < inputs.length; i++) {
-    inputs[i].addEventListener('keydown', function(e) {
+  var answerInputs = ['answer-path', 'answer-mount-mac', 'answer-mount-win', 'answer-lab'];
+  answerInputs.forEach(function(id) {
+    document.getElementById(id).addEventListener('keydown', function(e) {
       if (e.key === 'Enter') { check(); }
     });
-  }
+  });
 
-  /* Update the prompt when identity fields change (without stealing focus) */
+  /* Re-render prompt when identity fields change — uses stored random
+     values so the question stays stable while the user is typing. */
   document.getElementById('quiz-name').addEventListener('input', refreshPrompt);
   document.getElementById('quiz-netid').addEventListener('input', refreshPrompt);
 
@@ -378,57 +460,6 @@ Enter your name and NetID below to see your actual paths — or leave the defaul
 </script>
 </div>
 
-### Mounting Your Home Directory on a Personal Computer
-
-You can access your {{ storage.shared_name }} home directory directly from your laptop or desktop, as long as you're on the {{ institution.short_name }} network (or connected through the VPN).
-
-=== "macOS"
-
-    Open **Finder**, press ++cmd+k++, and enter your mount path:
-
-    ```
-    smb://KIEWIT.DARTMOUTH.EDU\netid@dartfs-hpc.dartmouth.edu/rc/home/<last-char>/<netid>
-    ```
-
-    Replace `<last-char>` with the last character of your NetID and `<netid>` with your full NetID. For example, NetID `f1234x5` would use:
-
-    ```
-    smb://KIEWIT.DARTMOUTH.EDU\f1234x5@dartfs-hpc.dartmouth.edu/rc/home/5/f1234x5
-    ```
-
-=== "Windows"
-
-    Open **File Explorer**, click the address bar, and enter your UNC path:
-
-    ```
-    \\dartfs-hpc.dartmouth.edu\rc\home\<last-char>\<netid>
-    ```
-
-    For example, NetID `f1234x5` would use:
-
-    ```
-    \\dartfs-hpc.dartmouth.edu\rc\home\5\f1234x5
-    ```
-
-!!! tip "You must be on the {{ institution.short_name }} network"
-    Home directory mounting only works when you're connected to the campus network or running the {{ institution.short_name }} VPN. If you're off campus and can't connect, start the VPN first.
-
-## Additional Storage
-
-Your 50 GB home directory is great for scripts, configuration files, and small datasets, but research often requires more space. All faculty are entitled to a free **1 TB lab volume** on {{ storage.shared_name }} to support their research — additional storage beyond that can be purchased through the [Storage Request page](https://rcweb.dartmouth.edu/storagerequests/).
-
-!!! note "Lab volumes are faculty-only"
-    Lab volumes are provisioned for faculty principal investigators, not for individual students or staff. If you're a student or postdoc, your advisor's lab volume is where shared research data typically lives. Ask your PI for the path.
-
-Lab volumes live under `/dartfs-hpc/rc/lab/` and are typically named after the PI's last name. For example, Professor Xavier's lab share would be at:
-
-```
-/dartfs-hpc/rc/lab/xavier
-```
-
-Like home directories, lab volumes can be mounted from a personal computer using the same pattern — just replace `/rc/home/<last-char>/<netid>` with `/rc/lab/<labname>` in the mount paths described above.
-
-For a full overview of the available storage tiers, see the [Storage Fundamentals](../fundamentals/storage.md) article.
 
 ## Optional Features
 
