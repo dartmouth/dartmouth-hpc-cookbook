@@ -20,7 +20,13 @@ There are two key architectural models to understand:
 
 **Shared memory** is what you're used to. Your laptop has one pool of memory that all its CPU cores can access directly. This is simple and fast, but it doesn't scale beyond a single machine.
 
-**Distributed memory** is the model used by HPC clusters. Many individual machines (called **compute nodes**) each have their own private memory. They communicate over a high-speed network, coordinating to solve problems that no single machine could handle alone. This is what makes it possible to run a computation across hundreds or even thousands of processors simultaneously.
+**Distributed memory** is the model used by clusters of computers working collaboratively. Many individual machines (called **compute nodes**) each have their own private memory. They communicate over a high-speed network, coordinating to solve problems that no single machine could handle alone. This is what makes it possible to run a computation across hundreds or even thousands of processors simultaneously.
+
+!!! note
+
+    We can still leverage shared memory within an individual node in the cluster to allow all of that node's CPUs to work together. Only once we want to scale out across multiple nodes is when we are required to use a distributed memory programming model.
+
+
 
 ```mermaid
 graph LR
@@ -51,9 +57,17 @@ graph TB
     end
 ```
 
+## Storage: Where Your Data Lives
+
+Beyond raw computing power, HPC workloads also depend on **storage**. Most clusters provide at least two tiers: **high-speed scratch storage** that compute nodes can read and write quickly during a job, and **long-term storage** for datasets and results that need to persist between jobs but don't require the same speed. Choosing the right storage tier for each stage of your workflow can make a big difference in both performance and cost. We cover this in detail in the [Storage Fundamentals](../fundamentals/storage.md) article.
+
+
+
 {% include "site/systems-overview.md" %}
 
 ## How You Interact with an HPC Cluster
+
+On your own computer, you simply start a program and it runs immediately using as many resources as it needs until it hits the system's limits.
 
 Using an HPC cluster is different from using your personal computer. Here's the typical workflow:
 
@@ -76,7 +90,7 @@ flowchart LR
 
 ## Key Terminology
 
-New to HPC? Check the [glossary](../reference/glossary.md) for definitions of terms like nodes, jobs, partitions, and more that you'll encounter throughout this cookbook.
+New to HPC? Hover over technical terms to see a (hopefully) helpful definition. Check the [glossary](../reference/glossary.md) for the full list of terms like nodes, jobs, partitions, and more that you'll encounter throughout this cookbook.
 
 ## What's Next?
 

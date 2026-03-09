@@ -52,6 +52,12 @@
     An architecture where many nodes each have private memory, communicating
     over a high-speed network.
 
+- term: GSSAPI
+  full: Generic Security Services Application Program Interface
+  definition: >-
+    An authentication mechanism that works with campus credentials
+    (like Kerberos) to enable passwordless logins to HPC systems.
+
 - term: GPU
   full: Graphics Processing Unit
   definition: Used for parallel computation and AI/ML.
@@ -60,6 +66,10 @@
 - term: HPC
   full: High-Performance Computing
   definition: The practice of aggregating computing power for large-scale workloads.
+
+- term: I/O
+  full: Input/Output
+  definition: Abbreviation for data input and output processes, like reading/writing to a file or database.
 
 - term: job
   definition: >-
@@ -108,9 +118,20 @@
   full: Portable Batch System
   definition: A legacy job scheduler (this site uses {{ cluster.scheduler }}).
 
+- term: NetID
+  definition: >-
+    A unique campus username assigned to each member of the {{ institution.short_name }}
+    community, used for authentication across university systems including HPC.
+
 - term: QOS
   full: Quality of Service
   definition: Slurm mechanism for priority and limits.
+
+- term: quota
+  definition: >-
+    A limit on how much storage space a user or directory can consume.
+    Quotas prevent any one user or program from using more than their
+    fair share of shared storage resources.
 
 - term: scheduler
   definition: >-
@@ -120,8 +141,7 @@
 
 - term: shared memory
   definition: >-
-    An architecture where all processors share a single pool of RAM — like
-    your laptop, but bigger.
+    An architecture where all processors share a single pool of RAM, like in a regular laptop computer.
 
 - term: SIF
   full: Singularity Image Format
@@ -139,6 +159,20 @@
   full: Secure Shell
   definition: Encrypted protocol for remote access.
 
+- term: scratch
+  definition: >-
+    High-speed temporary storage on the cluster, optimized for the
+    heavy read/write patterns of running jobs. Files on scratch are
+    not backed up and may be purged automatically after a period of
+    inactivity.
+
+- term: scratch storage
+  definition: >-
+    High-speed temporary storage on the cluster, optimized for the
+    heavy read/write patterns of running jobs. Files on scratch are
+    not backed up and may be purged automatically after a period of
+    inactivity.
+
 - term: storage
   definition: >-
     The persistent, non-volatile data repositories that jobs read
@@ -146,6 +180,20 @@
     Lustre, GPFS) shared across many nodes, local scratch disks on
     individual nodes, and longer-term archives. Unlike memory,
     storage retains its contents after power is removed.
+
+- term: home directory
+  definition: >-
+    A small, persistent, backed-up personal directory on the cluster
+    (typically accessed as ~). Intended for scripts, configuration
+    files, and small personal files — not for large datasets or
+    heavy job I/O.
+
+- term: VPN
+  full: Virtual Private Network
+  definition: >-
+    Software that creates a secure, encrypted connection to a campus
+    network from an off-campus location, enabling access to resources
+    that are restricted to on-campus use.
 
 - term: venv
   full: Python virtual environment

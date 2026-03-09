@@ -548,3 +548,28 @@ def define_env(env):
         script += f"\n# Run your work\n{commands}\n```"
 
         return script
+
+
+def on_post_page_macros(env):
+    """Resolve Jinja2-style placeholders in page metadata (title, description).
+
+    MkDocs extracts YAML frontmatter *before* the macros plugin renders the
+    page body, so ``{{ institution.short_name }}`` in a ``title:`` field is
+    never processed by Jinja2.  This hook runs after macro rendering and
+    patches ``page.meta`` so the browser tab title and Material's on-scroll
+    header display the resolved values instead of raw ``{{ … }}`` tokens.
+    """
+    page = env.page
+    if page is None:
+        return
+
+    site_config = env.variables  # already populated by define_env()
+
+    for key in ("title", "description"):
+        raw = page.meta.get(key)
+        if raw and "{{" in str(raw):
+            page.meta[key] = _substitute_vars(str(raw), site_config)
+
+    # Material theme also caches the title on the Page object itself.
+    if page.title and "{{" in page.title:
+        page.title = _substitute_vars(page.title, site_config)

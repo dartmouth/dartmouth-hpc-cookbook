@@ -1,0 +1,234 @@
+/* ==========================================================================
+   Slide-deck Quiz Widget
+   Reusable interactive quiz component for MkDocs Material.
+   Drop a .slide-quiz container into any page; quiz.js auto-initialises it.
+   ========================================================================== */
+
+/* --- Outer wrapper --- */
+.slide-quiz {
+  margin: 1.5em 0;
+}
+
+/* --- Card container --- */
+.slide-quiz .quiz-card {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.5rem;
+  background: var(--md-default-bg-color);
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.slide-quiz .quiz-card.answered-correct {
+  border-color: #00693e;
+}
+.slide-quiz .quiz-card.answered-wrong {
+  border-color: #9d162e;
+}
+
+/* --- Header bar: progress + counter --- */
+.slide-quiz .quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.25rem;
+  background: var(--md-default-fg-color--lightest);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--md-default-fg-color--light);
+}
+.slide-quiz .quiz-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--md-default-fg-color--lightest);
+  border-radius: 2px;
+  margin-right: 1rem;
+  overflow: hidden;
+}
+.slide-quiz .quiz-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #00693e;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+[data-md-color-scheme="dartmouth-dark"] .slide-quiz .quiz-progress-fill {
+  background: #a5d75f;
+}
+
+/* --- Slide viewport --- */
+.slide-quiz .quiz-viewport {
+  position: relative;
+  overflow: hidden;
+}
+.slide-quiz .quiz-slide {
+  display: none;
+  padding: 1.25rem 1.25rem 1rem;
+  animation: quizFadeIn 0.3s ease;
+}
+.slide-quiz .quiz-slide.active {
+  display: block;
+}
+@keyframes quizFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* --- Prompt text --- */
+.slide-quiz .quiz-prompt {
+  font-style: italic;
+  margin-bottom: 0.85rem;
+  line-height: 1.6;
+  font-size: 0.92rem;
+}
+.slide-quiz .quiz-prompt strong {
+  font-style: normal;
+}
+
+/* --- Answer buttons --- */
+.slide-quiz .quiz-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.slide-quiz .quiz-btn {
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 0.3rem;
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s,
+    transform 0.1s;
+}
+.slide-quiz .quiz-btn:hover:not(:disabled) {
+  border-color: #00693e;
+  color: #00693e;
+  transform: translateY(-1px);
+}
+[data-md-color-scheme="dartmouth-dark"]
+  .slide-quiz
+  .quiz-btn:hover:not(:disabled) {
+  border-color: #a5d75f;
+  color: #a5d75f;
+}
+.slide-quiz .quiz-btn:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+.slide-quiz .quiz-btn.correct {
+  background: #00693e;
+  border-color: #00693e;
+  color: #fff;
+  opacity: 1 !important;
+}
+.slide-quiz .quiz-btn.wrong {
+  background: #9d162e;
+  border-color: #9d162e;
+  color: #fff;
+  opacity: 1 !important;
+}
+
+/* --- Feedback text --- */
+.slide-quiz .quiz-feedback {
+  margin-top: 0.7rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  min-height: 1.5em;
+}
+.slide-quiz .quiz-feedback.is-correct {
+  color: #00693e;
+}
+[data-md-color-scheme="dartmouth-dark"] .slide-quiz .quiz-feedback.is-correct {
+  color: #a5d75f;
+}
+.slide-quiz .quiz-feedback.is-wrong {
+  color: #9d162e;
+}
+[data-md-color-scheme="dartmouth-dark"] .slide-quiz .quiz-feedback.is-wrong {
+  color: #ffa00f;
+}
+
+/* --- Navigation footer --- */
+.slide-quiz .quiz-nav {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.6rem 1.25rem 1rem;
+}
+.slide-quiz .quiz-next {
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.4rem 1.2rem;
+  border: none;
+  border-radius: 0.3rem;
+  background: #00693e;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    opacity 0.2s;
+  display: none;
+}
+.slide-quiz .quiz-next:hover {
+  background: #12312b;
+}
+[data-md-color-scheme="dartmouth-dark"] .slide-quiz .quiz-next {
+  background: #a5d75f;
+  color: #0d1e1c;
+}
+[data-md-color-scheme="dartmouth-dark"] .slide-quiz .quiz-next:hover {
+  background: #c4dd88;
+}
+.slide-quiz .quiz-next.visible {
+  display: inline-block;
+}
+
+/* --- Final result slide --- */
+.slide-quiz .quiz-result {
+  text-align: center;
+  padding: 2rem 1.25rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.slide-quiz .quiz-result .score-icon {
+  font-size: 2.2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.slide-quiz .quiz-result .score-text {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+.slide-quiz .quiz-result .score-detail {
+  margin-top: 0.4rem;
+  font-size: 0.88rem;
+  color: var(--md-default-fg-color--light);
+}
+.slide-quiz .quiz-restart {
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 1rem;
+  padding: 0.4rem 1.2rem;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 0.3rem;
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.slide-quiz .quiz-restart:hover {
+  border-color: #00693e;
+  color: #00693e;
+}

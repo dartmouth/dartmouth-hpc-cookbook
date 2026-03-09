@@ -6,6 +6,10 @@ site_name: HPC Cookbook
 
 extra_css:
   - stylesheets/dartmouth.css
+  - stylesheets/quiz.css
+
+extra_javascript:
+  - javascripts/quiz.js
 
 # Institution-specific variables (cluster name, institution name, etc.)
 # are loaded from site.yml by the macros plugin — see hooks/macros.py.
@@ -13,6 +17,9 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/dartmouth
+
+  tags:
+    getting-started: getting-started
 
 theme:
   name: material
@@ -44,11 +51,12 @@ theme:
       code: JetBrains Mono
   features:
     - navigation.instant          # XHR-based page loading (no full reload)
+    - navigation.instant.prefetch # Prefetch page on link hover
     - navigation.instant.progress # Show loading progress bar
     - navigation.tabs           # Top-level sections as tabs
     - navigation.tabs.sticky    # Tabs stay visible on scroll
-    - navigation.sections       # Bold section headers in sidebar
-    - navigation.expand         # Auto-expand sections
+    # - navigation.sections       # Bold section headers in sidebar
+    # - navigation.expand         # Auto-expand sections
     - navigation.indexes        # Section index pages
     - navigation.top            # Back-to-top button
     - navigation.footer         # Prev/next page links
@@ -66,6 +74,8 @@ theme:
       tip: material/lightbulb-on
       warning: material/alert
       danger: material/fire
+    tag:
+      getting-started: material/tag
 
 markdown_extensions:
   # Python Markdown core
@@ -110,15 +120,40 @@ markdown_extensions:
       custom_checkbox: true
   - pymdownx.tilde
 
+nav:
+  - Home:
+    - home/index.md
+    - home/quick-links.md
+  - Getting Started:
+    - getting-started/what-is-hpc.md
+    - getting-started/account.md
+  - Fundamentals:
+    - fundamentals/index.md
+    - fundamentals/linux-basics.md
+    - fundamentals/storage.md
+  - Recipes:
+    - recipes/index.md
+    - Python:
+      - recipes/python/venv.md
+  - Reference:
+    - reference/index.md
+    - reference/glossary.md
+    - reference/tags.md
+  - Troubleshooting:
+    - troubleshooting/index.md
+
+
 plugins:
   - search
   - macros:
       module_name: hooks/macros
       include_dir: includes
+  - redirects:
+      redirect_maps:
+        'index.md': 'home/index.md'
   - git-revision-date-localized:
       enable_creation_date: true
       type: timeago
-  - tags:
-      tags_file: tags.md
   - minify:
       minify_html: true
+  - tags

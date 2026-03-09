@@ -62,3 +62,59 @@ With multiple systems available, it's natural to wonder which one is right for y
 | **Who can access** | All {{ institution.short_name }} users | Thayer and CS users | All {{ institution.short_name }} users |
 | **GPUs** | No | No | Yes |
 | **Scheduler** | No | No | Yes ({{ cluster.scheduler }}) |
+
+### Test Yourself: Which System Would You Choose?
+
+See if you can match each scenario to the best HPC system. Click on your answer, then advance to the next question!
+
+<div class="slide-quiz">
+  <div class="quiz-slide" data-answer="babylon" data-explain="The Babylon servers are the right call here. As a Thayer faculty member you have access, MATLAB is pre-installed on the Thayer infrastructure, and you just need a quick interactive session — no scheduler overhead needed.">
+    <div class="quiz-prompt"><strong>Scenario 1 of 5:</strong> You are a professor at Thayer and want to run a quick MATLAB simulation to verify some results before a meeting tomorrow morning. You'd like to work interactively so you can tweak parameters on the fly.</div>
+    <div class="quiz-options">
+      <button class="quiz-btn" data-choice="andes-polaris">Andes / Polaris</button>
+      <button class="quiz-btn" data-choice="babylon">Babylon</button>
+      <button class="quiz-btn" data-choice="discovery">Discovery</button>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz-slide" data-answer="discovery" data-explain="Discovery is the only system with GPUs. It also gives you dedicated resources through the Slurm scheduler, so your 48-hour training run won't be interrupted by other users.">
+    <div class="quiz-prompt"><strong>Scenario 2 of 5:</strong> You are a graduate student in Neuroscience who needs to train a convolutional neural network on brain imaging data. The training requires GPUs and will take roughly 48 hours.</div>
+    <div class="quiz-options">
+      <button class="quiz-btn" data-choice="andes-polaris">Andes / Polaris</button>
+      <button class="quiz-btn" data-choice="babylon">Babylon</button>
+      <button class="quiz-btn" data-choice="discovery">Discovery</button>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz-slide" data-answer="andes-polaris" data-explain="Andes and Polaris are large shared-memory machines with far more RAM than a typical compute node. They're ideal for loading a huge dataset into memory on a single machine for interactive analysis.">
+    <div class="quiz-prompt"><strong>Scenario 3 of 5:</strong> You are a genomics researcher who needs to load a 400 GB reference genome index into memory for an interactive alignment analysis. You want to explore results in real time.</div>
+    <div class="quiz-options">
+      <button class="quiz-btn" data-choice="andes-polaris">Andes / Polaris</button>
+      <button class="quiz-btn" data-choice="babylon">Babylon</button>
+      <button class="quiz-btn" data-choice="discovery">Discovery</button>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz-slide" data-answer="discovery" data-explain="Discovery's Slurm scheduler is built for exactly this kind of work. You can submit all 200 jobs as a job array, walk away, and collect the results when they're done. Each job gets its own dedicated resources.">
+    <div class="quiz-prompt"><strong>Scenario 4 of 5:</strong> You are a physics PhD student who needs to run 200 independent simulations, each with different parameters. You want to submit them all at once and collect results when they finish overnight.</div>
+    <div class="quiz-options">
+      <button class="quiz-btn" data-choice="andes-polaris">Andes / Polaris</button>
+      <button class="quiz-btn" data-choice="babylon">Babylon</button>
+      <button class="quiz-btn" data-choice="discovery">Discovery</button>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+
+  <div class="quiz-slide" data-answer="andes-polaris" data-explain="Andes and Polaris are great for interactive data work that doesn't need GPUs or a scheduler. As a Geography researcher (not Thayer/CS), you can't access Babylon — but Andes and Polaris are open to all Dartmouth users and have plenty of memory for large datasets.">
+    <div class="quiz-prompt"><strong>Scenario 5 of 5:</strong> You are a researcher in Geography who wants to interactively explore a large geospatial dataset in R. The dataset is about 60 GB.</div>
+    <div class="quiz-options">
+      <button class="quiz-btn" data-choice="andes-polaris">Andes / Polaris</button>
+      <button class="quiz-btn" data-choice="babylon">Babylon</button>
+      <button class="quiz-btn" data-choice="discovery">Discovery</button>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>

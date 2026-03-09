@@ -20,6 +20,11 @@ cluster:
   login_node: discovery.dartmouth.edu
   default_partition: standard
 
+storage:
+  shared_name: DartFS                # Institution-wide shared storage
+  shared_url: https://rc.dartmouth.edu/storage/getting-started-dartfs/
+  scratch_path: /scratch             # Fast scratch storage on the cluster
+
 # Build-time settings used by hooks/macros.py for SSH-based live data.
 # If your site doesn't use the remote_cmd / system_stats / cluster_stats
 # macros, you can ignore this section.
