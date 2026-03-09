@@ -1,0 +1,335 @@
+/* ==========================================================================
+   Dartmouth Ruzicka Font Family (headings)
+   ========================================================================== */
+
+@font-face {
+  font-family: "Dartmouth Ruzicka";
+  src: url("fonts/DartmouthRuzicka-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dartmouth Ruzicka";
+  src: url("fonts/DartmouthRuzicka-RegularItalic.ttf") format("truetype");
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dartmouth Ruzicka";
+  src: url("fonts/DartmouthRuzicka-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dartmouth Ruzicka";
+  src: url("fonts/DartmouthRuzicka-BoldItalic.ttf") format("truetype");
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ==========================================================================
+   National 2 Font Family (body text)
+   ========================================================================== */
+
+@font-face {
+  font-family: "National 2";
+  src: url("fonts/National2-Thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National 2";
+  src: url("fonts/National2-ThinItalic.otf") format("opentype");
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National 2";
+  src: url("fonts/National2-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National 2";
+  src: url("fonts/National2-LightItalic.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National 2";
+  src: url("fonts/National2-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National 2";
+  src: url("fonts/National2-RegularItalic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National 2";
+  src: url("fonts/National2-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National 2";
+  src: url("fonts/National2-MediumItalic.otf") format("opentype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National 2";
+  src: url("fonts/National2-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "National 2";
+  src: url("fonts/National2-BoldItalic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ==========================================================================
+   Shared font assignments
+   ========================================================================== */
+
+:root > * {
+  --md-text-font: "National 2";
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6,
+.md-header__title {
+  font-family: "Dartmouth Ruzicka", serif;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Dartmouth Light Scheme
+   Inspired by the "default" MkDocs Material scheme, recolored with
+   Dartmouth brand colors (see Dartmouth Office of Communications guide).
+   ========================================================================== */
+
+[data-md-color-scheme="dartmouth-light"] {
+  /* --- Primary (header bar & top-level navigation) --- */
+  --md-primary-fg-color: #00693e; /* Dartmouth Green */
+  --md-primary-fg-color--light: #2a8c62;
+  --md-primary-fg-color--dark: #12312b; /* Forest Green */
+  --md-primary-bg-color: #ffffff; /* Snow White */
+  --md-primary-bg-color--light: hsla(0, 0%, 100%, 0.7);
+
+  /* --- Accent (links, interactive highlights) --- */
+  --md-accent-fg-color: #267aba; /* River Blue */
+  --md-accent-fg-color--transparent: hsla(210, 66%, 44%, 0.1);
+  --md-accent-bg-color: #267aba;
+  --md-accent-bg-color--light: hsla(210, 66%, 44%, 0.1);
+
+  /* --- Default foreground (body text) --- */
+  --md-default-fg-color: hsla(0, 0%, 0%, 0.87);
+  --md-default-fg-color--light: hsla(0, 0%, 0%, 0.54);
+  --md-default-fg-color--lighter: hsla(0, 0%, 0%, 0.32);
+  --md-default-fg-color--lightest: hsla(0, 0%, 0%, 0.07);
+
+  /* --- Default background (page canvas) --- */
+  --md-default-bg-color: #ffffff; /* Snow White */
+  --md-default-bg-color--light: hsla(0, 0%, 100%, 0.7);
+  --md-default-bg-color--lighter: hsla(0, 0%, 100%, 0.3);
+  --md-default-bg-color--lightest: hsla(0, 0%, 100%, 0.12);
+
+  /* --- Code blocks --- */
+  --md-code-fg-color: #12312b; /* Forest Green */
+  --md-code-bg-color: #f7f7f7; /* Gray 1 */
+  --md-code-hl-color: hsla(48, 89%, 69%, 0.5); /* Summer Yellow tint */
+
+  /* --- Syntax highlighting (Dartmouth palette) --- */
+  --md-code-hl-number-color: #9d162e; /* Bonfire Red */
+  --md-code-hl-special-color: #d94415; /* Tuck Orange */
+  --md-code-hl-function-color: #8a6996; /* Violet */
+  --md-code-hl-string-color: #00693e; /* Dartmouth Green */
+  --md-code-hl-keyword-color: #003c73; /* River Navy */
+  --md-code-hl-constant-color: #643c20; /* Autumn Brown */
+  --md-code-hl-name-color: var(--md-code-fg-color);
+  --md-code-hl-operator-color: var(--md-default-fg-color--light);
+  --md-code-hl-punctuation-color: var(--md-default-fg-color--light);
+  --md-code-hl-comment-color: var(--md-default-fg-color--light);
+  --md-code-hl-generic-color: var(--md-default-fg-color--light);
+  --md-code-hl-variable-color: var(--md-default-fg-color--light);
+
+  /* --- Typeset --- */
+  --md-typeset-color: var(--md-default-fg-color);
+  --md-typeset-a-color: var(--md-accent-fg-color);
+  --md-typeset-mark-color: hsla(48, 89%, 69%, 0.5); /* Summer Yellow */
+  --md-typeset-del-color: hsla(6, 90%, 60%, 0.15);
+  --md-typeset-ins-color: hsla(150, 90%, 44%, 0.15);
+  --md-typeset-kbd-color: hsla(0, 0%, 98%, 1);
+  --md-typeset-kbd-accent-color: hsla(0, 0%, 100%, 1);
+  --md-typeset-kbd-border-color: hsla(0, 0%, 72%, 1);
+  --md-typeset-table-color: hsla(0, 0%, 0%, 0.12);
+  --md-typeset-table-color--light: hsla(0, 0%, 0%, 0.035);
+
+  /* --- Admonitions --- */
+  --md-admonition-fg-color: var(--md-default-fg-color);
+  --md-admonition-bg-color: var(--md-default-bg-color);
+
+  /* --- Footer --- */
+  --md-footer-fg-color: hsla(0, 0%, 100%, 1);
+  --md-footer-fg-color--light: hsla(0, 0%, 100%, 0.7);
+  --md-footer-fg-color--lighter: hsla(0, 0%, 100%, 0.3);
+  --md-footer-bg-color: #12312b; /* Forest Green */
+  --md-footer-bg-color--dark: #0d1e1c; /* Rich Forest Green */
+
+  /* --- Shadows --- */
+  --md-shadow-z1:
+    0 0.2rem 0.5rem hsla(0, 0%, 0%, 0.05), 0 0 0.05rem hsla(0, 0%, 0%, 0.1);
+  --md-shadow-z2:
+    0 0.2rem 0.5rem hsla(0, 0%, 0%, 0.1), 0 0 0.05rem hsla(0, 0%, 0%, 0.25);
+  --md-shadow-z3:
+    0 0.2rem 0.5rem hsla(0, 0%, 0%, 0.2), 0 0 0.05rem hsla(0, 0%, 0%, 0.35);
+}
+
+/* Hide dark-only images in light mode */
+[data-md-color-scheme="dartmouth-light"] img[src$="#only-dark"],
+[data-md-color-scheme="dartmouth-light"] img[src$="#gh-dark-mode-only"] {
+  display: none;
+}
+
+/* ==========================================================================
+   Dartmouth Dark Scheme
+   Inspired by the "slate" MkDocs Material scheme, recolored with
+   Dartmouth brand colors on a Rich Forest Green canvas.
+   ========================================================================== */
+
+[data-md-color-scheme="dartmouth-dark"] {
+  color-scheme: dark;
+
+  /* --- Primary (header bar & top-level navigation) --- */
+  --md-primary-fg-color: #00693e; /* Dartmouth Green */
+  --md-primary-fg-color--light: #2a8c62;
+  --md-primary-fg-color--dark: #12312b; /* Forest Green */
+  --md-primary-bg-color: #ffffff; /* Snow White */
+  --md-primary-bg-color--light: hsla(0, 0%, 100%, 0.7);
+
+  /* --- Accent (links, interactive highlights) --- */
+  --md-accent-fg-color: #a5d75f; /* Rich Spring Green */
+  --md-accent-fg-color--transparent: hsla(90, 62%, 61%, 0.1);
+  --md-accent-bg-color: #a5d75f;
+  --md-accent-bg-color--light: hsla(90, 62%, 61%, 0.1);
+
+  /* --- Default foreground (body text — light on dark) --- */
+  --md-default-fg-color: hsla(170, 15%, 95%, 1);
+  --md-default-fg-color--light: hsla(170, 15%, 90%, 0.62);
+  --md-default-fg-color--lighter: hsla(170, 15%, 90%, 0.32);
+  --md-default-fg-color--lightest: hsla(170, 15%, 90%, 0.12);
+
+  /* --- Default background (page canvas — Rich Forest Green) --- */
+  --md-default-bg-color: #0d1e1c; /* Rich Forest Green */
+  --md-default-bg-color--light: hsla(169, 40%, 8%, 0.54);
+  --md-default-bg-color--lighter: hsla(169, 40%, 8%, 0.26);
+  --md-default-bg-color--lightest: hsla(169, 40%, 8%, 0.07);
+
+  /* --- Code blocks --- */
+  --md-code-fg-color: hsla(170, 18%, 86%, 1);
+  --md-code-bg-color: hsla(170, 25%, 5%, 1);
+  --md-code-hl-color: hsla(170, 54%, 22%, 0.15);
+
+  /* --- Syntax highlighting (bright Dartmouth palette for dark bg) --- */
+  --md-code-hl-number-color: #ffa00f; /* Bonfire Orange */
+  --md-code-hl-special-color: #d94415; /* Tuck Orange */
+  --md-code-hl-function-color: #8a6996; /* Violet */
+  --md-code-hl-string-color: #c4dd88; /* Spring Green */
+  --md-code-hl-keyword-color: #267aba; /* River Blue */
+  --md-code-hl-constant-color: #f5dc69; /* Summer Yellow */
+  --md-code-hl-name-color: var(--md-code-fg-color);
+  --md-code-hl-operator-color: var(--md-default-fg-color--light);
+  --md-code-hl-punctuation-color: var(--md-default-fg-color--light);
+  --md-code-hl-comment-color: var(--md-default-fg-color--light);
+  --md-code-hl-generic-color: var(--md-default-fg-color--light);
+  --md-code-hl-variable-color: var(--md-default-fg-color--light);
+
+  /* --- Typeset --- */
+  --md-typeset-color: var(--md-default-fg-color);
+  --md-typeset-a-color: var(--md-accent-fg-color);
+  --md-typeset-mark-color: hsla(170, 54%, 22%, 0.6);
+  --md-typeset-del-color: hsla(6, 90%, 60%, 0.3);
+  --md-typeset-ins-color: hsla(150, 90%, 44%, 0.3);
+  --md-typeset-kbd-color: hsla(170, 15%, 94%, 0.12);
+  --md-typeset-kbd-accent-color: hsla(170, 15%, 94%, 0.2);
+  --md-typeset-kbd-border-color: hsla(170, 15%, 14%, 1);
+  --md-typeset-table-color: hsla(170, 75%, 95%, 0.12);
+  --md-typeset-table-color--light: hsla(170, 75%, 95%, 0.035);
+
+  /* --- Admonitions --- */
+  --md-admonition-fg-color: var(--md-default-fg-color);
+  --md-admonition-bg-color: var(--md-default-bg-color);
+
+  /* --- Footer --- */
+  --md-footer-fg-color: hsla(0, 0%, 100%, 1);
+  --md-footer-fg-color--light: hsla(0, 0%, 100%, 0.7);
+  --md-footer-fg-color--lighter: hsla(0, 0%, 100%, 0.3);
+  --md-footer-bg-color: hsla(169, 40%, 5%, 0.87);
+  --md-footer-bg-color--dark: hsla(169, 40%, 3%, 1);
+
+  /* --- Shadows (stronger for dark backgrounds) --- */
+  --md-shadow-z1:
+    0 0.2rem 0.5rem hsla(0, 0%, 0%, 0.15), 0 0 0.05rem hsla(0, 0%, 0%, 0.3);
+  --md-shadow-z2:
+    0 0.2rem 0.5rem hsla(0, 0%, 0%, 0.25), 0 0 0.05rem hsla(0, 0%, 0%, 0.45);
+  --md-shadow-z3:
+    0 0.2rem 0.5rem hsla(0, 0%, 0%, 0.35), 0 0 0.05rem hsla(0, 0%, 0%, 0.55);
+}
+
+/* Hide light-only images in dark mode */
+[data-md-color-scheme="dartmouth-dark"] img[src$="#only-light"],
+[data-md-color-scheme="dartmouth-dark"] img[src$="#gh-light-mode-only"] {
+  display: none;
+}
+
+/* ==========================================================================
+   System stats table (generated by system_stats macro)
+   ========================================================================== */
+
+figure.system-stats {
+  margin: 1.5em auto;
+  max-width: fit-content;
+}
+
+figure.system-stats figcaption {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--md-default-fg-color--light);
+  margin-top: 0.25em;
+  padding-top: 0;
+}
