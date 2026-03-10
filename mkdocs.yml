@@ -8,9 +8,11 @@ repo_url: https://github.com/dartmouth/dartmouth-hpc-cookbook
 extra_css:
   - stylesheets/dartmouth.css
   - stylesheets/quiz.css
+  - stylesheets/terminal-tour.css
 
 extra_javascript:
   - javascripts/quiz.js
+  - javascripts/linux-terminal-tour.js
 
 # Institution-specific variables (cluster name, institution name, etc.)
 # are loaded from site.yml by the macros plugin — see hooks/macros.py.
@@ -128,9 +130,10 @@ nav:
   - Getting Started:
     - getting-started/what-is-hpc.md
     - getting-started/account.md
-  # - Fundamentals:
-  #   - fundamentals/index.md
-  #   - fundamentals/linux-basics.md
+  - Fundamentals:
+    - fundamentals/index.md
+    - fundamentals/linux-basics.md
+    - fundamentals/linux-advanced.md
   #   - fundamentals/storage.md
   # - Recipes:
   #   - recipes/index.md

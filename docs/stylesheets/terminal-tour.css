@@ -1,0 +1,172 @@
+/* ==========================================================================
+   Terminal Tour Widget
+   Scoped interactive terminal emulator widget for MkDocs Material pages.
+   Drop a .terminal-tour container into any page; linux-terminal-tour.js
+   auto-initialises it and lazy-loads xterm.js from CDN.
+   ========================================================================== */
+
+/* --- Outer container --- */
+.terminal-tour {
+  margin: 1.5em 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #0d1e1c; /* Rich Forest Green — matches xterm background */
+  font-family:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid #12312b; /* Forest Green */
+  /* Ensure the container is visible before JS populates it */
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Splash screen --- */
+.terminal-tour .tt-splash {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  text-align: center;
+  padding: 32px;
+  background: #0d1e1c; /* Rich Forest Green */
+}
+
+.terminal-tour .tt-splash-inner {
+  max-width: 400px;
+}
+
+.terminal-tour .tt-splash-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.terminal-tour .tt-splash-title {
+  color: #e2e8f0;
+  font-family:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  line-height: 1.3;
+}
+
+.terminal-tour .tt-splash-sub {
+  color: #94a3b8;
+  font-family:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.terminal-tour .tt-splash-meta {
+  color: #64748b;
+  font-family:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+  font-size: 12px;
+  margin-bottom: 24px;
+  line-height: 1.8;
+}
+
+/* --- NetID input --- */
+.terminal-tour .tt-netid-label {
+  display: block;
+  color: #c4dd88; /* Spring Green */
+  font-family:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.terminal-tour .tt-netid-input {
+  background: #12312b; /* Forest Green */
+  border: 1px solid #00693e; /* Dartmouth Green */
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-family:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+  font-size: 15px;
+  padding: 10px 14px;
+  width: 220px;
+  text-align: center;
+  outline: none;
+  margin-bottom: 20px;
+  transition: border-color 0.2s;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.terminal-tour .tt-netid-input:focus {
+  border-color: #a5d75f; /* Rich Spring Green */
+}
+
+.terminal-tour .tt-netid-input::placeholder {
+  color: #475569;
+}
+
+/* --- Start button --- */
+.terminal-tour .tt-start-btn {
+  background: #00693e;
+  color: white;
+  border: 1px solid #a5d75f; /* Rich Spring Green */
+  padding: 14px 40px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+  transition:
+    opacity 0.2s,
+    border-color 0.2s;
+}
+
+.terminal-tour .tt-start-btn:hover:not(:disabled) {
+  opacity: 0.88;
+  border-color: #c4dd88; /* Spring Green on hover */
+  color: white;
+}
+
+.terminal-tour .tt-start-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  color: #0d1e1c;
+}
+
+/* --- Terminal container --- */
+.terminal-tour .tt-terminal-container {
+  display: none;
+  height: 480px;
+  padding: 4px;
+  background: #0d1e1c; /* Rich Forest Green — matches xterm background */
+}
+
+.terminal-tour .tt-terminal-container.active {
+  display: block;
+}
+
+/* --- xterm.js overrides — keep the terminal flush inside the widget --- */
+.terminal-tour .xterm {
+  height: 100%;
+}
+
+.terminal-tour .xterm-viewport {
+  border-radius: 0;
+}
+
+/* --- Loading indicator (shown while xterm CDN loads) --- */
+.terminal-tour .tt-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  color: #c4dd88; /* Spring Green */
+  font-family:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+  font-size: 13px;
+  background: #0d1e1c; /* Rich Forest Green */
+}

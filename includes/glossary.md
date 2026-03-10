@@ -11,6 +11,7 @@
 *[GSSAPI]: Generic Security Services Application Program Interface — An authentication mechanism that works with campus credentials (like Kerberos) to enable passwordless logins to HPC systems.
 *[GPU]: Graphics Processing Unit — Used for parallel computation and AI/ML.
 *[GPUs]: Graphics Processing Unit — Used for parallel computation and AI/ML.
+*[host]: A computer on a network, identified by its hostname. When you're logged into an HPC cluster, the hostname in your shell prompt (e.g., discovery) tells you which host you're on.
 *[HPC]: High-Performance Computing — The practice of aggregating computing power for large-scale workloads.
 *[I/O]: Input/Output — Abbreviation for data input and output processes, like reading/writing to a file or database.
 *[job]: A unit of work that a user submits to a scheduler. A job script specifies what to run and what resources are needed.

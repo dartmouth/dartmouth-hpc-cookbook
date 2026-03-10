@@ -63,6 +63,9 @@
   definition: Used for parallel computation and AI/ML.
   plurals: [GPUs]
 
+- term: host
+  definition: A computer on a network, identified by its hostname. When you're logged into an HPC cluster, the hostname in your shell prompt (e.g., discovery) tells you which host you're on.
+
 - term: HPC
   full: High-Performance Computing
   definition: The practice of aggregating computing power for large-scale workloads.
