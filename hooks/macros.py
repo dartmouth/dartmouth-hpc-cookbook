@@ -128,6 +128,15 @@ def define_env(env):
     if short:
         env.conf["site_name"] = f"{short} HPC Cookbook"
 
+    # Inject CWG logo into the site-wide footer via the copyright field.
+    # Use an absolute URL (anchored to site_url) so the path resolves
+    # correctly from any page depth.
+    site_url = env.conf.get("site_url", "").rstrip("/")
+    env.conf["copyright"] = (
+        f'<img src="{site_url}/assets/cwg-logo.png"'
+        f' alt="CWG Logo" class="footer-cwg-logo">'
+    )
+
     # Generate tooltip file from the single glossary YAML, substituting
     # institution-specific variables into glossary text.
     _generate_glossary_tooltips(site_config)
