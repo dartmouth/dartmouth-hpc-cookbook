@@ -22,3 +22,6 @@ This file provides guidance to agents when working with code in this repository.
 - Headings use "Dartmouth Ruzicka" font; body uses "National 2" — both loaded from local files in `docs/stylesheets/fonts/`.
 - The quiz widget (`docs/javascripts/quiz.js`) expects a specific `.slide-quiz > .quiz-slide` HTML structure with `data-answer` and `data-explain` attributes.
 - No tests or linting exist in this project. No pyproject.toml or setup.cfg.
+
+## Important distinction
+- This cookbook is a learning resource, not a technical documentation. Introduced concepts should be explained. The *why* is just as important as the *how*. Total coverage of a topic is less important than good scaffolding. Be opinionated and selective in recommendations if it fosters understanding.

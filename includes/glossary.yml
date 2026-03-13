@@ -47,6 +47,10 @@
   full: Compute Unified Device Architecture
   definition: NVIDIA's GPU programming toolkit.
 
+- term: dependency
+  definition: Something your program depends on. This could be a Python package (like numpy), a shared library (like GDAL), or anything else that exists outside your own source code. If something works on your computer, but not on a different computer (like an HPC system), it's most likely because of a missing or mismatched dependency.
+  plurals: [dependencies]
+
 - term: distributed memory
   definition: >-
     An architecture where many nodes each have private memory, communicating
