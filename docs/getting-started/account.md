@@ -1,12 +1,12 @@
 ---
-title: Requesting an Account
+title: Request an Account
 description: "How to get an account on {{ institution.short_name }}'s HPC systems and what comes with it"
 tags:
   - getting-started
   - account
 ---
 
-# Requesting an Account
+# Request an Account
 
 Before you can log in to the cluster, submit jobs, or even explore the system, you need an HPC account. The good news: it's quick to set up, free for anyone in the {{ institution.short_name }} community, and comes with storage space you can access from anywhere on campus.
 
