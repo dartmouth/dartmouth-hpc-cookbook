@@ -114,18 +114,15 @@ source ~/.bashrc
 
 ### Environment modules on {{ cluster.name }}
 
-{{ cluster.name }} uses the **modules** system to manage software. Instead of manually tweaking `$PATH`, you load and unload software packages:
+Now that you know about `$PATH`, here's the practical payoff: {{ cluster.name }} uses an **environment modules** system so you never have to edit `$PATH` by hand. When you load a module, the system updates your environment variables automatically:
 
 ```bash
-module avail                  # list available software
-module avail python           # search for python modules
-module load python/3.11       # make Python 3.11 available
-module list                   # what's currently loaded
-module unload python/3.11     # unload it
-module purge                  # unload everything
+module load python/3.11    # makes Python 3.11 available
+module list                # see what's currently loaded
 ```
 
-Add `module load` calls to your `~/.bashrc` for tools you always want available, or put them at the top of your job scripts so jobs are self-contained.
+That's all you need for now. Modules are central to working on the cluster: Loading software, managing versions, and keeping your jobs reproducible are all important concerns in HPC land, so they have [their own dedicated article](modules.md).
+
 
 ## Quick Reference
 
@@ -148,5 +145,6 @@ Add `module load` calls to your `~/.bashrc` for tools you always want available,
 
 ## What's Next
 
-- [**Storage on {{ cluster.name }}**](storage.md) — understand your home directory, lab volumes, and scratch space
-- [**Submitting your first job**](../getting-started/what-is-hpc.md) — put the scheduler to work with `sbatch`
+- [**Storage on {{ cluster.name }}**](storage.md): Understand your home directory, lab volumes, and scratch space
+- [**Submitting your first job**](../getting-started/what-is-hpc.md): Put the scheduler to work with `sbatch`
+- [**All about modules**](modules.md): Setting the stage by loading the right software for the job

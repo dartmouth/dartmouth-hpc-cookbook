@@ -9,7 +9,7 @@
 To request a {{ institution.support_team }} account, go to the [HPC Account Request page](https://dashboard.dartmouth.edu/research/hpc_account) and log in with your NetID. Once your account is created, you'll receive a confirmation email with further details.
 
 !!! note "Non-{{ institution.short_name }} collaborators"
-    If you're working with someone outside of {{ institution.short_name }} who needs access, faculty sponsors can request accounts for external collaborators. Contact [{{ institution.support_team }}](mailto:research.computing@dartmouth.edu) for details.
+    If you're working with someone outside of {{ institution.short_name }} who needs access, faculty sponsors can request accounts for external collaborators. Contact [{{ institution.support_team }}](mailto:{{ institution.support_email }}) for details.
 
 ## Your Home Directory
 
@@ -463,7 +463,7 @@ Enter your name and NetID below to see your actual paths — or leave the defaul
 
 ## Optional Features
 
-{{ institution.support_team }} offers a few optional features you can enable by emailing [research.computing@dartmouth.edu](mailto:research.computing@dartmouth.edu):
+{{ institution.support_team }} offers a few optional features you can enable by emailing [{{ institution.support_email }}](mailto:{{ institution.support_email }}):
 
 **Personal website hosting** — Your home directory can serve a website at `https://rcweb.dartmouth.edu/homes/<netid>/`. Custom URL aliases are available on a first-come, first-served basis.
 

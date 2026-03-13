@@ -32,7 +32,8 @@ Markdown page via Jinja2 syntax (`{{ variable.name }}`).
 |----------|---------|------------------|
 | `institution.name` | Dartmouth College | Footer, about pages |
 | `institution.short_name` | Dartmouth | Headings, inline text, site title |
-| `institution.support_team` | Research Computing | Footer |
+| `institution.support_team` | Research Computing | Footer, troubleshooting |
+| `institution.support_email` | research.computing@dartmouth.edu | Contact links, troubleshooting |
 | `institution.support_url` | https://rc.dartmouth.edu | Footer link |
 | `institution.github_url` | https://github.com/dartmouth | Social links |
 | `cluster.name` | Discovery | Throughout all articles |
@@ -49,6 +50,7 @@ institution:
   name: Massachusetts Institute of Technology
   short_name: MIT
   support_team: Research Computing Services
+  support_email: rcs@mit.edu
   support_url: https://rc.mit.edu
   github_url: https://github.com/mit
 

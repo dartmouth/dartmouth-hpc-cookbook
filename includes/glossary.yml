@@ -63,6 +63,9 @@
   definition: Used for parallel computation and AI/ML.
   plurals: [GPUs]
 
+- term: headless
+  definition: A system with no physical display attached. Cluster nodes are headless, which is why running graphical applications requires X11 forwarding or a similar tool to send the visual output back to your local screen.
+
 - term: host
   definition: A computer on a network, identified by its hostname. When you're logged into an HPC cluster, the hostname in your shell prompt (e.g., discovery) tells you which host you're on.
 

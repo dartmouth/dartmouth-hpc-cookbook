@@ -130,6 +130,8 @@ nav:
   - Getting Started:
     - getting-started/what-is-hpc.md
     - getting-started/account.md
+    - getting-started/connecting.md
+    - getting-started/first-job.md
   - Fundamentals:
     - fundamentals/index.md
     - fundamentals/linux-basics.md
