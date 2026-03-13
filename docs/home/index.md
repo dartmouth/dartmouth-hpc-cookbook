@@ -7,6 +7,10 @@ description: "Practical recipes for High-Performance Computing at {{ institution
 
 Welcome to the **{{ institution.short_name }} HPC Cookbook** — a practical guide to using {{ institution.short_name }}'s High-Performance Computing resources. Whether you're submitting your first batch job or scaling a deep learning pipeline across multiple GPUs, you'll find what you need here.
 
+!!! warning "What is this?"
+     This "cookbook" is first and foremost a learning resource, not the official documentation for {{ institution.name }}'s HPC systems. While there is significant overlap, this cookbook is opinionated and selective in how it presents information and the available options and concepts. The goal is to offer you an engaging and scaffolded learning path, not full coverage of everything {{ institution.name }} has to offer.
+
+
 ---
 
 <div class="grid cards" markdown>
@@ -52,7 +56,7 @@ Welcome to the **{{ institution.short_name }} HPC Cookbook** — a practical gui
 
 This site is organized into two main tracks:
 
-**If you're new to HPC**, start with [Getting Started](getting-started/index.md) and work through the [Fundamentals](fundamentals/index.md) section in order. These will give you the core knowledge you need.
+**If you're new to HPC**, start with [Getting Started](getting-started/index.md) and work through the [Fundamentals](fundamentals/index.md) section in order. These will give you the basic knowledge you need.
 
 **If you know the basics and need to get something done**, jump straight to [Recipes](recipes/index.md). Each recipe is self-contained with copy-pasteable scripts and explanations.
 

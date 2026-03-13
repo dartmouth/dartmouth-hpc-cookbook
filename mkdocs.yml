@@ -137,10 +137,10 @@ nav:
     - fundamentals/linux-basics.md
     - fundamentals/linux-advanced.md
   #   - fundamentals/storage.md
-  # - Recipes:
-  #   - recipes/index.md
-  #   - Python:
-  #     - recipes/python/venv.md
+  - Recipes:
+    - recipes/index.md
+    - Python:
+      - recipes/python/uv.md
   # - Reference:
   #   - reference/index.md
   #   - reference/glossary.md
