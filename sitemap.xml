@@ -13,11 +13,23 @@
          <lastmod>2026-03-13</lastmod>
     </url>
     <url>
+         <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/fundamentals/modules/</loc>
+         <lastmod>2026-03-13</lastmod>
+    </url>
+    <url>
          <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/fundamentals/storage/</loc>
          <lastmod>2026-03-13</lastmod>
     </url>
     <url>
          <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/getting-started/account/</loc>
+         <lastmod>2026-03-13</lastmod>
+    </url>
+    <url>
+         <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/getting-started/connecting/</loc>
+         <lastmod>2026-03-13</lastmod>
+    </url>
+    <url>
+         <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/getting-started/first-job/</loc>
          <lastmod>2026-03-13</lastmod>
     </url>
     <url>
@@ -37,7 +49,7 @@
          <lastmod>2026-03-13</lastmod>
     </url>
     <url>
-         <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/recipes/python/venv/</loc>
+         <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/recipes/python/uv/</loc>
          <lastmod>2026-03-13</lastmod>
     </url>
     <url>
