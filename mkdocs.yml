@@ -141,6 +141,7 @@ nav:
     - recipes/index.md
     - Python:
       - recipes/python/uv.md
+      - recipes/python/pytorch.md
   # - Reference:
   #   - reference/index.md
   #   - reference/glossary.md
