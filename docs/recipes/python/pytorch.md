@@ -9,7 +9,7 @@ tags:
 
 # PyTorch with GPU Support
 
-!!! abstract "What you'll learn"
+!!! abstract "What we're cooking"
     How to install PyTorch with GPU acceleration on {{ cluster.name }} using
     [`uv`](uv.md), how to pick the right CUDA index for your target GPU, and
     how to verify that everything works in a batch job.
@@ -92,7 +92,37 @@ uv add torch torchvision
 `uv` resolves versions from the custom index for `torch` and `torchvision`,
 and fetches everything else (NumPy, Pillow, etc.) from PyPI.
 
+## Working Across Environments
+
+We often develop code intended to run on the cluster on another system, like our personal laptop. These systems often don't have a CUDA-compatible GPU, so we don't want to install the heavy CUDA-enabled PyTorch build. We can use `uv`'s marker system to install different builds on different platforms. For example, if you develop on macOS or Windows without a CUDA-supported GPU, you can put the following in your `pyproject.toml`:
+
+```toml
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", marker = "sys_platform != 'linux'" },
+  { index = "pytorch-cu128", marker = "sys_platform == 'linux'" },
+]
+torchvision = [
+  { index = "pytorch-cpu", marker = "sys_platform != 'linux'" },
+  { index = "pytorch-cu128", marker = "sys_platform == 'linux'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+```
+That way you can use the same project across all systems, but you only sync the packages you really need on each platform.
+
+
 ## Test Your Environment
+
+It's usually a good idea to run a simple test script after setting up an environment to test that everything is set up correctly (a so-called *smoke test*).
 
 Save the following as `smoke_test.py`:
 
@@ -173,8 +203,8 @@ Smoke test passed: matmul on cuda:0 produced shape torch.Size([1000, 1000])
 
 !!! info "Need a custom CUDA toolkit or other compiled libraries alongside PyTorch?"
     In most cases PyTorch's bundled CUDA libraries are sufficient. If you
-    have unusual requirements — such as a specific system CUDA version for
-    interoperability with other compiled code — consider using a conda-based
+    have unusual requirements, such as a specific system CUDA version for
+    interoperability with other compiled code, consider using a conda-based
     environment manager or a container-based workflow instead.
 
 ## See Also
