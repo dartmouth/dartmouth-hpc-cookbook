@@ -8,7 +8,7 @@ tags:
 
 # Getting Started with uv
 
-!!! abstract "What you'll learn"
+!!! abstract "What we're cooking"
     How to use [uv](https://docs.astral.sh/uv/) to manage Python versions,
     virtual environments, and packages on {{ cluster.name }}, and why it
     makes your work more reproducible.
