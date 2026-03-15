@@ -56,6 +56,14 @@
     An architecture where many nodes each have private memory, communicating
     over a high-speed network.
 
+- term: embarrassingly parallel
+  definition: >-
+    A type of problem where the work can be divided into completely
+    independent tasks that require no communication or coordination
+    between them. Processing 1,000 images with the same filter is a
+    classic example: each image can be handled separately without any
+    information from the others.
+
 - term: GSSAPI
   full: Generic Security Services Application Program Interface
   definition: >-
@@ -146,6 +154,13 @@
 - term: PBS
   full: Portable Batch System
   definition: A legacy job scheduler (this site uses {{ cluster.scheduler }}).
+
+- term: process
+  definition: >-
+    A running instance of a program, with its own process ID (PID)
+    and memory. A single program can spawn multiple processes — for
+    example, an MPI job launches one process per rank.
+  plurals: [processes]
 
 - term: NetID
   definition: >-

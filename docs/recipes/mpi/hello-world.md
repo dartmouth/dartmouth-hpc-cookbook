@@ -32,7 +32,7 @@ the one available on {{ cluster.name }}.
 !!! tip "MPI vs. threading"
     Threading (e.g., OpenMP) parallelises work *within* a single node by
     sharing memory between threads. MPI parallelises work *across* nodes by
-    passing messages between processes. Real HPC codes often combine both:
+    passing messages between processes. Real HPC programs often combine both:
     one MPI process per node, multiple threads per process.
 
 Every MPI program revolves around a few key ideas:

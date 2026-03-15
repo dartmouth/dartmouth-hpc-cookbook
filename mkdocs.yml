@@ -145,6 +145,7 @@ nav:
       - recipes/python/transformers.md
     - MPI:
       - recipes/mpi/hello-world.md
+      - recipes/mpi/mpi4py.md
   # - Reference:
   #   - reference/index.md
   #   - reference/glossary.md

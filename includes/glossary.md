@@ -10,6 +10,7 @@
 *[dependency]: Something your program depends on. This could be a Python package (like numpy), a shared library (like GDAL), or anything else that exists outside your own source code. If something works on your computer, but not on a different computer (like an HPC system), it's most likely because of a missing or mismatched dependency.
 *[dependencies]: Something your program depends on. This could be a Python package (like numpy), a shared library (like GDAL), or anything else that exists outside your own source code. If something works on your computer, but not on a different computer (like an HPC system), it's most likely because of a missing or mismatched dependency.
 *[distributed memory]: An architecture where many nodes each have private memory, communicating over a high-speed network.
+*[embarrassingly parallel]: A type of problem where the work can be divided into completely independent tasks that require no communication or coordination between them. Processing 1,000 images with the same filter is a classic example: each image can be handled separately without any information from the others.
 *[GSSAPI]: Generic Security Services Application Program Interface — An authentication mechanism that works with campus credentials (like Kerberos) to enable passwordless logins to HPC systems.
 *[GPU]: Graphics Processing Unit — Used for parallel computation and AI/ML.
 *[GPUs]: Graphics Processing Unit — Used for parallel computation and AI/ML.
@@ -32,6 +33,8 @@
 *[partition]: A logical grouping of nodes, often organized by hardware type or intended use (e.g., standard CPU nodes, GPU nodes).
 *[partitions]: A logical grouping of nodes, often organized by hardware type or intended use (e.g., standard CPU nodes, GPU nodes).
 *[PBS]: Portable Batch System — A legacy job scheduler (this site uses Slurm).
+*[process]: A running instance of a program, with its own process ID (PID) and memory. A single program can spawn multiple processes — for example, an MPI job launches one process per rank.
+*[processes]: A running instance of a program, with its own process ID (PID) and memory. A single program can spawn multiple processes — for example, an MPI job launches one process per rank.
 *[NetID]: A unique campus username assigned to each member of the Dartmouth community, used for authentication across university systems including HPC.
 *[QOS]: Quality of Service — Slurm mechanism for priority and limits.
 *[quota]: A limit on how much storage space a user or directory can consume. Quotas prevent any one user or program from using more than their fair share of shared storage resources.
