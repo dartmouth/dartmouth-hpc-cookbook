@@ -21,7 +21,10 @@
 *[jobs]: A unit of work that a user submits to a scheduler. A job script specifies what to run and what resources are needed.
 *[login node]: The node you connect to via SSH — used for preparing and submitting jobs, not running them.
 *[memory]: The fast but volatile working memory (RAM) available to a node, used by running processes to hold data and code while a job executes. Memory is different from storage because it is cleared when power is removed, but is much faster to access for the CPU or GPU.
-*[MPI]: Message Passing Interface — Standard for distributed computing across nodes.
+*[MPI]: Message Passing Interface — A standard for writing programs that run as many simultaneous processes spread across multiple nodes, communicating by sending messages over the network. Each process has its own private memory and a unique integer ID called a rank. Open MPI is the most common implementation on HPC clusters.
+*[Open MPI]: A widely used open-source implementation of the MPI standard, available on Discovery. Provides the mpicc compiler wrapper (which links the MPI libraries into your program) and the mpirun launcher (which starts your processes across allocated nodes).
+*[rank]: A unique integer ID assigned to each process in an MPI job, starting at 0. If you launch 8 MPI processes, they are numbered rank 0 through 7. Rank 0 is conventionally used as the "root" for coordination tasks like gathering results from all other ranks.
+*[ranks]: A unique integer ID assigned to each process in an MPI job, starting at 0. If you launch 8 MPI processes, they are numbered rank 0 through 7. Rank 0 is conventionally used as the "root" for coordination tasks like gathering results from all other ranks.
 *[node]: An individual machine within a cluster. Each node has its own CPUs, memory, and (sometimes) GPUs.
 *[nodes]: An individual machine within a cluster. Each node has its own CPUs, memory, and (sometimes) GPUs.
 *[OOD]: Open OnDemand — Web portal for cluster access.

@@ -518,6 +518,8 @@ def define_env(env):
         cpus: int = 1,
         mem: str = "4G",
         gpus: int = 0,
+        ntasks_per_node: int = 0,
+        nodes: int = 0,
         modules: list[str] | None = None,
         commands: str = "echo 'Hello from the cluster!'",
     ):
@@ -528,6 +530,13 @@ def define_env(env):
         site.yml (e.g. ``{{ storage.scratch_path }}``) — they are resolved
         at build time using the same substitution as the rest of the page.
 
+        For MPI jobs, set ``ntasks_per_node`` (MPI ranks per node) and
+        ``nodes`` (number of nodes).  The total rank count is
+        ``nodes × ntasks_per_node``.  When ``ntasks_per_node > 0`` and
+        ``cpus`` is at its default of 1, ``--cpus-per-task`` is omitted so
+        the script stays clean for pure-MPI jobs.  Set ``cpus > 1``
+        alongside ``ntasks_per_node`` for hybrid MPI+OpenMP jobs.
+
         Usage in Markdown:
             {{ sbatch_template(
                 job_name="pytorch_train",
@@ -536,6 +545,15 @@ def define_env(env):
                 mem="32G",
                 modules=["python/3.11", "cuda/12.2"],
                 commands="python train.py --epochs 50"
+            ) }}
+
+            {{ sbatch_template(
+                job_name="mpi_hello",
+                nodes=2,
+                ntasks_per_node=4,
+                mem="4G",
+                modules=["openmpi"],
+                commands="mpirun ./hello_mpi"
             ) }}
         """
         # Resolve any {{ var }} placeholders in the commands string so that
@@ -546,11 +564,22 @@ def define_env(env):
 #!/bin/bash
 #SBATCH --job-name={job_name}
 #SBATCH --partition={partition}
-#SBATCH --time={time}
-#SBATCH --cpus-per-task={cpus}
-#SBATCH --mem={mem}
-#SBATCH --output=%x_%j.out
-#SBATCH --error=%x_%j.err"""
+#SBATCH --time={time}"""
+
+        if nodes > 0:
+            script += f"\n#SBATCH --nodes={nodes}"
+
+        if ntasks_per_node > 0:
+            script += f"\n#SBATCH --ntasks-per-node={ntasks_per_node}"
+            # Only emit --cpus-per-task for hybrid MPI+OpenMP jobs
+            if cpus > 1:
+                script += f"\n#SBATCH --cpus-per-task={cpus}"
+        else:
+            script += f"\n#SBATCH --cpus-per-task={cpus}"
+
+        script += f"\n#SBATCH --mem={mem}"
+        script += "\n#SBATCH --output=%x_%j.out"
+        script += "\n#SBATCH --error=%x_%j.err"
 
         if gpus > 0:
             script += f"\n#SBATCH --gres=gpu:{gpus}"

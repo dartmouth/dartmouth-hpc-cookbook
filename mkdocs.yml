@@ -143,6 +143,8 @@ nav:
       - recipes/python/uv.md
       - recipes/python/pytorch.md
       - recipes/python/transformers.md
+    - MPI:
+      - recipes/mpi/hello-world.md
   # - Reference:
   #   - reference/index.md
   #   - reference/glossary.md

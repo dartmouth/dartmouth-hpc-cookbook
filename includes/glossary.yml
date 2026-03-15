@@ -102,7 +102,26 @@
 
 - term: MPI
   full: Message Passing Interface
-  definition: Standard for distributed computing across nodes.
+  definition: >-
+    A standard for writing programs that run as many simultaneous processes
+    spread across multiple nodes, communicating by sending messages over the
+    network. Each process has its own private memory and a unique integer ID
+    called a rank. Open MPI is the most common implementation on HPC clusters.
+
+- term: Open MPI
+  definition: >-
+    A widely used open-source implementation of the MPI standard, available
+    on {{ cluster.name }}. Provides the mpicc compiler wrapper (which links
+    the MPI libraries into your program) and the mpirun launcher (which
+    starts your processes across allocated nodes).
+
+- term: rank
+  definition: >-
+    A unique integer ID assigned to each process in an MPI job, starting
+    at 0. If you launch 8 MPI processes, they are numbered rank 0 through 7.
+    Rank 0 is conventionally used as the "root" for coordination tasks like
+    gathering results from all other ranks.
+  plurals: [ranks]
 
 - term: node
   definition: >-
