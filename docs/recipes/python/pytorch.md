@@ -207,6 +207,57 @@ Smoke test passed: matmul on cuda:0 produced shape torch.Size([1000, 1000])
     interoperability with other compiled code, consider using a conda-based
     environment manager or a container-based workflow instead.
 
+## Managing the PyTorch Cache
+
+When downloading pre-trained model weights, PyTorch
+needs a place to store them. By default, it uses `~/.cache/torch/` in your home
+directory.
+Your home directory on {{ cluster.name }} has a strict quota, though. Multi-gigabyte
+model weights can fill it quickly, causing jobs to
+fail with cryptic I/O or out-of-space errors. The fix is to redirect these
+caches to [scratch storage](../fundamentals/storage.md) before your job starts.
+
+Functions like `torch.hub.load()` and the pretrained model APIs in
+`torchvision.models` download weights on first use and store them under
+`$TORCH_HOME/hub/` (default: `~/.cache/torch/hub/`). A single model can
+easily be several gigabytes.
+
+Point `TORCH_HOME` at your scratch directory so downloads land there instead:
+
+```bash
+export TORCH_HOME={{ storage.scratch_path }}/$USER/torch
+```
+
+PyTorch reads it at import time, so set this *before* your
+Python process starts. You can confirm the active location
+from inside Python:
+
+```python
+import torch
+print(torch.hub.get_dir())  # should show your scratch path
+```
+
+### Putting it together in a batch job
+
+Add the `export` line to your job script before calling `uv run`:
+
+{{ sbatch_template(
+    job_name="torch-train",
+    partition="gpuq",
+    time="04:00:00",
+    cpus=4,
+    mem="32G",
+    gpus=1,
+    modules=["uv"],
+    commands="export TORCH_HOME={{ storage.scratch_path }}/$USER/torch\n\ncd /path/to/myproject\nuv run python train.py"
+) }}
+
+!!! tip "Set cache path in your shell profile"
+    To avoid repeating this export in every job script, add it to your
+    `~/.bashrc`. It will be inherited by all batch jobs automatically.
+    Just remember that scratch may be purged periodically, triggering PyTorch
+    to re-download any pretrained weights.
+
 ## See Also
 
 - [Getting Started with uv](uv.md) — The recommended way to manage Python projects on {{ cluster.name }}

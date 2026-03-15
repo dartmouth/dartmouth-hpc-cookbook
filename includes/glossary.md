@@ -44,3 +44,6 @@
 *[home directory]: A small, persistent, backed-up personal directory on the cluster (typically accessed as ~). Intended for scripts, configuration files, and small personal files — not for large datasets or heavy job I/O.
 *[VPN]: Virtual Private Network — Software that creates a secure, encrypted connection to a campus network from an off-campus location, enabling access to resources that are restricted to on-campus use.
 *[venv]: Python virtual environment — A bundle of Python packages of specific versions.
+*[HuggingFace Hub]: The online model registry at huggingface.co where researchers publish pre-trained model weights, tokenizers, and datasets. The ``transformers`` library downloads from the Hub on first use and caches the files locally under ``$HF_HOME``.
+*[device_map]: An ``accelerate`` feature that automatically partitions a model's layers across all available GPUs (and CPU/disk if needed) so that large models exceeding a single GPU's memory can still run. Enabled by passing ``device_map="auto"`` to ``AutoModel.from_pretrained()``.
+*[accelerate]: A HuggingFace library that abstracts multi-GPU and mixed-precision training and inference. Required for ``device_map="auto"`` in ``transformers``.

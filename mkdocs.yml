@@ -142,6 +142,7 @@ nav:
     - Python:
       - recipes/python/uv.md
       - recipes/python/pytorch.md
+      - recipes/python/transformers.md
   # - Reference:
   #   - reference/index.md
   #   - reference/glossary.md

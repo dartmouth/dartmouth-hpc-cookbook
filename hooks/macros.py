@@ -524,6 +524,10 @@ def define_env(env):
         """
         Generate a templated sbatch script. Useful for recipe pages.
 
+        The ``commands`` string may contain ``{{ var }}`` placeholders from
+        site.yml (e.g. ``{{ storage.scratch_path }}``) — they are resolved
+        at build time using the same substitution as the rest of the page.
+
         Usage in Markdown:
             {{ sbatch_template(
                 job_name="pytorch_train",
@@ -534,6 +538,10 @@ def define_env(env):
                 commands="python train.py --epochs 50"
             ) }}
         """
+        # Resolve any {{ var }} placeholders in the commands string so that
+        # callers can write e.g. {{ storage.scratch_path }} inside commands.
+        commands = _substitute_vars(commands, site_config)
+
         script = f"""```bash
 #!/bin/bash
 #SBATCH --job-name={job_name}
