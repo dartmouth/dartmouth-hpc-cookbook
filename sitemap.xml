@@ -49,6 +49,22 @@
          <lastmod>2026-03-15</lastmod>
     </url>
     <url>
+         <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/recipes/mpi/hello-world/</loc>
+         <lastmod>2026-03-15</lastmod>
+    </url>
+    <url>
+         <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/recipes/mpi/mpi4py/</loc>
+         <lastmod>2026-03-15</lastmod>
+    </url>
+    <url>
+         <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/recipes/python/pytorch/</loc>
+         <lastmod>2026-03-15</lastmod>
+    </url>
+    <url>
+         <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/recipes/python/transformers/</loc>
+         <lastmod>2026-03-15</lastmod>
+    </url>
+    <url>
          <loc>https://dartmouth.github.io/dartmouth-hpc-cookbook/recipes/python/uv/</loc>
          <lastmod>2026-03-15</lastmod>
     </url>
