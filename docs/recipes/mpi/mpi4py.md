@@ -18,6 +18,9 @@ tags:
 
 ## Why mpi4py?
 
+!!! tip "New to parallel programming?"
+    If distributed computing concepts like message passing, ranks, and communication overhead are new to you, read the [Distributed Computing fundamentals](../../fundamentals/distributed-computing.md) article first.
+
 The [C MPI recipe](hello-world.md) shows the canonical approach: write C,
 compile with `mpicc`, run with `mpirun`.  That works great for performance-
 critical programs, but sometimes you want MPI's multi-node reach with Python's

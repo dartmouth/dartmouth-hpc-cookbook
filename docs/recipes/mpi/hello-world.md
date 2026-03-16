@@ -26,6 +26,9 @@ run as many simultaneous processes spread across multiple nodes, communicating
 by sending messages over the network. Each process has its own private memory;
 if it needs data from another process, it has to explicitly ask for it.
 
+!!! tip "New to parallel programming?"
+    If concepts like distributed memory, message passing, and processes vs. threads are unfamiliar, read the [Distributed Computing fundamentals](../../fundamentals/distributed-computing.md) article first. It explains *why* this model exists and when to use it. This recipe focuses on the *how*.
+
 **Open MPI** is the most widely used implementation of the MPI standard and
 the one available on {{ cluster.name }}.
 
