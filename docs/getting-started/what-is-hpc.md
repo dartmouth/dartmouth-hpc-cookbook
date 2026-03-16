@@ -24,7 +24,7 @@ There are two key architectural models to understand:
 
 !!! note
 
-    We can still leverage shared memory within an individual node in the cluster to allow all of that node's CPUs to work together. Only once we want to scale out across multiple nodes is when we are required to use a distributed memory programming model.
+    We can still leverage shared memory within an individual node in the cluster to allow all of that node's CPUs to work together. Only once we want to scale out across multiple nodes is when we are required to use a distributed memory programming model. To learn more about these paradigms, see [Parallel Programming](../fundamentals/parallel-programming.md).
 
 
 
@@ -98,4 +98,5 @@ Now that you have a sense of what HPC is and how {{ institution.short_name }}'s 
 
 - [**Request an account**](account.md) for our HPC systems
 - [**Connect to our HPC systems**](connecting.md) via SSH
+- [**Parallel Programming**](../fundamentals/parallel-programming.md) — Understand concurrent, parallel, and distributed programming paradigms
 - [**Submit your first job**](first-job.md) with {{ cluster.scheduler }}

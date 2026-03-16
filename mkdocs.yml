@@ -133,25 +133,49 @@ nav:
     - getting-started/connecting.md
     - getting-started/first-job.md
   - Fundamentals:
-    - fundamentals/index.md
-    - fundamentals/linux-basics.md
-    - fundamentals/linux-advanced.md
-  #   - fundamentals/storage.md
+    - Navigating the Cluster:
+      - fundamentals/linux-basics.md
+      - fundamentals/linux-advanced.md
+      - fundamentals/storage.md
+      - fundamentals/data-transfer.md
+      - fundamentals/gpu-computing.md
+    - Parallel Programming:
+      - fundamentals/parallel-programming.md
+      - fundamentals/concurrent-programming.md
+      - fundamentals/parallel-computing.md
+      - fundamentals/distributed-computing.md
   - Recipes:
     - recipes/index.md
     - Python:
       - recipes/python/uv.md
       - recipes/python/pytorch.md
       - recipes/python/transformers.md
+      - recipes/python/multi-gpu.md
+      - recipes/python/conda.md
+    - R:
+      - recipes/r/getting-started.md
+      - recipes/r/batch-job.md
+    - MATLAB:
+      - recipes/matlab/batch-job.md
+    - Containers:
+      - recipes/containers/intro.md
+      - recipes/containers/apptainer.md
+    - Open OnDemand:
+      - recipes/open-ondemand/getting-started.md
+      - recipes/open-ondemand/apps.md
+    - Slurm Patterns:
+      - recipes/slurm/interactive-jobs.md
+      - recipes/slurm/job-arrays.md
+      - recipes/slurm/intermediate-patterns.md
     - MPI:
       - recipes/mpi/hello-world.md
       - recipes/mpi/mpi4py.md
-  # - Reference:
-  #   - reference/index.md
-  #   - reference/glossary.md
-  #   - reference/tags.md
-  # - Troubleshooting:
-  #   - troubleshooting/index.md
+  - Reference:
+    - reference/index.md
+    - reference/glossary.md
+    - reference/tags.md
+  - Troubleshooting:
+    - troubleshooting/index.md
 
 
 plugins:

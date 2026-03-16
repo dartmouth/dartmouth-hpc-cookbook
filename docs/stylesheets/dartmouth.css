@@ -318,13 +318,18 @@
 }
 
 /* ==========================================================================
-   CWG logo in site footer
+   Logos in site footer
    ========================================================================== */
 
-.md-footer-meta .footer-cwg-logo {
+.md-footer-meta .footer-cwg-logo,
+.md-footer-meta .footer-rr-logo {
   height: 2rem;
   vertical-align: middle;
   opacity: 0.9;
+}
+
+.md-footer-meta .footer-rr-logo {
+  margin-left: 0.75rem;
 }
 
 /* ==========================================================================

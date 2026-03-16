@@ -263,3 +263,92 @@
     A HuggingFace library that abstracts multi-GPU and mixed-precision
     training and inference. Required for ``device_map="auto"`` in
     ``transformers``.
+
+- term: Amdahl's Law
+  definition: >-
+    A formula predicting the maximum speedup from parallelizing a program:
+    S = 1 / (1 − P + P/n), where P is the fraction that can be parallelized
+    and n is the number of processors. The serial portion of your code sets
+    a hard ceiling on how much faster you can go, no matter how many
+    processors you add.
+
+- term: concurrency
+  definition: >-
+    Executing multiple tasks in overlapping time periods, potentially on a
+    single processor. Tasks make progress by interleaving — not necessarily
+    by running simultaneously. Useful for I/O-bound workloads where tasks
+    spend time waiting for external resources.
+
+- term: coroutine
+  definition: >-
+    A function that can pause its execution (yield control) and resume
+    later. Used in async/concurrent programming to allow cooperative
+    multitasking within a single thread.
+  plurals: [coroutines]
+
+- term: CPU-bound
+  definition: >-
+    A workload whose execution time is dominated by computation rather
+    than waiting for I/O. CPU-bound tasks benefit from parallel execution
+    on multiple cores.
+
+- term: event loop
+  definition: >-
+    A programming construct that waits for tasks to become ready and
+    dispatches them for execution. The core mechanism behind
+    concurrent/async programming — it switches between tasks when one
+    begins waiting for I/O, keeping the processor busy.
+
+- term: GIL
+  full: Global Interpreter Lock
+  definition: >-
+    A mutex in CPython that allows only one thread to execute Python
+    bytecode at a time. This limits the effectiveness of thread-based
+    parallelism for CPU-bound Python code; use multiple processes instead.
+
+- term: I/O-bound
+  definition: >-
+    A workload whose execution time is dominated by waiting for
+    input/output operations (network requests, disk reads, database
+    queries) rather than computation. I/O-bound tasks benefit from
+    concurrent execution.
+
+- term: message passing
+  definition: >-
+    A communication model where processes exchange data by explicitly
+    sending and receiving messages rather than sharing memory. MPI is the
+    dominant standard for message passing in HPC.
+
+- term: oversubscription
+  definition: >-
+    Running more processes or threads than available physical CPU cores,
+    forcing the operating system to time-share them. Can degrade
+    performance due to context-switching overhead.
+
+- term: parallelism
+  definition: >-
+    Executing multiple tasks at the exact same time on separate physical
+    processors. Unlike concurrency (which interleaves tasks on one core),
+    parallelism requires multi-core or multi-node hardware.
+
+- term: race condition
+  definition: >-
+    A bug that occurs when multiple threads or processes access shared
+    data simultaneously and the outcome depends on the unpredictable
+    timing of their execution. Avoiding race conditions is a central
+    challenge in shared-memory parallel programming.
+  plurals: [race conditions]
+
+- term: speedup
+  definition: >-
+    The ratio of sequential execution time to parallel execution time.
+    A speedup of 4× means the parallel version runs four times faster
+    than the sequential one.
+
+- term: thread
+  definition: >-
+    An execution flow within a process that shares the parent process's
+    memory space. Threads are lightweight to create and destroy, but
+    concurrent access to shared memory introduces the risk of race
+    conditions.
+  plurals: [threads]

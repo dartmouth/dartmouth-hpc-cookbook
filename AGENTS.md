@@ -25,3 +25,4 @@ This file provides guidance to agents when working with code in this repository.
 
 ## Important distinction
 - This cookbook is a learning resource, not a technical documentation. Introduced concepts should be explained. The *why* is just as important as the *how*. Total coverage of a topic is less important than good scaffolding. Be opinionated and selective in recommendations if it fosters understanding.
+- Discoverability is very important. We have to assume that a user might land on any page as their starting page. We need to make sure that other related resources can be discovered from there, not just when traveling through the materials from the top down.
