@@ -252,6 +252,7 @@ cd ../..                # go up two levels
 
 With these fundamentals in hand, you're ready to go deeper:
 
+- [**Editing Files in the Terminal**](editing.md) — edit job scripts and config files with nano or vi
 - [**Linux — Permissions, Pipes & the Environment**](linux-advanced.md) — file permissions, pipes, redirection, and shell configuration
 - [**Storage on {{ cluster.name }}**](storage.md) — understand your home directory, lab volumes, and scratch space
 - [**Submitting your first job**](../getting-started/what-is-hpc.md) — put the scheduler to work with `sbatch`

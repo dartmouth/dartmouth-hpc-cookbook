@@ -136,6 +136,7 @@ nav:
     - Navigating the Cluster:
       - fundamentals/linux-basics.md
       - fundamentals/linux-advanced.md
+      - fundamentals/editing.md
       - fundamentals/storage.md
       - fundamentals/data-transfer.md
       - fundamentals/gpu-computing.md
