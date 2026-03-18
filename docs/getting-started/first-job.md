@@ -7,9 +7,9 @@ tags:
 
 # Submit Your First Job
 
-You have an account. You're connected to {{ cluster.name }}. Let's put the cluster to work.
+You have an [account](account.md). You're [connected to {{ cluster.name }}](connecting.md). Let's put the cluster to work.
 
-By the end of this page you'll have submitted a job, watched it move through the queue, and read its output — the full cycle described in [What is HPC?](what-is-hpc.md), for real.
+By the end of this page you'll have submitted a job, watched it move through the queue, and read its output. It's time to do the full cycle described in [What is HPC?](what-is-hpc.md) for real!
 
 !!! tip "New to the command line?"
     This guide assumes you can navigate directories and edit files in a terminal. If that's unfamiliar, work through [Linux Basics](../fundamentals/linux-basics.md) first — it won't take long.
@@ -89,7 +89,7 @@ Running as: f00abc
 Thu Mar 12 10:15:42 EDT 2026
 ```
 
-Notice the hostname: it's a **compute node**, not the login node you're typing on. Try running `hostname` right now in your terminal and compare — they'll be different. Your job ran somewhere else entirely, scheduled and managed without you having to think about which machine was available.
+Notice the hostname: it's a **compute node**, not the login node you're typing on. Try running `hostname` right now in your terminal and compare. They'll be different! Your job ran somewhere else entirely, scheduled and managed without you having to think about which machine was available.
 
 That's the core loop: **write a script, submit it, collect results**. Everything else you'll learn about {{ cluster.name }} builds on this.
 
