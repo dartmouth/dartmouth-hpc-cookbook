@@ -23,8 +23,6 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/dartmouth
 
-  tags:
-    getting-started: getting-started
 
 theme:
   name: material
@@ -79,8 +77,6 @@ theme:
       tip: material/lightbulb-on
       warning: material/alert
       danger: material/fire
-    tag:
-      getting-started: material/tag
 
 markdown_extensions:
   # Python Markdown core
