@@ -32,6 +32,7 @@ Paste the following:
 #SBATCH --time=00:05:00           # allow up to 5 minutes (it'll be much faster)
 #SBATCH --output=first-job.out    # write output to this file
 
+sleep 30                        # (1)!
 echo "Hello from $(hostname)"
 echo "Job ID: $SLURM_JOB_ID"
 echo "Running as: $USER"
@@ -44,7 +45,7 @@ Let's break that down:
 
 - `#!/bin/bash` tells Linux to run the script with Bash.
 - Lines starting with `#SBATCH` are **directives** — instructions to the scheduler, not regular comments. Each one requests a specific resource or sets an option.
-- Everything after the directives is your actual work. Here it's just a few `echo` commands so we can verify where and how the job ran.
+- Everything after the directives is your actual work. Here it's just a few `echo` commands so we can verify where and how the job ran. We also threw in a `sleep` command in the beginning to have a chance to see the job in the queue. Otherwise it would finish too quickly.
 
 That's the anatomy of every job script you'll ever write: directives at the top, commands below. The directives will get more interesting as your work does, but the structure stays the same.
 
@@ -107,7 +108,7 @@ Don't worry about memorizing `sacct` flags right now. We'll cover job monitoring
 
 You just completed the full HPC workflow. Now it's time to build the skills that let you do real work on the cluster:
 
-- [**Linux Basics**](../fundamentals/linux-basics.md) — navigate the filesystem and manage files from the command line
-- [**Storage on {{ cluster.name }}**](../fundamentals/storage.md) — understand where to put your data and why it matters
-- [**Modules**](../fundamentals/modules.md) — load the software you need for your research
-- [**Job Scheduling**](../fundamentals/scheduling.md) — request the right resources, run parallel work, and use job arrays
+- [**Linux Basics**](../fundamentals/linux-basics.md): Navigate the filesystem and manage files from the command line
+- [**Storage on {{ cluster.name }}**](../fundamentals/storage.md): Understand where to put your data and why it matters
+- [**Modules**](../fundamentals/modules.md): Load the software you need for your research
+- [**Job Scheduling**](../fundamentals/scheduling.md): Request the right resources, run parallel work, and use job arrays
