@@ -33,10 +33,10 @@ When you SSH into {{ cluster.name }}, you see something like this:
 
 This is your **shell prompt**. It tells you:
 
-- **`f00abc`** — your username (your NetID)
-- **`discovery`** — the name of the host you're logged into
-- **`~`** — your current directory (`~` is shorthand for your home directory)
-- **`$`** — you're logged in as a regular user (not root)
+- **`f00abc`**: your username (your NetID)
+- **`discovery`**: the name of the host you're logged into
+- **`~`**: your current directory (`~` is shorthand for your home directory)
+- **`$`**: you're logged in as a regular user (not root)
 
 Everything you type after `$` is a command. Press ++enter++ to run it.
 
@@ -67,7 +67,7 @@ Add flags to get more detail:
 | Command | What it does |
 |---------|-------------|
 | `ls` | List files and directories |
-| `ls -l` | Long format — shows permissions, size, date |
+| `ls -l` | Long format; shows permissions, size, date |
 | `ls -a` | Show hidden files (those starting with `.`) |
 | `ls -lh` | Long format with human-readable file sizes |
 | `ls /some/path` | List a different directory without navigating to it |
@@ -177,7 +177,7 @@ find . -newer reference.txt       # files newer than reference.txt
 Every command has built-in documentation:
 
 ```bash
-man ls        # full manual page — press q to quit
+man ls        # full manual page; press q to quit
 ls --help     # shorter usage summary
 ```
 
@@ -185,7 +185,7 @@ When in doubt, `man` is your friend.
 
 ## Paths and the Filesystem
 
-Linux uses a single unified filesystem tree rooted at `/`. There are no drive letters — everything hangs off `/`.
+Linux uses a single unified filesystem tree rooted at `/`. There are no drive letters. Everything hangs off `/`.
 
 ```
 /
@@ -252,7 +252,7 @@ cd ../..                # go up two levels
 
 With these fundamentals in hand, you're ready to go deeper:
 
-- [**Editing Files in the Terminal**](editing.md) — edit job scripts and config files with nano or vi
-- [**Linux — Permissions, Pipes & the Environment**](linux-advanced.md) — file permissions, pipes, redirection, and shell configuration
-- [**Storage on {{ cluster.name }}**](storage.md) — understand your home directory, lab volumes, and scratch space
-- [**Submitting your first job**](../getting-started/what-is-hpc.md) — put the scheduler to work with `sbatch`
+- [**Editing Files in the Terminal**](editing.md): Edit job scripts and config files with nano or vi
+- [**Linux — Permissions, Pipes & the Environment**](linux-advanced.md): File permissions, pipes, redirection, and shell configuration
+- [**Storage on {{ cluster.name }}**](storage.md): Understand your home directory, lab volumes, and scratch space
+- [**Submitting your first job**](../getting-started/what-is-hpc.md): Put the scheduler to work with `sbatch`

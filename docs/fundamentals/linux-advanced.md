@@ -1,12 +1,12 @@
 ---
-title: Linux — Permissions, Pipes & the Environment
+title: Advanced Linux: Permissions, Pipes & the Environment
 description: "File permissions, pipes, redirection, environment variables, dotfiles, and modules on {{ institution.short_name }}'s HPC cluster"
 tags:
   - fundamentals
   - linux
 ---
 
-# Linux — Permissions, Pipes & the Environment
+# Advanced Linux: Permissions, Pipes & the Environment
 
 This article picks up where [Linux Basics](linux-basics.md) left off. You should already be comfortable navigating the filesystem and managing files. Here you'll learn how Linux controls access to files, how to chain commands together with pipes, and how to configure your shell environment.
 

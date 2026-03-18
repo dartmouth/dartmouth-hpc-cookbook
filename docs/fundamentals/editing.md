@@ -8,18 +8,18 @@ tags:
 
 # Editing Files in the Terminal
 
-When you're logged into {{ cluster.name }}, there's no graphical text editor — no VS Code window you can click into, no Notepad. If you need to edit a file — fix a typo in a job script, update a config file, or jot down a quick note — you need a **terminal-based editor**.
+When you're logged into {{ cluster.name }}, there's no graphical text editor: No VS Code window you can click into, no Notepad. If you need to edit a file, fix a typo in a job script, update a config file, or jot down a quick note, you need a **terminal-based editor**.
 
 Two editors are available everywhere: **nano** and **vi** (or its improved variant, **vim**). They take completely different approaches, and both are worth knowing.
 
 | | nano | vi / vim |
 |---|---|---|
-| Learning curve | Gentle — controls shown on screen | Steep — modal editing, nothing on screen |
+| Learning curve | Gentle: controls shown on screen | Steep: modal editing, nothing on screen |
 | Best for | Quick edits, beginners | Power users, complex edits |
 | Available on | Nearly all Linux systems | Every Linux system, always |
 | Mouse support | Sometimes | Rarely (depends on config) |
 
-The honest recommendation: **start with nano for quick edits**. Learn enough vi to escape it when you accidentally end up inside it — which will happen.
+While vi is the more powerful editor, we recommend to **start with nano for quick edits**. Learn enough vi to escape it when you accidentally end up inside it. That will happen inevitably because many tools use vi as their default text editor (e.g., git).
 
 ---
 
@@ -30,25 +30,15 @@ nano is the friendliest terminal editor. When you open a file, the controls are 
 ### Opening a file
 
 ```bash
-nano job_script.sh         # open an existing file
-nano new_file.txt          # create and open a new file
+nano job_script.sh    # (1)!
+nano new_file.txt     # (2)!
 ```
+1. If a file of that name exists, nano will open it.
+2. If there is no existing file under that name, nano will create a new one.
 
 The screen looks like this:
 
-```
-  GNU nano 7.2              job_script.sh
-
-#!/bin/bash
-#SBATCH --job-name=my_job
-#SBATCH --ntasks=1
-#SBATCH --time=01:00:00
-
-echo "Hello from the cluster"
-
-^G Help    ^O Write Out  ^W Where Is  ^K Cut     ^T Execute
-^X Exit    ^R Read File  ^\ Replace   ^U Paste   ^J Justify
-```
+![nano interface](../assets/nano-tui.png)
 
 The `^` symbol means ++ctrl++. So `^X` means ++ctrl+x++.
 
@@ -83,7 +73,7 @@ That's it. nano is intentionally simple.
 
 vi is the oldest and most universally available terminal editor. **vim** ("Vi IMproved") is the modern version and what you almost always get when you type `vi` on a modern system. On {{ cluster.name }}, `vi` opens vim.
 
-vi is powerful but has a reputation for being confusing — largely because it's **modal**: the same keys do different things depending on what mode you're in. This trips up almost everyone the first time.
+vi is powerful but has a reputation for being confusing. This is largely because it's **modal**: The same keys do different things depending on what mode you're in. This trips up almost everyone the first time and there are many memes about the alleged difficulty of exiting vi (seriously, google it).
 
 ### The two essential modes
 
@@ -178,7 +168,7 @@ Once you're comfortable with insert mode and saving, normal mode becomes genuine
 | `:q!` | Quit without saving (discard changes) |
 
 !!! tip "Why learn vi at all?"
-    vi is guaranteed to be present on every Linux system — including minimal container images, embedded systems, and remote servers where nothing else is installed. If you're deep inside a container or on an emergency recovery shell, vi may be your only option.
+    vi is guaranteed to be present on every Linux system. That even includes minimal container images, embedded systems, and remote servers where nothing else is installed. If you're deep inside a container or on an emergency recovery shell, vi may be your only option.
 
 ---
 
@@ -196,7 +186,7 @@ Use **vi** when:
 - You're already in vi and need to make a change
 - You want to invest in learning an editor that will serve you anywhere
 
-For longer editing sessions — writing analysis scripts, building complex pipelines — consider using **VS Code with the Remote-SSH extension** to edit files on {{ cluster.name }} from your laptop with a full graphical interface. See [Connecting to {{ cluster.name }}](../getting-started/connecting.md) for details.
+For longer editing sessions, like writing analysis scripts, building complex pipelines, consider using **VS Code with the Remote-SSH extension** to edit files on {{ cluster.name }} from your laptop with a full graphical interface. See [Connecting to {{ cluster.name }}](../getting-started/connecting.md) for details.
 
 ---
 
@@ -227,6 +217,5 @@ For longer editing sessions — writing analysis scripts, building complex pipel
 
 ## What's Next
 
-- [**Linux — Permissions, Pipes & the Environment**](linux-advanced.md) — file permissions, pipes, and shell configuration
-- [**Connecting to {{ cluster.name }}**](../getting-started/connecting.md) — set up VS Code Remote-SSH for full GUI editing on the cluster
-- [**Storage on {{ cluster.name }}**](storage.md) — understand where your files live and how to manage them
+- [**Linux: Permissions, Pipes & the Environment**](linux-advanced.md): File permissions, pipes, and shell configuration
+- [**Storage on {{ cluster.name }}**](storage.md): Understand where your files live and how to manage them
