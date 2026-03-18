@@ -88,10 +88,21 @@ Before you can connect, make sure you meet two requirements:
 
 {% include "site/connecting-details.md" %}
 
-Once you type the `ssh` command and hit ++enter++, you'll be prompted for your
-password. Type it in, but note that the cursor won't move and no characters will appear.
-This is normal; it's a security feature, not a bug. Press ++enter++ when you've finished
-typing your password.
+### The First Connection: Host Key Verification
+
+The very first time you connect to a new remote machine, your SSH client won't recognize it. It will stop and show you a message similar to this:
+
+```text
+The authenticity of host 'discovery.dartmouth.edu (129.170.x.x)' can't be established.
+ED25519 key fingerprint is SHA256:abc123xyz...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+This is SSH protecting you from "man-in-the-middle" attacks. The remote server presents a unique "fingerprint." Type `yes` and press ++enter++. Your client will save this fingerprint and won't ask you again unless the server's identity changes (which occasionally happens during major system upgrades).
+
+### Entering Your Password
+
+Once the connection is established, you'll be prompted for your password. Type it in, but note that the cursor won't move and no characters will appear. This is normal! It's a security feature, not a bug. Press ++enter++ when you've finished typing.
 
 !!! warning "Nothing Shows When I Type My Password!"
     This catches almost everyone the first time. When you type your password at an SSH
@@ -114,7 +125,7 @@ remote machine, not your laptop.
 !!! info "What's a Login Node?"
     On a cluster like {{ cluster.name }}, the machine you land on when you SSH in is
     called a **login node**. It's a shared gateway: a place to manage files, write
-    scripts, and submit jobs. It is **not** where you run heavy computations — those
+    scripts, and submit jobs. It is **not** where you run heavy computations! Those
     happen on separate compute nodes managed by the job scheduler. We'll cover job
     submission in a later section.
 
@@ -202,6 +213,14 @@ how to draw those remote windows on your screen.
 | SSH client | The program on your machine that initiates the connection |
 | Login node | The shared machine you land on after connecting |
 | X11 forwarding | Sending graphical output from the cluster to your screen |
+
+## Next Steps
+
+## Practice SSH Connections
+
+Ready to try it out? This interactive widget simulates a local terminal on your machine. You can practice logging in, handling X11 forwarding, and dealing with common errors before you try the real thing.
+
+<div class="ssh-simulator" data-cluster-name="{{ cluster.name }}" markdown="0"></div>
 
 ## Next Steps
 
