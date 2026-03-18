@@ -23,6 +23,8 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/dartmouth
 
+  tags:
+    getting-started: getting-started
 
 theme:
   name: material
@@ -126,6 +128,7 @@ nav:
     - home/index.md
     - home/quick-links.md
   - Getting Started:
+    - getting-started/index.md
     - getting-started/what-is-hpc.md
     - getting-started/account.md
     - getting-started/connecting.md

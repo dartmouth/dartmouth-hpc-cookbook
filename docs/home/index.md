@@ -56,9 +56,9 @@ Welcome to the **{{ institution.short_name }} HPC Cookbook** — a practical gui
 
 This site is organized into two main tracks:
 
-**If you're new to HPC**, start with [Getting Started](getting-started/index.md) and work through the [Fundamentals](fundamentals/index.md) section in order. These will give you the basic knowledge you need.
+**If you're new to HPC**, start with [Getting Started](../getting-started/index.md) and work through the [Fundamentals](../fundamentals/index.md) section in order. These will give you the basic knowledge you need.
 
-**If you know the basics and need to get something done**, jump straight to [Recipes](recipes/index.md). Each recipe is self-contained with copy-pasteable scripts and explanations.
+**If you know the basics and need to get something done**, jump straight to [Recipes](../recipes/index.md). Each recipe is self-contained with copy-pasteable scripts and explanations.
 
 !!! tip "Look for the copy button"
     Every code block on this site has a :material-content-copy: button in the top-right corner. Use it to copy commands and scripts directly into your terminal.

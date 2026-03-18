@@ -215,7 +215,7 @@ directory.
 Your home directory on {{ cluster.name }} has a strict quota, though. Multi-gigabyte
 model weights can fill it quickly, causing jobs to
 fail with cryptic I/O or out-of-space errors. The fix is to redirect these
-caches to [scratch storage](../fundamentals/storage.md) before your job starts.
+caches to [scratch storage](../../fundamentals/storage.md) before your job starts.
 
 Functions like `torch.hub.load()` and the pretrained model APIs in
 `torchvision.models` download weights on first use and store them under
