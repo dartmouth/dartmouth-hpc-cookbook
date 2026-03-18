@@ -131,12 +131,15 @@ nav:
     - getting-started/connecting.md
     - getting-started/first-job.md
   - Fundamentals:
+    - fundamentals/index.md
     - Navigating the Cluster:
       - fundamentals/linux-basics.md
       - fundamentals/linux-advanced.md
+      - fundamentals/modules.md
       - fundamentals/editing.md
       - fundamentals/storage.md
       - fundamentals/data-transfer.md
+      - fundamentals/scheduling.md
       - fundamentals/gpu-computing.md
     - Parallel Programming:
       - fundamentals/parallel-programming.md
