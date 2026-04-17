@@ -9,7 +9,7 @@ tags:
 
 # Environment Modules
 
-On your laptop, installing software is straightforward — you download it, install it, and it's available everywhere. HPC clusters work differently. Hundreds of users share the same system, often needing different (and incompatible) versions of the same software. **Environment modules** are how clusters solve this problem.
+On your laptop, installing software is straightforward: You download it, install it, and it's available everywhere. HPC clusters work differently. Hundreds of users share the same system, often needing different (and incompatible) versions of the same software. **Environment modules** are how clusters solve this problem.
 
 ## The Problem Modules Solve
 
@@ -21,11 +21,11 @@ HPC systems are **shared infrastructure**. Unlike your laptop, you don't get to 
 
 ## What Modules Actually Do
 
-If you've read [Linux — Permissions, Pipes & the Environment](linux-advanced.md), you know that your shell uses environment variables like `$PATH` to find commands. When you type `python3`, your shell searches through the directories listed in `$PATH` until it finds a matching executable.
+If you've read [Advanced Linux: Permissions, Pipes & the Environment](linux-advanced.md), you know that your shell uses environment variables like `$PATH` to find commands. When you type `python3`, your shell searches through the directories listed in `$PATH` until it finds a matching executable.
 
 Modules work by **manipulating these environment variables**. When you load a module, it prepends the software's `bin/` directory to your `$PATH`, adds its `lib/` directory to `$LD_LIBRARY_PATH`, and sets any other variables the software needs. When you unload it, those changes are reversed.
 
-That's the entire trick. There's no containerization, no virtualization — just careful management of environment variables. This is why understanding `$PATH` and environment variables first makes modules feel intuitive rather than magical.
+That's all! There's no containerization or virtualization, just careful management of environment variables.
 
 ## Core Commands
 
@@ -37,21 +37,21 @@ These are the commands you'll use every day on {{ cluster.name }}. They all star
 module avail
 ```
 
-This lists every module installed on the cluster. The output can be overwhelming — {{ cluster.name }} has hundreds of modules. To narrow it down, pass a search term:
+This lists every module installed on the cluster. The output can be overwhelming because {{ cluster.name }} has many modules. To narrow it down, pass a search term:
 
 ```bash
-module avail python
+module avail gcc
 ```
 
-This shows only modules whose names contain "python." Use this when you know roughly what you need but aren't sure of the exact version or name.
+This shows only modules whose names contain "gcc." Use this when you know roughly what you need but aren't sure of the exact version or name.
 
 ### Load a module
 
 ```bash
-module load python/3.11.5
+module load gcc/12.2.0
 ```
 
-This makes Python 3.11.5 available in your current session. After running this, `python3` points to version 3.11.5 and any associated tools (like `pip`) are also on your `$PATH`.
+This makes GCC 12.2.0 available in your current session. After running this, `gcc` points to version 12.2.0 and any associated tools (like `g++`) are also on your `$PATH`.
 
 You can load multiple modules at once:
 
@@ -70,7 +70,7 @@ This shows every module currently active in your session. If something isn't beh
 ### Unload a module
 
 ```bash
-module unload python/3.11.5
+module unload gcc/12.2.0
 ```
 
 This reverses the environment changes that `module load` made. The software is no longer available in your session.
@@ -86,15 +86,15 @@ This unloads **everything**. It's useful when you've accumulated modules over a 
 ### Inspect a module
 
 ```bash
-module show python/3.11.5
+module show gcc/12.2.0
 ```
 
 This reveals exactly what a module does — which directories it adds to `$PATH`, what environment variables it sets, and whether it loads any other modules as dependencies. This is invaluable for debugging:
 
 ```
-prepend-path    PATH            /opt/software/python/3.11.5/bin
-prepend-path    LD_LIBRARY_PATH /opt/software/python/3.11.5/lib
-setenv          PYTHON_HOME     /opt/software/python/3.11.5
+prepend-path    PATH            /opt/software/gcc/12.2.0/bin
+prepend-path    LD_LIBRARY_PATH /opt/software/gcc/12.2.0/lib
+setenv          CC              /opt/software/gcc/12.2.0/bin/gcc
 ```
 
 !!! tip "When in doubt, `module show`"
@@ -105,17 +105,17 @@ setenv          PYTHON_HOME     /opt/software/python/3.11.5
 Modules follow a `name/version` naming convention:
 
 ```
-python/3.11.5
 gcc/12.2.0
 cuda/12.1
 openmpi/4.1.4
+uv/0.1.24
 ```
 
 The name identifies the software, and the version after the slash identifies the specific release. Some key things to know:
 
-- **Default versions**: If you run `module load python` without specifying a version, the system loads a default (usually marked with `(D)` in `module avail` output). It's better to always specify the version explicitly — the default may change when the system is updated, which could break your workflow.
+- **Default versions**: If you run `module load gcc` without specifying a version, the system loads a default (usually marked with `(D)` in `module avail` output). It's better to always specify the version explicitly — the default may change when the system is updated, which could break your workflow.
 
-- **Partial matching**: You can often use partial version numbers. `module load python/3.11` may resolve to `python/3.11.5` if that's the only 3.11.x installed.
+- **Partial matching**: You can often use partial version numbers. `module load gcc/12` may resolve to `gcc/12.2.0` if that's the only 12.x installed.
 
 - **Hierarchical modules**: Some modules only appear after you've loaded a prerequisite. For example, MPI libraries compiled with a specific compiler may only show up in `module avail` after you load that compiler. If you can't find a module you expect to exist, check whether it depends on another module being loaded first.
 
@@ -126,7 +126,7 @@ The name identifies the software, and the version after the slash identifies the
 
 This is the single most important thing to understand about modules on a cluster: **modules loaded in your interactive session do not carry over into your batch jobs.**
 
-When you submit a job with `sbatch`, it starts a fresh shell on a compute node. That shell has no memory of what you loaded on the login node. If your job needs Python, you must load it in the job script.
+When you submit a job with `sbatch`, it starts a fresh shell on a compute node. That shell has no memory of what you loaded on the login node. If your job needs a specific tool like `uv`, you must load it in the job script.
 
 ```bash
 #!/bin/bash
@@ -136,9 +136,9 @@ When you submit a job with `sbatch`, it starts a fresh shell on a compute node. 
 #SBATCH --time=01:00:00
 
 module purge                  # start clean
-module load python/3.11.5     # load what you need
+module load uv                # load what you need
 
-python3 my_analysis.py
+uv run python my_analysis.py
 ```
 
 The `module purge` at the top ensures you're starting from a known state, regardless of what might be loaded by default. Then you explicitly load exactly what your job requires. This makes your job script **self-contained and reproducible** — anyone can read it and know exactly what software environment it expects.
@@ -151,7 +151,7 @@ For more on job script structure, see [Submit Your First Job](../getting-started
 ## Common Pitfalls
 
 !!! warning "Conflicting modules"
-    Loading two versions of the same software (e.g., `python/3.9.7` and `python/3.11.5`) leads to unpredictable behavior. The module system may warn you, or it may silently let both coexist with one shadowing the other. Always `module unload` or `module purge` before switching versions.
+    Loading two versions of the same software (e.g., `gcc/10.2.0` and `gcc/12.2.0`) leads to unpredictable behavior. The module system may warn you, or it may silently let both coexist with one shadowing the other. Always `module unload` or `module purge` before switching versions.
 
 !!! warning "Modules in `.bashrc` — handle with care"
     You might be tempted to add `module load` commands to your `~/.bashrc` so your favorite software is always available. This works but is fragile:
@@ -171,7 +171,7 @@ Modules are the right tool for **system-level software**: compilers (GCC, Intel)
 
 Modules are **not** the right tool for managing Python packages, R libraries, or other language-specific dependencies. For those, use the language's own package manager inside an isolated environment:
 
-- **Python packages**: Use virtual environments managed by a tool like `uv`. See [Getting Started with uv](../recipes/python/uv.md) for a complete walkthrough. You'll still use `module load python/3.11.5` to get a base Python interpreter, but your project's packages (`numpy`, `pandas`, `torch`, etc.) should live in a virtual environment, not come from modules.
+- **Python packages**: Use virtual environments managed by a tool like `uv`. See [Getting Started with uv](../recipes/python/uv.md) for a complete walkthrough. Instead of loading a Python module, you will `module load uv` and let `uv` download and manage the exact Python version your project needs.
 
 - **R packages**: Install them into a user library with `install.packages()` inside an R session.
 
