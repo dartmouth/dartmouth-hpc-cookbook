@@ -1,0 +1,22 @@
+[
+  {
+      "id": "name",
+      "display": "Partition",
+      "mobile": true
+  },
+  {
+      "id": "node_count",
+      "display": "# Nodes",
+      "mobile": false
+  },
+  {
+      "id": "maxtime",
+      "display": "Maximum Time Limit",
+      "mobile": false
+  },
+  {
+      "id": "deftime",
+      "display": "Default Time Limit",
+      "mobile": false
+  }
+]

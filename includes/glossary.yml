@@ -67,8 +67,9 @@
 - term: GSSAPI
   full: Generic Security Services Application Program Interface
   definition: >-
-    An authentication mechanism that works with campus credentials
-    (like Kerberos) to enable passwordless logins to HPC systems.
+    An authentication mechanism that works with institutional credentials
+    to enable passwordless logins to HPC systems. Some clusters use SSH
+    keys instead.
 
 - term: GPU
   full: Graphics Processing Unit
@@ -76,14 +77,26 @@
   plurals: [GPUs]
 
 - term: headless
-  definition: A system with no physical display attached. Cluster nodes are headless, which is why running graphical applications requires X11 forwarding or a similar tool to send the visual output back to your local screen.
+  definition: A system with no physical display attached. Cluster nodes are headless, which is why graphical applications need a remote display path, typically a web portal like Open OnDemand, X11 forwarding, or saving figures to files.
 
 - term: host
-  definition: A computer on a network, identified by its hostname. When you're logged into an HPC cluster, the hostname in your shell prompt (e.g., discovery) tells you which host you're on.
+  definition: A computer on a network, identified by its hostname. When you're logged into an HPC cluster, the hostname in your shell prompt tells you which host you're on.
 
 - term: HPC
   full: High-Performance Computing
   definition: The practice of aggregating computing power for large-scale workloads.
+
+- term: Lmod
+  definition: >-
+    A Lua-based module system for managing software environments on HPC
+    clusters. Lmod provides commands like ``module load``, ``module avail``,
+    and ``module list`` to load and switch between software versions.
+
+- term: MGHPCC
+  full: Massachusetts Green High Performance Computing Center
+  definition: >-
+    A data center in Holyoke, MA that hosts shared HPC infrastructure
+    for a consortium of universities, including the {{ cluster.name }} cluster.
 
 - term: I/O
   full: Input/Output

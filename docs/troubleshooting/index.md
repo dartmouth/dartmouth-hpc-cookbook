@@ -92,7 +92,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 
     2. **Wrong file paths** — relative paths are resolved from the working directory at
        job submission time, which may not be where you expect. Prefer absolute paths
-       (e.g., `/dartfs-hpc/scratch/netid/myproject/input.csv`) or set your working
+       (e.g., `{{ storage.scratch_path }}/username/myproject/input.csv`) or set your working
        directory explicitly with `#SBATCH --chdir=`.
 
     3. **Script syntax error** — a typo or missing quote in your Bash script causes an
@@ -300,7 +300,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
         ```
     2. **Use absolute paths.** Relative paths to the environment break when the
        working directory differs between submission and execution. Prefer
-       `/dartfs-hpc/scratch/netid/project/.venv` over `.venv`.
+       `{{ storage.scratch_path }}/username/project/.venv` over `.venv`.
     3. **Check home directory accessibility.** In rare cases, NFS issues can make
        home unavailable on a compute node. If your environment lives in `$HOME`,
        try `ls $HOME` inside the job script and check the output.
@@ -349,12 +349,12 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 ??? question "ssh: connect to host ... Connection refused (or timeout)"
 
     A "connection refused" or timeout when SSH-ing to {{ cluster.name }} almost always
-    means your machine isn't on the Dartmouth network. {{ cluster.name }}'s login nodes
-    are not reachable from the public internet without a VPN.
+    means a network issue. {{ cluster.name }}'s login nodes may not be reachable from
+    all networks.
 
     **Fix:**
 
-    1. Connect to the Dartmouth VPN first.
+    1. If your institution requires a VPN for off-campus access, connect to it first.
     2. Then SSH to `{{ cluster.login_node }}`.
 
     If you're already on campus or VPN and still see this error, double-check the
@@ -368,24 +368,41 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     Check the [{{ institution.short_name }} Research Computing status page]({{ institution.support_url }})
     for announcements.
 
-??? question "Permission denied (publickey,gssapi-keyex,gssapi-with-mic)"
+??? question "Permission denied (publickey)"
 
-    This error means SSH authentication failed entirely — the server rejected every
-    method it tried. The most common cause is an **expired Kerberos ticket**. {{ cluster.name }}
-    uses Kerberos (GSSAPI) as its primary authentication mechanism; when your ticket
-    expires (typically after 24 hours), SSH can't authenticate and falls through to
-    public-key auth, which may also not be configured.
+    This error means SSH authentication failed — the server rejected your key.
+    {{ cluster.name }} uses SSH key authentication, so this usually means your key
+    isn't properly configured.
 
-    **Fix:** renew your Kerberos ticket:
+    **Fix — check each of these in order:**
 
-    ```bash
-    kinit your_netid@KIEWIT.DARTMOUTH.EDU
-    ```
+    1. **Is your private key added to the SSH agent?**
+        ```bash
+        ssh-add -l
+        ```
+        If your Unity key isn't listed, add it:
+        ```bash
+        ssh-add ~/.ssh/unity-privkey.key
+        ```
 
-    Then retry SSH. If that doesn't resolve it, verify your SSH config is set up
-    correctly by following the [Connecting to {{ cluster.name }}](../getting-started/connecting.md)
-    guide — in particular, the `GSSAPIAuthentication yes` and `GSSAPIDelegateCredentials yes`
-    settings in `~/.ssh/config`.
+    2. **Is your public key uploaded to the {{ cluster.name }} portal?**
+       Log in to [{{ cluster.portal_url }}]({{ cluster.portal_url }}), go to
+       **Account Settings > SSH Keys**, and verify your public key is there.
+
+    3. **Are file permissions correct?** Your private key must be readable only by you:
+        ```bash
+        chmod 600 ~/.ssh/unity-privkey.key
+        ```
+
+    4. **Are you using the correct username format?** {{ institution.short_name }} users
+       connect as `{{ institution.username_label | lower }}_dartmouth_edu`, not just your
+       {{ institution.username_label }}:
+        ```bash
+        ssh your_{{ institution.username_label | lower }}_dartmouth_edu@{{ cluster.login_node }}
+        ```
+
+    If none of these resolve the issue, try verbose mode (`ssh -v ...`) and contact
+    [{{ cluster.support_email }}](mailto:{{ cluster.support_email }}) with the output.
 
 ---
 
@@ -448,14 +465,13 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 
     1. Copy inputs to scratch before the job starts.
     2. Run the job, writing outputs to scratch.
-    3. Copy important results back to `$HOME` or
-       [{{ storage.shared_name }}]({{ institution.support_url }}) at the end of the job script:
+    3. Copy important results back to your work directory at the end of the job script:
         ```bash
-        cp -r {{ storage.scratch_path }}/$USER/results $HOME/results
+        cp -r {{ storage.scratch_path }}/$USER/results {{ storage.work_path }}/pi_<group>/results
         ```
 
-    If you need long-term storage for large datasets, contact
-    {{ institution.support_team }} about {{ storage.shared_name }} allocations.
+    If you need additional long-term storage, contact
+    {{ institution.support_team }} about requesting a project allocation.
 
 ??? question "I can't write to my home directory from a compute node"
 

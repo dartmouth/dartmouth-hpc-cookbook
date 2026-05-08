@@ -14,20 +14,35 @@ institution:
   support_email: research.computing@dartmouth.edu
   support_url: https://rc.dartmouth.edu
   github_url: https://github.com/dartmouth
+  username_label: NetID              # What your institution calls usernames
+  sso_dropdown_label: Dartmouth College  # Label to pick in the Unity SSO dropdown
+  username_suffix: _dartmouth_edu    # Appended to the username for SSH login (e.g. NetID_dartmouth_edu)
 
 cluster:
-  name: Discovery                    # Primary HPC cluster name
+  name: Unity                        # Primary HPC cluster name
   scheduler: Slurm                   # Job scheduler (e.g., Slurm, PBS)
-  login_node: discovery.dartmouth.edu
-  default_partition: standard
+  module_system: Lmod                # Module system (e.g., Lmod, Tmod)
+  login_node: login.unityhpc.org
+  login_node_count: 4                # Number of named login nodes (login1..loginN)
+  default_partition: cpu
+  ondemand_url: https://ood.unity.rc.umass.edu/
+  docs_url: https://unityhpc.org/documentation/
+  portal_url: https://unity.dartmouth.edu/
+  catchall_pi_group: pi_general_dartmouth_edu  # Institution-funded fallback PI group; leave blank if none
+  support_email: hpc@umass.edu       # Cluster-level support (may differ from institution)
 
 storage:
-  shared_name: DartFS                # Institution-wide shared storage
-  shared_url: https://rc.dartmouth.edu/storage/getting-started-dartfs/
-  scratch_path: /dartfs-hpc/scratch  # Fast scratch storage on the cluster
+  home_path: /home
+  home_quota: 100 GB
+  work_path: /work                   # Primary job I/O and research data
+  work_quota: 1 TB
+  scratch_path: /scratch             # Fast temporary workspace
+  scratch_quota: 15 TB
+  project_path: /project             # Allocated on request, staged data
+  datasets_path: /datasets           # Curated read-only datasets
 
 # Build-time settings used by hooks/macros.py for SSH-based live data.
 # If your site doesn't use the remote_cmd / system_stats / cluster_stats
 # macros, you can ignore this section.
 build:
-  kerberos_realm: KIEWIT.DARTMOUTH.EDU
+  ssh_auth: key                      # 'key' or 'gssapi'

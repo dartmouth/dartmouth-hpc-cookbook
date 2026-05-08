@@ -1,0 +1,115 @@
+{{ $nodeGroupList := index site.Data (.Get 0) -}}
+{{ $meta := site.Data.partition_meta -}}
+
+    {{ $partitionData := dict }}
+    {{ range $nodeGroupList }}
+      {{ if .gpu_model  }}
+      {{ $gpuModel := .gpu_model }}
+      {{ $vram := .vram }}
+      {{ $gpuModelKey := delimit  (slice $gpuModel $vram) "," }}
+      {{ $gpuPerNode := .gpu_count }}
+      {{ $totalGPUs := mul .count .gpu_count }}
+      {{ $groupCpuPerGpu := math.Floor (div .cores .gpu_count) }}
+      {{ $groupRamPerGpu := math.Floor (div .ram .gpu_count) }}
+      {{ range .partitions }}
+        {{ $partition := . }}
+        {{ if strings.Contains $partition "cpu" }}
+            {{ continue }}
+        {{ end }}
+        {{ if not (index $partitionData $partition) }}
+          {{ $partitionData = merge $partitionData (dict $partition (dict $gpuModelKey (dict "name" $gpuModel "vram" $vram "count" $totalGPUs "per" (slice $groupCpuPerGpu $groupCpuPerGpu $groupRamPerGpu $groupRamPerGpu (slice $gpuPerNode))))) }}
+        {{ else if not (index (index $partitionData $partition) $gpuModelKey) }}
+          {{ $existingCountList := index (index (index (index $partitionData $partition) $gpuModelKey) "per") 4 }}
+          {{ $newCountList := union $existingCountList (slice $gpuPerNode) }}
+          {{ $partitionData = merge $partitionData (dict $partition (merge (index $partitionData $partition) (dict $gpuModelKey (dict "name" $gpuModel "vram" $vram "count" $totalGPUs "per" (slice $groupCpuPerGpu $groupCpuPerGpu $groupRamPerGpu $groupRamPerGpu $newCountList))))) }}
+        {{ else }}
+          {{ $existingCountList := index (index (index (index $partitionData $partition) $gpuModelKey) "per") 4  }}
+          {{ $newCountList := union $existingCountList (slice $gpuPerNode) }}
+          {{ $existingCount := index (index (index $partitionData $partition) $gpuModelKey) "count" }}
+          {{ $newCount := add $existingCount $totalGPUs }}
+          {{ $existingPer := index (index (index $partitionData $partition) $gpuModelKey) "per" }}
+          {{ $newMinPer := math.Min (index $existingPer 0) $groupCpuPerGpu  }}
+          {{ $newMaxPer := math.Max (index $existingPer 1) $groupCpuPerGpu  }}
+          {{ $newRamMinPer := math.Min (index $existingPer 3) $groupRamPerGpu  }}
+          {{ $newRamMaxPer := math.Max (index $existingPer 4) $groupRamPerGpu  }}
+          {{ $partitionData = merge $partitionData (dict $partition (merge (index $partitionData $partition) (dict $gpuModelKey (dict "name" $gpuModel "vram" $vram "count" $newCount "per" (slice $newMinPer $newMaxPer $newRamMinPer $newRamMaxPer $newCountList))))) }}
+        {{ end }}
+      {{ end }}
+      {{ end }}
+    {{ end }}
+    {{ $sortedPartitionData := dict }}
+    {{ range $partition, $gpuModels := $partitionData }}
+          {{ $sortedPartitionData = merge $sortedPartitionData (dict $partition (sort $gpuModels "vram")) }}
+    {{ end }}
+
+<table class="w-full" id="nodeList">
+    <thead class="text-left bg-main border-main text-white dark:bg-main-dark border dark:border-main-dark">
+    <tr>
+      <th>General<br/>Access</th>
+      <th>Partition</th>
+      <th>GPU Model</th>
+      <th>Total GPUs</th>
+      <th>GPUs<br/>per node</th>
+      <th>GPU VRAM<br/>(GB)</th>
+      <th>Cores Per GPU<br/>(may be range)</th>
+      <th>System RAM(GB) Per GPU<br/>(may be range)</th>
+    </tr>
+    </thead>
+    <tbody class="">
+        {{ range $partition, $gpuModels := $sortedPartitionData }}
+            {{ if in $meta.general $partition }}
+                {{ template "gpuitems" (dict "partition" $partition "gpus" $gpuModels "meta" $meta "span" ($gpuModels | len) )}}
+            {{ end }}
+        {{ end }}
+        {{ range $partition, $gpuModels := $sortedPartitionData }}
+            {{ if not (in $meta.general $partition) }}
+                {{ template "gpuitems" (dict "partition" $partition "gpus" $gpuModels "meta" $meta "span" ($gpuModels | len) )}}
+            {{ end }}
+        {{ end }}
+    </tbody>
+</table>
+
+{{ define "gpuitems" }}
+    <!-- Render the table -->
+    {{ $lastPartition := "" }}
+    {{ $partition := .partition }}
+    {{ $meta := .meta }}
+    {{ $span := .span }}
+      {{ range $gpuModel, $gpuCounts := .gpus }}
+        <tr>
+          {{ if ne $lastPartition $partition  }}
+          <td rowspan="{{ $span }}">
+              {{ if in $meta.general $partition }}
+              <div class="material-symbols-rounded">check</div>
+              {{ end }}
+          </td>
+          {{ end }}
+          {{ if ne $lastPartition $partition  }}
+          <td rowspan="{{ $span }}">
+              {{ $partition }}
+              {{ $lastPartition = $partition }}
+          </td>
+          {{ end }}
+          <td>{{ index $gpuCounts "name" }}</td>
+          <td>{{ index $gpuCounts "count" }}</td>
+          <td>{{ delimit (index (index $gpuCounts "per") 4 | sort) "," }}</td>
+          <td>{{ index $gpuCounts "vram" }}</td>
+          <td>
+              {{ $per := index $gpuCounts "per" }}
+              {{ if eq (index $per 0) (index $per 1) }}
+              {{ index $per 0 }}
+              {{ else }}
+              {{ index $per 0 }}-{{ index $per 1 }}
+              {{ end }}
+          </td>
+          <td>
+              {{ $per := index $gpuCounts "per" }}
+              {{ if eq (index $per 2) (index $per 3) }}
+              {{ index $per 2 }}
+              {{ else }}
+              {{ index $per 2 }}-{{ index $per 3 }}
+              {{ end }}
+          </td>
+        </tr>
+      {{ end }}
+{{ end }}

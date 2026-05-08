@@ -25,12 +25,13 @@ performance, or crashes.
 
 ## Step 1: Check the CUDA Version for Your Target GPU
 
-| Generation | GPUs | Supported CUDA versions |
+| Generation | GPUs on {{ cluster.name }} | Supported CUDA versions |
 |---|---|---|
 | Volta | V100 | ≥ 9.0, < 13.0 |
-| Ampere | A100, A5500, A5000 | ≥ 11.0 |
-| Hopper | H200 | ≥ 12.0 |
+| Ampere | A100 | ≥ 11.0 |
+| Hopper | H100, Grace Hopper | ≥ 12.0 |
 | Lovelace | L40S | ≥ 12.0 |
+| Turing | RTX 2080, RTX 2080 Ti | ≥ 10.0 |
 
 !!! warning "Multiple GPU generations? Pick a common CUDA version"
     If you want your code to run on different GPUs with minimal friction,

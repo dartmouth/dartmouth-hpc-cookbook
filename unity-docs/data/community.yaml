@@ -1,0 +1,47 @@
+base_url: https://unity-user-community.slack.com/app_redirect?channel={{ id }}
+links:
+  - name: '#help-desk'
+    id: help-desk 
+    description: |
+      for asking questions about the Unity cluster and research
+      computing. Generally, if you have a question or need help with an error 
+      or bug, it should go here. 
+  - name: '#announcements'
+    id: announcements
+    description: |
+      for Unity-related news announcements posted by the 
+      Unity team. **Please do not post in this channel. Your post will be 
+      removed to keep the announcements front and center.**
+  - name: '#events'
+    id: events
+    description: |
+      for research computing events of interest to the 
+      community. If you would like to post an event advertisement, please 
+      contact [{{< param help-email >}}]({{< param help-email >}}) for 
+      permission prior to posting.
+  - name: '#general'
+    id: general 
+    description: |
+      serves as mostly a landing channel or catch-all channel. Most topics of 
+      discussion have a better home elsewhere, but please post here if you 
+      have a question or discussion that follows the community guidelines but 
+      does not fit better in another channel.
+  - name: '#job-board'
+    id: job-board
+    description: |
+      for posting jobs related to research computing or HPC. All community
+      members are welcome to advertise jobs here. However, if the Unity team 
+      determines your advertisement is off topic or otherwise violates community
+      guidelines, we reserve the right to remove it. 
+  - name: '#research-computing'
+    id: research-computing
+    description: |
+      for general research computing or HPC related news and discussion.
+  - name: '#bioinformatics'
+    id: bioinformatics
+    description: |
+      for discussions around bioinformatics and research computing.
+  - name: '#gpu-pod'
+    id: gpu-pod
+    description: |
+      for discussions about using the NVIDIA HGX A100 nodes. 

@@ -11,19 +11,21 @@
 *[dependencies]: Something your program depends on. This could be a Python package (like numpy), a shared library (like GDAL), or anything else that exists outside your own source code. If something works on your computer, but not on a different computer (like an HPC system), it's most likely because of a missing or mismatched dependency.
 *[distributed memory]: An architecture where many nodes each have private memory, communicating over a high-speed network.
 *[embarrassingly parallel]: A type of problem where the work can be divided into completely independent tasks that require no communication or coordination between them. Processing 1,000 images with the same filter is a classic example: each image can be handled separately without any information from the others.
-*[GSSAPI]: Generic Security Services Application Program Interface — An authentication mechanism that works with campus credentials (like Kerberos) to enable passwordless logins to HPC systems.
+*[GSSAPI]: Generic Security Services Application Program Interface — An authentication mechanism that works with institutional credentials to enable passwordless logins to HPC systems. Some clusters use SSH keys instead.
 *[GPU]: Graphics Processing Unit — Used for parallel computation and AI/ML.
 *[GPUs]: Graphics Processing Unit — Used for parallel computation and AI/ML.
-*[headless]: A system with no physical display attached. Cluster nodes are headless, which is why running graphical applications requires X11 forwarding or a similar tool to send the visual output back to your local screen.
-*[host]: A computer on a network, identified by its hostname. When you're logged into an HPC cluster, the hostname in your shell prompt (e.g., discovery) tells you which host you're on.
+*[headless]: A system with no physical display attached. Cluster nodes are headless, which is why graphical applications need a remote display path, typically a web portal like Open OnDemand, X11 forwarding, or saving figures to files.
+*[host]: A computer on a network, identified by its hostname. When you're logged into an HPC cluster, the hostname in your shell prompt tells you which host you're on.
 *[HPC]: High-Performance Computing — The practice of aggregating computing power for large-scale workloads.
+*[Lmod]: A Lua-based module system for managing software environments on HPC clusters. Lmod provides commands like ``module load``, ``module avail``, and ``module list`` to load and switch between software versions.
+*[MGHPCC]: Massachusetts Green High Performance Computing Center — A data center in Holyoke, MA that hosts shared HPC infrastructure for a consortium of universities, including the Unity cluster.
 *[I/O]: Input/Output — Abbreviation for data input and output processes, like reading/writing to a file or database.
 *[job]: A unit of work that a user submits to a scheduler. A job script specifies what to run and what resources are needed.
 *[jobs]: A unit of work that a user submits to a scheduler. A job script specifies what to run and what resources are needed.
 *[login node]: The node you connect to via SSH — used for preparing and submitting jobs, not running them.
 *[memory]: The fast but volatile working memory (RAM) available to a node, used by running processes to hold data and code while a job executes. Memory is different from storage because it is cleared when power is removed, but is much faster to access for the CPU or GPU.
 *[MPI]: Message Passing Interface — A standard for writing programs that run as many simultaneous processes spread across multiple nodes, communicating by sending messages over the network. Each process has its own private memory and a unique integer ID called a rank. Open MPI is the most common implementation on HPC clusters.
-*[Open MPI]: A widely used open-source implementation of the MPI standard, available on Discovery. Provides the mpicc compiler wrapper (which links the MPI libraries into your program) and the mpirun launcher (which starts your processes across allocated nodes).
+*[Open MPI]: A widely used open-source implementation of the MPI standard, available on Unity. Provides the mpicc compiler wrapper (which links the MPI libraries into your program) and the mpirun launcher (which starts your processes across allocated nodes).
 *[rank]: A unique integer ID assigned to each process in an MPI job, starting at 0. If you launch 8 MPI processes, they are numbered rank 0 through 7. Rank 0 is conventionally used as the "root" for coordination tasks like gathering results from all other ranks.
 *[ranks]: A unique integer ID assigned to each process in an MPI job, starting at 0. If you launch 8 MPI processes, they are numbered rank 0 through 7. Rank 0 is conventionally used as the "root" for coordination tasks like gathering results from all other ranks.
 *[node]: An individual machine within a cluster. Each node has its own CPUs, memory, and (sometimes) GPUs.
@@ -41,8 +43,8 @@
 *[scheduler]: A program that receives job submissions from users, keeps track of the cluster's available resources, and decides when and where each job should run. This site's cluster uses Slurm.
 *[shared memory]: An architecture where all processors share a single pool of RAM, like in a regular laptop computer.
 *[SIF]: Singularity Image Format — Container image format used by Apptainer.
-*[SLURM]: Simple Linux Utility for Resource Management — The job scheduler used on the Discovery cluster.
-*[Slurm]: Simple Linux Utility for Resource Management — The job scheduler used on the Discovery cluster.
+*[SLURM]: Simple Linux Utility for Resource Management — The job scheduler used on the Unity cluster.
+*[Slurm]: Simple Linux Utility for Resource Management — The job scheduler used on the Unity cluster.
 *[SSH]: Secure Shell — Encrypted protocol for remote access.
 *[scratch]: High-speed temporary storage on the cluster, optimized for the heavy read/write patterns of running jobs. Files on scratch are not backed up and may be purged automatically after a period of inactivity.
 *[scratch storage]: High-speed temporary storage on the cluster, optimized for the heavy read/write patterns of running jobs. Files on scratch are not backed up and may be purged automatically after a period of inactivity.

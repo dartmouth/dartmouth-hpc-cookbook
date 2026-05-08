@@ -1,0 +1,54 @@
+- partitions:
+    - umd-cscdr-cpu
+    - umd-cscdr-gpu
+    - umd-cscdr-arm
+  note: |
+    Restricted to members of [CSCDR at UMass Dartmouth](https://www.cscdr.umassd.edu/).
+  symbol: '1'
+- partitions:
+    - uri-cpu
+    - uri-gpu
+  note: |
+    Restricted to users affiliated with the University of Rhode Island.
+  symbol: '2'
+- partitions:
+    - arm-gpu
+    - arm-preempt
+    - umd-cscdr-arm
+  note: |
+    Nodes have the [ARM architecture](https://en.wikipedia.org/wiki/ARM_architecture_family),
+    most software and modules will not work unless built for ARM.
+  symbol: '3'
+- partitions:
+    - power9
+    - power9-gpu
+    - power9-gpu-osg
+    - power9-gpu-preempt
+  note: |
+    Nodes have the [POWER9 architecture](https://en.wikipedia.org/wiki/POWER9),
+    most software and modules will not work unless built for POWER9.
+  symbol: '4'
+- partitions:
+    - cpu-preempt
+    - gpu-preempt
+    - arm-preempt
+    - power9-gpu-preempt
+  note: |
+    Nodes in preempt partitions belong to specific groups which would normally be
+    inaccessible to general users. Priority users reserve the right to kill (preempt)
+    any job running on their nodes to make room for their own jobs. When you
+    schedule a job on a preempt partition, your job can be killed after two
+    hours.
+  symbol: '5'
+- partitions:
+    - cpu
+    - gpu
+    - cpu-preempt
+    - gpu-preempt
+    - arm-cpu
+    - arm-gpu
+    - arm-preempt
+    - power9-gpu-preempt
+  note: |
+      Use `--qos=long` to get up to 14 days.
+  symbol: '6'

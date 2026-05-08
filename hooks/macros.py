@@ -261,9 +261,8 @@ def define_env(env):
         Returns the output wrapped in a fenced code block. Falls back to
         an info admonition when SSH is unavailable (e.g., in CI or off-VPN).
 
-        Uses GSSAPI (Kerberos) for authentication. Before building, obtain
-        a Kerberos ticket for your realm (see ``build.kerberos_realm`` in
-        site.yml).  Then run ``mkdocs build`` or ``mkdocs serve`` as usual.
+        Authentication method is controlled by ``build.ssh_auth`` in site.yml
+        (``key`` or ``gssapi``).  See CUSTOMIZING.md for details.
 
         Usage in Markdown:
             {{ remote_cmd("login.example.edu", "free -h") }}
@@ -293,21 +292,31 @@ def define_env(env):
     def _ssh_cmd(host: str, command: str) -> str | None:
         """Run a command on a remote host via SSH. Returns stdout or None.
 
-        Uses GSSAPI (Kerberos) for passwordless authentication. Requires
-        a valid Kerberos ticket (see ``build.kerberos_realm`` in site.yml).
+        Authentication method is controlled by ``build.ssh_auth`` in site.yml:
+        - ``gssapi``: Uses GSSAPI (Kerberos) — requires a valid ticket.
+        - ``key`` (default): Uses standard key-based SSH authentication.
         """
+        build_config = site_config.get("build", {})
+        ssh_auth = build_config.get("ssh_auth", "key")
+
+        ssh_opts = [
+            "ssh",
+            "-o", "BatchMode=yes",
+            "-o", "ConnectTimeout=5",
+            "-o", "StrictHostKeyChecking=accept-new",
+        ]
+
+        if ssh_auth == "gssapi":
+            ssh_opts += [
+                "-o", "GSSAPIAuthentication=yes",
+                "-o", "GSSAPIDelegateCredentials=yes",
+            ]
+
+        ssh_opts += [host, command]
+
         try:
             result = subprocess.run(
-                [
-                    "ssh",
-                    "-o", "BatchMode=yes",
-                    "-o", "ConnectTimeout=5",
-                    "-o", "StrictHostKeyChecking=accept-new",
-                    "-o", "GSSAPIAuthentication=yes",
-                    "-o", "GSSAPIDelegateCredentials=yes",
-                    host,
-                    command,
-                ],
+                ssh_opts,
                 capture_output=True,
                 text=True,
                 timeout=15,
@@ -515,7 +524,7 @@ def define_env(env):
     @env.macro
     def sbatch_template(
         job_name: str = "my_job",
-        partition: str = "standard",
+        partition: str = site_config.get("cluster", {}).get("default_partition", "cpu"),
         time: str = "01:00:00",
         cpus: int = 1,
         mem: str = "4G",

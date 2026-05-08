@@ -145,7 +145,7 @@ export R_LIBS_USER=/path/to/your/project/R/library
 
 !!! warning "Don't install packages in scratch"
     Don't set `R_LIBS_USER` to a scratch directory — scratch files are purged
-    automatically on a rolling schedule. Your home directory or a DartFS project
+    automatically on a rolling schedule. Your home directory or a work/project
     directory is the right place for your R library. See
     [Storage Fundamentals](../../fundamentals/storage.md) for details on which
     storage tier to use.

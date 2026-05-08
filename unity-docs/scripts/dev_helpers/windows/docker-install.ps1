@@ -1,0 +1,1 @@
+docker run --init --rm -it -u node -v "${PWD}:/site" -w "/site" --name unity-dev-install georgiastuart/unity-website:latest npm run node-install

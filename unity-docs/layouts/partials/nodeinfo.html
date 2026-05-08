@@ -1,0 +1,15 @@
+<div class="more-info">
+    <span class=" font-bold">CPU Type:</span> {{ .cpus }}<br>
+    <span class=" font-bold">Core Count:</span> {{ .cores }}<br>
+    <span class=" font-bold">Memory (RAM):</span> {{ .ram }} GB<br>
+    <span class=" font-bold">Number Available:</span> {{ .count }}<br>
+    <span class=" font-bold">Node List:</span> {{ .nodes_folded }}<br><br>
+    {{- if .gpu_model }}
+    <span class=" font-bold">GPU Type:</span> {{ .gpu_model }}, {{ .vram }} GB VRAM<br>
+    <span class=" font-bold">Number of GPUs:</span> {{ .gpu_count }}<br><br>
+    {{ end -}}
+    <span class=" font-bold">Partitions:</span><br>
+    <div class="pl-4 pb-4">{{ partial "list.html" (dict "items" .partitions "pageLink" "partitions") }}</div>
+    <span class=" font-bold">Features:</span><br>
+    <div class="pl-4">{{ partial "list.html" (dict "items" .features "pageLink" "features")  }}</div>
+</div>

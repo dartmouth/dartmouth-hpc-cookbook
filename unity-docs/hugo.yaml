@@ -1,0 +1,127 @@
+baseURL: 'http://localhost/'
+languageCode: 'en-us'
+timeZone: 'America/New_York'
+title: 'Unity Documentation'
+enableGitInfo: true
+theme: unity
+
+markup:
+  goldmark:
+    parser:
+      attribute:
+        block: true
+        title: true
+    renderer:
+      hardWraps: false
+      unsafe: true # needed for br tag
+      xhtml: false
+  highlight:
+    anchorLineNos: false
+    codeFences: true
+    guessSyntax: true
+    hl_Lines: ''
+    lineAnchors: ''
+    lineNoStart: 1
+    lineNos: false
+    lineNumbersInTable: true
+    noClasses: false
+    style: 'solarized-dark'
+    tabWidth: 4
+
+params:
+  help-email: hpc@umass.edu
+  repo_url: https://gitlab.rc.umass.edu/unity/education/documentation/unity-website
+  repo_commit_url_base: https://gitlab.rc.umass.edu/unity/education/documentation/unity-website/-/commit/
+  account-base-url: https://account.unityhpc.org/
+  login-hostname: login.unityhpc.org
+  account-url: https://account.unityhpc.org/panel/account.php
+  allocation-url: https://allocation.unityhpc.org/
+  ood-url: https://ood.unity.rc.umass.edu/
+  slack-signup-url: https://join.slack.com/t/unity-user-community/signup
+  slack-url: https://unity-user-community.slack.com/
+  officehours-url: https://account.unityhpc.org/office-hours
+  docs-url: https://docs.unityhpc.org/
+  nese-url: https://nese.mghpcc.org/
+  slurmversion: 25.05.5
+  slurmdocurl: https://slurm.schedmd.com/archive/slurm-%s/%s
+  toc: true
+  weight: 100
+  timeZone: 'America/New_York'
+  js_file: /js/unity.js
+  sponsors:
+    - name: University of Massachusetts Amherst
+      logo: umass
+      link: https://www.umass.edu/
+      width: 64px
+    - name: University of Rhode Island
+      logo: uri
+      link: https://www.uri.edu/
+      width: 64px
+    - name: University of Massachusetts Dartmouth
+      logo: umassd
+      link: https://www.umassd.edu/
+      width: 100px
+    - name: University of Massachusetts Lowell
+      logo: uml
+      link: https://www.uml.edu/
+      width: 64px
+    - name: University of Massachusetts Boston
+      logo: umb
+      link: https://www.umb.edu/
+      width: 64px
+    - name: Mount Holyoke College
+      logo: mtholyoke
+      link: https://www.mtholyoke.edu/
+      width: 100px
+    - name: Smith College
+      logo: smith
+      link: https://www.smith.edu/
+      width: 64px
+    - name: Olin College of Engineering
+      logo: olin
+      link: https://www.olin.edu/
+      width: 64px
+  socials:
+    - name: Email
+      icon: mail
+      link: mailto:hpc@umass.edu
+    - name: Slack
+      icon: fa-brands fa-slack
+      link: https://unity-user-community.slack.com/
+    - name: Twitter
+      icon: fa-brands fa-twitter
+      link: https://www.twitter.com/
+    - name: GitLab
+      icon: fa-brands fa-gitlab
+      link: https://gitlab.rc.umass.edu/
+
+menus:
+  home_external_links:
+    - name: System Status
+      weight: 1000
+      url: https://account.unityhpc.org/status.php
+      params:
+        blurb: >
+            Visit the System Status Page to check if Unity services are operational.
+        icon: error
+    - name: Account Settings
+      weight: 1000
+      url: https://account.unityhpc.org/
+      params:
+        blurb: >
+            Visit the Account Portal to manage PI group membership, SSH keys, etc.
+        icon: settings
+    - name: Software/Dataset Request Form
+      weight: 1000
+      url: https://account.unityhpc.org/software-request-form
+      params:
+        blurb: >
+            Can't find the software/dataset you're looking for on the Unity cluster? Submit a request and we may make it available.
+        icon: mail
+    - name: Open OnDemand
+      weight: 1000
+      url: https://ood.unity.rc.umass.edu
+      params:
+        blurb: >
+            Open OnDemand is a web GUI for managing jobs on the Unity cluster.
+        icon: computer

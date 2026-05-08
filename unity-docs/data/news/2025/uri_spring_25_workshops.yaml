@@ -1,0 +1,164 @@
+header:
+  - key: date
+    name: Date
+    weight: 0
+  - key: time
+    name: Time (Eastern)
+    weight: 10
+  - key: name
+    name: Workshop Name
+    weight: 20
+  - key: link
+    name: Zoom Link
+    weight: 30
+
+subtables:
+  id: category
+  entries:
+    - key: ai_tools
+      title: AI Tools
+      weight: 0
+      description: |
+        Workshops on learning to use artifical intelligence tools for different use cases.
+    - key: genai
+      title: Generative AI
+      weight: 10
+      description: |
+        Workshops on generative artificial intelligence.
+    - key: r
+      title: R Series
+      weight: 20
+      description: |
+        Workshops on R.
+    - key: spss_sas
+      title: SPSS & SAS
+      weight: 20
+      description: |
+        Workshops how to use SPSS (Statistical Package for the Social Sciences) and SAS (Statistical Analysis System).
+    - key: data_exploration
+      title: Data Exploration
+      weight: 20
+      description: |
+        Workshops on data exploration.
+    - key: github
+      title: Introduction to GitHub
+      weight: 30
+      description: |
+        Workshops on using git version control with GitHub.
+    - key: ml_dl
+      title: Machine Learning & Deep Learning
+      weight: 30
+      description: |
+        Workshops on machine learning and deep learning.
+    - key: bioinformatics
+      title: Bioinformatics
+      weight: 20
+      description: |
+        Workshops on bioinformatics on the Unity cluster.
+    - key: unity
+      title: Introduction to Unity
+      weight: 30
+      description: |
+        Workshops to get to know the Unity cluster.
+
+items:
+  - category: ai_tools
+    date: Jan 31, 2025 (Fri)
+    time: 10:00 to 11:30 am
+    name: AI Tools - For Researchers
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/zzgU3UhGRlOo6Ob2I7vcCQ)"
+  - category: ai_tools
+    date: Feb 7, 2025 (Fri)
+    time: 10:00 to 11:30 am
+    name: AI Tools - Personal Productivity
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/zzgU3UhGRlOo6Ob2I7vcCQ)"
+  - category: ai_tools
+    date: Feb 14, 2025 (Fri)
+    time: 10:00 to 11:30 am
+    name: AI Tools - Writing
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/zzgU3UhGRlOo6Ob2I7vcCQ)"
+  - category: ai_tools
+    date: Feb 21, 2025 (Fri)
+    time: 10:00 to 11:30 am
+    name: AI Tools - Image & Art
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/zzgU3UhGRlOo6Ob2I7vcCQ)"
+  - category: ai_tools
+    date: Feb 28, 2025 (Fri)
+    time: 10:00 to 11:30 am
+    name: AI Tools - For Researchers
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/zzgU3UhGRlOo6Ob2I7vcCQ)"
+  - category: ai_tools
+    date: Mar 7, 2025 (Fri)
+    time: 10:00 to 11:30 am
+    name: AI Tools - Programming
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/zzgU3UhGRlOo6Ob2I7vcCQ)"
+  - category: ai_tools
+    date: Mar 21, 2025 (Fri)
+    time: 10:00 to 11:30 am
+    name: AI Tools - Video & Music
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/zzgU3UhGRlOo6Ob2I7vcCQ)"
+  - category: genai
+    date: Apr 11, 2025 (Fri)
+    time: 10:00 to 11:30 am
+    name: Generative AI
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/WLTpq29wTg-BXbiKNYORvw)"
+  - category: genai
+    date: Apr 18, 2025 (Fri)
+    time: 10:00 to 11:30 am
+    name: Generative AI
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/WLTpq29wTg-BXbiKNYORvw)"
+  - category: r
+    date: Feb 3 - Feb 7, 2025
+    time: 4:00 to 5:00 pm
+    name: R Series
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/51u4WzL9Tryn8LXPod1WKQ)"
+  - category: spss_sas
+    date: Jan 30, 2025 (Thu)
+    time: 4:00 to 5:00 pm
+    name: SAS Beginner
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/Afih_tKYRcyzNhPZAoEL7Q)"
+  - category: spss_sas
+    date: Jan 31, 2025 (Fri)
+    time: 4:00 to 5:00 pm
+    name: SPSS Beginner
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/Afih_tKYRcyzNhPZAoEL7Q)"
+  - category: data_exploration
+    date: Feb 10 - Feb 14, 2025
+    time: 3:00 to 4:00 pm
+    name: Data Exploration
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/MgtbN-F4SDaIS0zcUS09DA)"
+  - category: github
+    date: Mar 5, 2025 (Wed)
+    time: 3:00 to 4:00 pm
+    name: GitHub
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/sv-nxoRSRwyrBkFu57bUSA)"
+  - category: ml_dl
+    date: Apr 7 - Apr 10, 2025
+    time: 3:00 to 4:00 pm
+    name: Machine Learning / Deep Learning
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/UX75M1ShTzGXOYc4W-M7Sg)"
+  - category: bioinformatics
+    date: Mar 24 - Mar 28, 2025
+    time: 3:00 to 4:00 pm
+    name: Bioinformatics - Spring 2025
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/sKeM5bTgQB-xIEnxDi6GwQ)"
+  - category: unity
+    date: Feb 6, 2025 (Thu)
+    time: 1:00 to 2:00 pm
+    name: Introduction to Unity
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/fDnYwzHoSNimWR-VZ5ZkKw)"
+  - category: unity
+    date: Feb 27, 2025 (Thu)
+    time: 1:00 to 2:00 pm
+    name: Introduction to Unity
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/fDnYwzHoSNimWR-VZ5ZkKw)"
+  - category: unity
+    date: Mar 20, 2025 (Thu)
+    time: 1:00 to 2:00 pm
+    name: Introduction to Unity
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/fDnYwzHoSNimWR-VZ5ZkKw)"
+  - category: unity
+    date: Apr 10, 2025 (Thu)
+    time: 1:00 to 2:00 pm
+    name: Introduction to Unity
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/fDnYwzHoSNimWR-VZ5ZkKw)"

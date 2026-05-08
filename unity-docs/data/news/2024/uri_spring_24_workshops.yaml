@@ -1,0 +1,110 @@
+header:
+  - key: date
+    name: Date
+    weight: 0
+  - key: time
+    name: Time (Eastern)
+    weight: 10
+  - key: name
+    name: Workshop Name
+    weight: 20
+  # - key: link
+  #   name: Zoom Link
+  #   weight: 30
+
+subtables:
+  id: category
+  entries:
+    - key: python
+      title: Python
+      weight: 0
+      description: |
+        Workshops on learning to use the Python programming language.
+    - key: data_science
+      title: Data Science
+      weight: 10
+      description: |
+        Workshops on data management and analysis.
+    - key: bioinformatics
+      title: Bioinformatics
+      weight: 20
+      description: |
+        Workshops on bioinformatics on the Unity cluster.
+    - key: unity_osn
+      title: Introduction to Unity & OSN
+      weight: 30
+      description: |
+        A monthly onboarding workshop to get to know the Unity cluster and the Open Storage Network.
+    - key: github
+      title: Introduction to GitHub
+      weight: 30
+      description: |
+        Workshops on using git version control with GitHub.
+
+items:
+  - category: python
+    date: Feb 9, 2024 (Fri)
+    time: 1:00 to 2:00 pm
+    name: Introduction to Python programming
+    link: "[Zoom link](https://uri-edu.zoom.us/j/91667826692)"
+  - category: python
+    date: Mar 1, 2024 (Fri)
+    time: 1:00 to 2:00 pm
+    name: Introduction to Python programming
+    link: "[Zoom link](https://uri-edu.zoom.us/j/91667826692)"
+  - category: data_science
+    date: Feb 28, 2024 (Wed)
+    time: 2:00 to 3:00 pm
+    name: Data Manipulation
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/tJAqceqvrTkvEt37B5LDg0Xj0gh0olWjLXw1)"
+  - category: data_science
+    date: Mar 6, 2024 (Wed)
+    time: 2:00 to 3:00 pm
+    name: Data Visualization
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/tJUrd--gqjkpGNbgOVM5gPb7dCaeCGfLjvN7)"
+  - category: data_science
+    date: Mar 27, 2024 (Wed)
+    time: 2:00 to 3:00 pm
+    name: Exploratory Data Analysis
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/tJwudu2rqDwuE90FRvJgfXsQIjg8qDBWDSym)"
+  - category: bioinformatics
+    date: Feb 26, 2024 (Mon)
+    time: 11:00 am to 12:00 pm
+    name: Intro to Bioinformatics on Unity I
+    link: "[Zoom link](https://uri-edu.zoom.us/j/93888062902?pwd=VVBlaTBKaW1JUEVSUmJvYWZQYmdEZz09)"
+  - category: bioinformatics
+    date: Mar 25, 2024 (Mon)
+    time: 11:00 am to 12:00 pm
+    name: Intro to Bioinformatics on Unity II
+    link: "[Zoom link](https://uri-edu.zoom.us/j/93888062902?pwd=VVBlaTBKaW1JUEVSUmJvYWZQYmdEZz09)"
+  - category: bioinformatics
+    date: Apr 22, 2024 (Mon)
+    time: 11:00 am to 12:00 pm
+    name: Intro to Bioinformatics on Unity III
+    link: "[Zoom link](https://uri-edu.zoom.us/j/93888062902?pwd=VVBlaTBKaW1JUEVSUmJvYWZQYmdEZz09)"
+  - category: unity_osn
+    date: Feb 29, 2024 (Thu)
+    time: 11:00 am to 12:00 pm
+    name: Introduction to Unity & Open Storage Network
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/tJAtduqtpjsoHtRIZ2rOa_A1mx_7Letdj6Ev)"
+  - category: unity_osn
+    date: Mar 28, 2024 (Thu)
+    time: 11:00 am to 12:00 pm
+    name: Introduction to Unity & Open Storage Network
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/tJMqdOmsqz8tGNxg4D0mU1HcZ6i9vXwdpvs-)"
+  - category: unity_osn
+    date: Apr 25, 2024 (Thu)
+    time: 11:00 am to 12:00 pm
+    name: Introduction to Unity & Open Storage Network
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/tJYud--qqjgvG9Nvz4UDXCSE84DctJKfVpXK)"
+  - category: github
+    date: Feb 14, 2024 (Wed)
+    time: 2:00 to 3:00 pm
+    name: GitHub
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/tJElcO2sqzsuHtJ49W7TsUTCrFt8Rc4pdydx)"
+  - category: github
+    date: Feb 14, 2024 (Wed)
+    time: 2:00 to 3:00 pm
+    name: GitHub
+    link: "[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/tJwsd-mspjkjE9LmUJGTffslIL0CtbeRpM7P)"
+

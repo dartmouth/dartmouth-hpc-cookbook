@@ -1,0 +1,482 @@
+[
+  {
+    "type": "GPU Model",
+    "term": "1080ti",
+    "description": "Contains [Nvidia GeForce 1080 Ti](https://www.nvidia.com/en-gb/geforce/graphics-cards/geforce-gtx-1080-ti/specifications/) GPUs"
+  },
+  {
+    "type": "GPU Model",
+    "term": "2080",
+    "description": "Contains [Nvidia GeForce RTX 2080](https://www.nvidia.com/en-us/geforce/graphics-cards/compare/?section=compare-20) GPUs"
+  },
+  {
+    "type": "GPU Model",
+    "term": "2080ti",
+    "description": "Contains [Nvidia GeForce RTX 2080 Ti](https://www.nvidia.com/en-us/geforce/graphics-cards/compare/?section=compare-20) GPUs"
+  },
+  {
+    "type": "GPU Model",
+    "term": "a16",
+    "description": "Contains [Nvidia A16](https://www.nvidia.com/en-us/data-center/products/a16-gpu/) GPUs"
+  },
+  {
+    "type": "GPU Model",
+    "term": "a40",
+    "description": "Contains [Nvidia A40](https://www.nvidia.com/en-us/data-center/a40/) GPUs"
+  },
+  {
+    "type": "GPU Model",
+    "term": "a100",
+    "description": "Contains [Nvidia A100](https://www.nvidia.com/en-us/data-center/a100/) GPUs with either 40 GB or 80 GB of VRAM"
+  },
+  {
+    "type": "GPU Model",
+    "term": "a100-40g",
+    "description": "Contains [Nvidia A100](https://www.nvidia.com/en-us/data-center/a100/) GPUs with 40 GB of VRAM"
+  },
+  {
+    "type": "GPU Model",
+    "term": "a100-80g",
+    "description": "Contains [Nvidia A100](https://www.nvidia.com/en-us/data-center/a100/) GPUs with 80 GB of VRAM"
+  },
+  {
+    "type": "CPU Architecture",
+    "term": "aarch64",
+    "description": "Has the [AArch / ARM64](https://en.wikipedia.org/wiki/AArch64) architecture in the ARM architecture family"
+  },
+  {
+    "type": "Job Support",
+    "term": "altivec",
+    "description": "Provides the [AltiVec SIMD instruction set](https://en.wikipedia.org/wiki/AltiVec)"
+  },
+  {
+    "type": "CPU Model",
+    "term": "amd",
+    "description": "Has CPUs manufactured by [AMD](https://en.wikipedia.org/wiki/AMD)"
+  },
+  {
+    "type": "CPU Model",
+    "term": "amd1900x",
+    "description": "Features the [AMD Ryzen Threadripper 1900x](https://www.amd.com/en/product/3011) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "amd7402",
+    "description": "Features the [AMD EPYC 7402](https://www.amd.com/en/products/cpu/amd-epyc-7402) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "amd7502",
+    "description": "Features the [AMD EPYC 7502](https://www.amd.com/en/products/cpu/amd-epyc-7502) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "amd7543",
+    "description": "Features the [AMD EPYC 7543](https://www.amd.com/en/products/cpu/amd-epyc-7543) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "amd7702",
+    "description": "Features the [AMD EPYC 7702](https://www.amd.com/en/products/cpu/amd-epyc-7702) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "amd7763",
+    "description": "Features the [AMD EPYC 7763](https://www.amd.com/en/products/cpu/amd-epyc-7763) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "amd9654",
+    "description": "Features the [AMD EPYC 9654](https://www.amd.com/en/products/processors/server/epyc/4th-generation-9004-and-8004-series/amd-epyc-9654.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "ampere_altra_q80_30",
+    "description": "Features the [Ampere Altra Q80-30](https://amperecomputing.com/en/briefs/ampere-altra-family-product-brief) CPUs"
+  },
+  {
+    "type": "CPU Architecture",
+    "term": "arm64",
+    "description": "Has the [AArch / ARM64](https://en.wikipedia.org/wiki/AArch64) architecture in the ARM architecture family"
+  },
+  {
+    "type": "Job Support",
+    "term": "avx512",
+    "description": "Provides the [AVX-512 SIMD instruction set](https://en.wikipedia.org/wiki/AVX-512)"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "cascadelake",
+    "description": "Has the [Intel Cascade Lake](https://en.wikipedia.org/wiki/Cascade_Lake_%28microprocessor%29) microarchitecture"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "gracehopper",
+    "description": "[NVIDIA Grace Hopper Superchip](https://www.nvidia.com/en-us/data-center/grace-hopper-superchip/)"
+  },
+  {
+    "type": "CPU Model",
+    "term": "grace_a02",
+    "description": "[NVIDIA Grace CPU Superchip](https://resources.nvidia.com/en-us-grace-cpu/data-center-datasheet)"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "haswell",
+    "description": "Has the [Intel Haswell](https://en.wikipedia.org/wiki/Haswell_%28microarchitecture%29) microarchitecture"
+  },
+  {
+    "type": "Job Support",
+    "term": "ib",
+    "description": "Features [InfiniBand networking](https://en.wikipedia.org/wiki/InfiniBand)"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "icelake",
+    "description": "Has the [Intel Ice Lake](https://en.wikipedia.org/wiki/Ice_Lake_%28microprocessor%29) microarchitecture"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel",
+    "description": "Has CPUs manufactured by [Intel Corporation](https://en.wikipedia.org/wiki/Intel)"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel2620v3",
+    "description": "Features the [Intel Xeon E5-2620 V3](https://ark.intel.com/content/www/us/en/ark/products/83352/intel-xeon-processor-e52620-v3-15m-cache-2-40-ghz.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel4110",
+    "description": "Features the [Intel Xeon Silver 4110](https://ark.intel.com/content/www/us/en/ark/products/123547/intel-xeon-silver-4110-processor-11m-cache-2-10-ghz.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel4116",
+    "description": "Features the [Intel Xeon Silver 4116](https://ark.intel.com/content/www/us/en/ark/products/120481/intel-xeon-silver-4116-processor-16-5m-cache-2-10-ghz.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel4214r",
+    "description": "Features the [Intel Xeon Silver 4214R](https://ark.intel.com/content/www/us/en/ark/products/197100/intel-xeon-silver-4214r-processor-16-5m-cache-2-40-ghz.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel4215r",
+    "description": "Features the [Intel Xeon Silver 4215R](https://ark.intel.com/content/www/us/en/ark/products/199349/intel-xeon-silver-4215r-processor-11m-cache-3-20-ghz.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel5118",
+    "description": "Features the [Intel Xeon Gold 5118](https://ark.intel.com/content/www/us/en/ark/products/120473/intel-xeon-gold-5118-processor-16-5m-cache-2-30-ghz.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel5218",
+    "description": "Features the [Intel Xeon Gold 5218](https://www.intel.com/content/www/us/en/products/sku/192444/intel-xeon-gold-5218-processor-22m-cache-2-30-ghz/specifications.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel6126",
+    "description": "Features the [Intel Xeon Gold 6126](https://ark.intel.com/content/www/us/en/ark/products/120483/intel-xeon-gold-6126-processor-19-25m-cache-2-60-ghz.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel6130",
+    "description": "Features the [Intel Xeon Gold 6130](https://www.intel.com/content/www/us/en/products/sku/120492/intel-xeon-gold-6130-processor-22m-cache-2-10-ghz/specifications.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel6140",
+    "description": "Features the [Intel Xeon Gold 6140](https://www.intel.com/content/www/us/en/products/sku/120485/intel-xeon-gold-6140-processor-24-75m-cache-2-30-ghz/specifications.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel6148",
+    "description": "Features the [Intel Xeon Gold 6148](https://www.intel.com/content/www/us/en/products/sku/120489/intel-xeon-gold-6148-processor-27-5m-cache-2-40-ghz/specifications.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel6240",
+    "description": "Features the [Intel Xeon Gold 6240](https://ark.intel.com/content/www/us/en/ark/products/192443/intel-xeon-gold-6240-processor-24-75m-cache-2-60-ghz.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel6226r",
+    "description": "Features the [Intel Xeon Gold 6226R](https://ark.intel.com/content/www/us/en/ark/products/199347/intel-xeon-gold-6226r-processor-22m-cache-2-90-ghz.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel6238r",
+    "description": "Features the [Intel Xeon Gold 6238R](https://ark.intel.com/content/www/us/en/ark/products/199345/intel-xeon-gold-6238r-processor-38-5m-cache-2-20-ghz.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel6248r",
+    "description": "Features the [Intel Xeon Gold 6248R](https://ark.intel.com/content/www/us/en/ark/products/199351/intel-xeon-gold-6248r-processor-35-75m-cache-3-00-ghz.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel6326",
+    "description": "Features the [Intel Xeon Gold 6326](https://www.intel.com/content/www/us/en/products/sku/215274/intel-xeon-gold-6326-processor-24m-cache-2-90-ghz/specifications.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel6526y",
+    "description": "Features the [Intel Xeon Gold 6526Y](https://www.intel.com/content/www/us/en/products/sku/237560/intel-xeon-gold-6526y-processor-37-5m-cache-2-80-ghz/specifications.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel6730p",
+    "description": "Features the [Intel Xeon 6730P](https://www.intel.com/content/www/us/en/products/sku/241830/intel-xeon-6730p-processor-288m-cache-2-50-ghz/specifications.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel8352y",
+    "description": "Features the [Intel Xeon Platinum 8352Y](https://www.intel.com/content/www/us/en/products/sku/212284/intel-xeon-platinum-8352y-processor-48m-cache-2-20-ghz/compatible.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel8358",
+    "description": "Features the [Intel Xeon Platinum 8358](https://www.intel.com/content/www/us/en/products/sku/212282/intel-xeon-platinum-8358-processor-48m-cache-2-60-ghz/specifications.html) CPUs"
+  },
+  {
+    "type": "CPU Model",
+    "term": "intel8480",
+    "description": "Features the [Intel Xeon Platinum 8480+](https://www.intel.com/content/www/us/en/products/sku/231746/intel-xeon-platinum-8480-processor-105m-cache-2-00-ghz/specifications.html) CPUs"
+  },
+  {
+    "type": "GPU Model",
+    "term": "l4",
+    "description": "Contains [Nvidia L4](https://www.nvidia.com/en-us/data-center/l4/) GPUs"
+  },
+  {
+    "type": "GPU Model",
+    "term": "l40s",
+    "description": "Contains [Nvidia L40S](https://www.nvidia.com/en-us/data-center/l40s/) GPUs"
+  },
+  {
+    "type": "GPU Model",
+    "term": "m40",
+    "description": "Contains [Nvidia Tesla M40](https://en.wikipedia.org/wiki/Nvidia_Tesla) GPUs"
+  },
+  {
+    "type": "Job Support",
+    "term": "mpi",
+    "description": "Ensure consistent CPU type across multi-node jobs"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "neoverse_n1",
+    "description": "Features the [Arm Neoverse N1](https://www.arm.com/products/silicon-ip-cpu/neoverse/neoverse-n1) CPUs"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "neoverse_v2",
+    "description": "Features the [Arm Neoverse V2](https://www.arm.com/products/silicon-ip-cpu/neoverse/neoverse-v2) CPUs"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "p922",
+    "description": ""
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "p923",
+    "description": ""
+  },
+  {
+    "type": "CPU Architecture",
+    "term": "power9",
+    "description": "Has the [ppc64le](https://en.wikipedia.org/wiki/Ppc64) architecture"
+  },
+  {
+    "type": "CPU Architecture",
+    "term": "power9le",
+    "description": "Has the [ppc64le](https://en.wikipedia.org/wiki/Ppc64) architecture"
+  },
+  {
+    "type": "CPU Architecture",
+    "term": "ppc64le",
+    "description": "Has the [ppc64le](https://en.wikipedia.org/wiki/Ppc64) architecture"
+  },
+  {
+    "type": "GPU Model",
+    "term": "rtx8000",
+    "description": "Contains [Nvidia Quadro RTX 8000](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/quadro-product-literature/quadro-rtx-8000-us-nvidia-946977-r1-web.pdf) GPUs"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "sapphirerapids",
+    "description": "Has the [Intel Sapphire Rapids](https://en.wikipedia.org/wiki/Sapphire_Rapids) microarchitecture"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "skylake_avx512",
+    "description": "Has the [Intel Sky Lake](https://en.wikipedia.org/wiki/Skylake_%28microarchitecture%29) microarchitecture"
+  },
+  {
+    "type": "GPU Capability",
+    "term": "sm_52",
+    "description": "Contains GPUs with the [5.2 compute capability](https://en.wikipedia.org/wiki/CUDA#GPUs_supported)"
+  },
+  {
+    "type": "GPU Capability",
+    "term": "sm_61",
+    "description": "Contains GPUs with the [6.1 compute capability](https://en.wikipedia.org/wiki/CUDA#GPUs_supported)"
+  },
+  {
+    "type": "GPU Capability",
+    "term": "sm_70",
+    "description": "Contains GPUs with the [7.0 compute capability](https://en.wikipedia.org/wiki/CUDA#GPUs_supported)"
+  },
+  {
+    "type": "GPU Capability",
+    "term": "sm_75",
+    "description": "Contains GPUs with the [7.5 compute capability](https://en.wikipedia.org/wiki/CUDA#GPUs_supported)"
+  },
+  {
+    "type": "GPU Capability",
+    "term": "sm_80",
+    "description": "Contains GPUs with the [8.0 compute capability](https://en.wikipedia.org/wiki/CUDA#GPUs_supported)"
+  },
+  {
+    "type": "GPU Capability",
+    "term": "sm_86",
+    "description": "Contains GPUs with the [8.6 compute capability](https://en.wikipedia.org/wiki/CUDA#GPUs_supported)"
+  },
+  {
+    "type": "GPU Capability",
+    "term": "sm_87",
+    "description": "Contains GPUs with the [8.7 compute capability](https://en.wikipedia.org/wiki/CUDA#GPUs_supported)"
+  },
+  {
+    "type": "GPU Capability",
+    "term": "sm_89",
+    "description": "Contains GPUs with the [8.9 compute capability](https://en.wikipedia.org/wiki/CUDA#GPUs_supported)"
+  },
+  {
+    "type": "GPU Capability",
+    "term": "sm_90",
+    "description": "Contains GPUs with the [9.0 compute capability](https://en.wikipedia.org/wiki/CUDA#GPUs_supported)"
+  },
+  {
+    "type": "GPU Feature",
+    "term": "fp64",
+    "description": "Contains GPUs with [64-bit precision cores](https://blogs.nvidia.com/blog/double-precision-tensor-cores/)"
+  },
+  {
+    "type": "GPU Feature",
+    "term": "bf16",
+    "description": "Contains GPUs with [bfloat16 floating-point support](https://en.wikipedia.org/wiki/Bfloat16_floating-point_format)"
+  },
+  {
+    "type": "GPU Model",
+    "term": "titanx",
+    "description": "Contains [Nvidia TitanX](https://www.nvidia.com/en-us/geforce/products/10series/titan-x-pascal/) GPUs"
+  },
+  {
+    "type": "GPU Model",
+    "term": "v100",
+    "description": "Contains [Nvidia V100](https://www.nvidia.com/en-us/data-center/v100/) GPUs"
+  },
+  {
+    "type": "GPU VRAM",
+    "term": "vram102",
+    "description": "Contains a GPU with at least 102 GB VRAM"
+  },
+  {
+    "type": "GPU VRAM",
+    "term": "vram11",
+    "description": "Contains a GPU with at least 11 GB VRAM"
+  },
+  {
+    "type": "GPU VRAM",
+    "term": "vram12",
+    "description": "Contains a GPU with at least 12 GB VRAM"
+  },
+  {
+    "type": "GPU VRAM",
+    "term": "vram16",
+    "description": "Contains a GPU with at least 16 GB VRAM"
+  },
+  {
+    "type": "GPU VRAM",
+    "term": "vram23",
+    "description": "Contains a GPU with at least 23 GB VRAM"
+  },
+  {
+    "type": "GPU VRAM",
+    "term": "vram32",
+    "description": "Contains a GPU with at least 32 GB VRAM"
+  },
+  {
+    "type": "GPU VRAM",
+    "term": "vram40",
+    "description": "Contains a GPU with at least 40 GB VRAM"
+  },
+  {
+    "type": "GPU VRAM",
+    "term": "vram48",
+    "description": "Contains a GPU with at least 48 GB VRAM"
+  },
+  {
+    "type": "GPU VRAM",
+    "term": "vram8",
+    "description": "Contains a GPU with at least 8 GB VRAM"
+  },
+  {
+    "type": "GPU VRAM",
+    "term": "vram80",
+    "description": "Contains a GPU with at least 80 GB VRAM"
+  },
+  {
+    "type": "CPU Architecture",
+    "term": "x86_64",
+    "description": "Has the [x86-64](https://en.wikipedia.org/wiki/X86-64) architecture"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "x86_64_v3",
+    "description": "Has the [x86-64 V3](https://en.wikipedia.org/wiki/X86-64) architecture"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "x86_64_v4",
+    "description": "Has the [x86-64 V4](https://en.wikipedia.org/wiki/X86-64) architecture"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "zen",
+    "description": "Has the [AMD Zen](https://en.wikipedia.org/wiki/Zen_%28microarchitecture%29) microarchitecture"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "zen2",
+    "description": "Has the [AMD Zen 2](https://en.wikipedia.org/wiki/Zen_%28microarchitecture%29) microarchitecture"
+  },
+  {
+    "type": "CPU Microarchitecture",
+    "term": "zen3",
+    "description": "Has the [AMD Zen 3](https://en.wikipedia.org/wiki/Zen_%28microarchitecture%29) microarchitecture"
+  },
+  {
+    "type": "Network Speed",
+    "term": "10gbps",
+    "description": "Has 10 Gbps Ethernet"
+  },
+  {
+    "type": "Network Speed",
+    "term": "25gbps",
+    "description": "Has 25 Gbps Ethernet"
+  },
+  {
+    "type": "Network Speed",
+    "term": "40gbps",
+    "description": "Has 40 Gbps Ethernet"
+  },
+  {
+    "type": "Network Speed",
+    "term": "100gbps",
+    "description": "Has 100 Gbps Ethernet"
+  }
+]

@@ -1,0 +1,30 @@
+teams:
+  - key: sysadmin
+    name: Systems Administration
+    order: 2
+    note: Our systems administrators maintain Unity's hardware, software, and services.
+    bio: true
+  - key: facilitation
+    name: Research Computing and HPC Facilitation
+    order: 3
+    note: The facilitation team supports users and manages our educational efforts.
+    bio: true
+  - key: point-of-contact
+    name: Points of Contact
+    order: 1
+    sort: Params.organization
+    note: |
+      Contact information for the Unity partner institutions.
+    email: true
+    bio: false
+    header: organization
+  - key: development
+    name: Development
+    order: 4
+    note: Our developers maintain and add features to Unity's in-house, open-source web portal. 
+    bio: true
+  - key: general
+    name: General Inquiries 
+    order: 0
+    email: true
+    note: For general inquiries or to learn about joining Unity as an industry or academic partner.

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker run --init --rm -it -u "node" -v "${PWD}":/site -w /site --name unity-dev-new georgiastuart/unity-website:latest hugo new "$@"

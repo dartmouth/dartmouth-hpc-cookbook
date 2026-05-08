@@ -1,0 +1,11 @@
+<ul>
+    {{ range .items }}
+    {{ if and $.pageLink (page.GetPage $.pageLink) }}
+    {{ $id := replace . " " "-"}}
+    {{ $link := relref page (printf "%s%s%s" $.pageLink "#" $id) }}
+    <li><a href='{{ $link }}'>{{ . }}</a></li>
+    {{ else }}
+    <li>{{ . }}</li>
+    {{ end }}
+    {{ end }}
+</ul>

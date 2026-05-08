@@ -28,6 +28,8 @@ All institution-specific variables live in `site.yml` at the repository root.
 They are loaded at build time by `hooks/macros.py` and made available in every
 Markdown page via Jinja2 syntax (`{{ variable.name }}`).
 
+### Institution variables
+
 | Variable | Example | Where it appears |
 |----------|---------|------------------|
 | `institution.name` | Dartmouth College | Footer, about pages |
@@ -36,11 +38,44 @@ Markdown page via Jinja2 syntax (`{{ variable.name }}`).
 | `institution.support_email` | research.computing@dartmouth.edu | Contact links, troubleshooting |
 | `institution.support_url` | https://rc.dartmouth.edu | Footer link |
 | `institution.github_url` | https://github.com/dartmouth | Social links |
-| `cluster.name` | Discovery | Throughout all articles |
+| `institution.username_label` | NetID | Login instructions, prompts |
+| `institution.sso_dropdown_label` | Dartmouth College | Label users pick in the {{ cluster.name }} SSO dropdown |
+| `institution.username_suffix` | `_dartmouth_edu` | Appended to the username when SSHing into {{ cluster.name }} |
+
+### Cluster variables
+
+| Variable | Example | Where it appears |
+|----------|---------|------------------|
+| `cluster.name` | Unity | Throughout all articles |
 | `cluster.scheduler` | Slurm | Job submission guides |
-| `cluster.login_node` | discovery.dartmouth.edu | SSH connection guides |
-| `cluster.default_partition` | standard | Example job scripts |
-| `build.kerberos_realm` | KIEWIT.DARTMOUTH.EDU | Build-time SSH auth |
+| `cluster.module_system` | Lmod | Module system references |
+| `cluster.login_node` | login.unityhpc.org | SSH connection guides |
+| `cluster.login_node_count` | 4 | Number of named login nodes (login1..loginN) |
+| `cluster.default_partition` | cpu | Example job scripts |
+| `cluster.ondemand_url` | https://ood.unity.rc.umass.edu/ | Open OnDemand references |
+| `cluster.docs_url` | https://unityhpc.org/documentation/ | Links to official docs |
+| `cluster.portal_url` | https://unity.dartmouth.edu/ | Account registration |
+| `cluster.catchall_pi_group` | pi_general_dartmouth_edu | Optional general PI group for users without a specific lab |
+| `cluster.support_email` | hpc@umass.edu | Cluster-level support |
+
+### Storage variables
+
+| Variable | Example | Where it appears |
+|----------|---------|------------------|
+| `storage.home_path` | /home | Home directory references |
+| `storage.home_quota` | 100 GB | Storage guidance |
+| `storage.work_path` | /work | Primary job I/O references |
+| `storage.work_quota` | 1 TB | Storage guidance |
+| `storage.scratch_path` | /scratch | Scratch storage references |
+| `storage.scratch_quota` | 15 TB | Storage guidance |
+| `storage.project_path` | /project | Project storage references |
+| `storage.datasets_path` | /datasets | Curated dataset references |
+
+### Build variables
+
+| Variable | Example | Where it appears |
+|----------|---------|------------------|
+| `build.ssh_auth` | key | SSH macro authentication (`key` or `gssapi`) |
 
 To customize, open `site.yml` and replace the values.  For example, to
 adapt the cookbook for a fictional "Atlas" cluster at MIT:
@@ -53,15 +88,35 @@ institution:
   support_email: rcs@mit.edu
   support_url: https://rc.mit.edu
   github_url: https://github.com/mit
+  username_label: Kerberos ID
+  sso_dropdown_label: MIT
+  username_suffix: _mit_edu
 
 cluster:
   name: Atlas
   scheduler: Slurm
+  module_system: Lmod
   login_node: atlas.mit.edu
+  login_node_count: 2
   default_partition: general
+  ondemand_url: https://ood.atlas.mit.edu/
+  docs_url: https://atlas.mit.edu/docs/
+  portal_url: https://atlas.mit.edu/portal/
+  catchall_pi_group: pi_general_mit_edu
+  support_email: hpc@mit.edu
+
+storage:
+  home_path: /home
+  home_quota: 50 GB
+  work_path: /work
+  work_quota: 2 TB
+  scratch_path: /scratch
+  scratch_quota: 10 TB
+  project_path: /project
+  datasets_path: /datasets
 
 build:
-  kerberos_realm: ATHENA.MIT.EDU
+  ssh_auth: gssapi
 ```
 
 After this change, every page that references `{{ institution.short_name }}`
@@ -77,17 +132,29 @@ pulled into generic pages with `{% include "site/filename.md" %}`.
 
 | File | Purpose | Included by |
 |------|---------|-------------|
-| `includes/site/systems-overview.md` | Describes all HPC systems at your site (shared-memory machines, the main cluster, comparison table, "which system should I use" guidance) | `docs/getting-started/what-is-hpc.md` |
-| `includes/site/footer.md` | "Maintained by …" footer line | `docs/index.md` |
+| `systems-overview.md` | Lists any institution-specific HPC systems available IN ADDITION to {{ cluster.name }} | `docs/getting-started/what-is-hpc.md` |
+| `account-details.md` | Account creation process, what users get (home dir, storage) | `docs/getting-started/account.md` |
+| `connecting-details.md` | How to connect (SSH hostname, OnDemand URL) | `docs/getting-started/connecting.md` |
+| `storage-overview.md` | Maps the cluster's storage tiers to the generic concepts | `docs/fundamentals/storage.md` |
+| `footer.md` | "Maintained by …" footer line | `docs/index.md` |
 
 When forking, replace these files with your own content.  You can use any
 Jinja2 variables from `site.yml` inside them, plus the macros defined in
 `hooks/macros.py` (like `{{ system_stats([...]) }}` or
 `{{ cluster_stats("host", label="Name") }}`).
 
-If your institution has only one cluster and no shared-memory servers, your
-`systems-overview.md` can be much simpler — just describe your cluster and
-delete the comparison table.
+### Forkability notes for Unity institutions
+
+If your institution is part of the Unity consortium, most of these files are
+largely reusable as-is — they describe Unity's shared infrastructure:
+
+- **`connecting-details.md`** — Unity-generic (same login node and OnDemand URL)
+- **`storage-overview.md`** — Unity-generic (same storage tiers)
+
+The files you'll need to fully rewrite for your institution:
+
+- **`systems-overview.md`** — Replace the Dartmouth-specific systems (Discovery, Andes, etc.) with your institution's landscape, or empty the file if {{ cluster.name }} is the only system to mention
+- **`account-details.md`** — Replace the Dartmouth SSO portal URL and onboarding steps with your institution's process
 
 ---
 
@@ -140,22 +207,31 @@ fetch live statistics (`system_stats`, `cluster_stats`, `remote_cmd`).
 These require:
 
 1. SSH access from the build machine to the cluster nodes.
-2. GSSAPI (Kerberos) authentication — obtain a ticket before building:
-   ```
-   kinit youruser@YOUR.REALM
-   ```
+2. Authentication configured via `build.ssh_auth` in `site.yml`:
+   - `key` (default): Uses standard SSH key authentication.
+   - `gssapi`: Uses Kerberos/GSSAPI — obtain a ticket before building:
+     ```
+     kinit youruser@YOUR.REALM
+     ```
 3. Hostnames defined in your `includes/site/systems-overview.md` (or
    wherever you call the macros).
 
 If your build environment can't reach the cluster (e.g., CI/CD), the macros
 fall back gracefully to an info admonition saying the data is unavailable.
 
-If you don't use Kerberos, you can modify `_ssh_cmd()` in `hooks/macros.py`
-to use key-based SSH or remove the GSSAPI options.
+---
+
+## 6. Interactive widgets
+
+The cookbook includes JavaScript-powered interactive widgets:
+
+- **Terminal Tour** (`docs/javascripts/linux-terminal-tour.js`) — A guided CLI simulation. The `CONFIG` block at the top defines the cluster name, home path function, and default username. Update these for your environment.
+- **SSH Simulator** (`docs/javascripts/ssh-simulator.js`) — An SSH connection practice tool. The `CONFIG` block defines the cluster hostname and default username.
+- **Quiz System** (`docs/javascripts/quiz.js`) — Multi-slide quizzes. The HTML structure is in the Markdown files.
 
 ---
 
-## 6. `mkdocs.yml` — build configuration
+## 7. `mkdocs.yml` — build configuration
 
 Most of `mkdocs.yml` is generic (theme features, markdown extensions,
 plugins) and shouldn't need changes.  The institution-specific parts to
@@ -181,5 +257,6 @@ If you want to override it, uncomment the `site_name` line in `mkdocs.yml`.
 | Should | `docs/stylesheets/dartmouth.css` | Adjust colors and fonts |
 | Should | `docs/stylesheets/fonts/` | Replace custom fonts |
 | Should | `mkdocs.yml` | Update logo paths, CSS path, social links |
+| Should | `docs/javascripts/*.js` | Update CONFIG blocks in terminal tour and SSH simulator |
 | Optional | `includes/glossary.yml` | Add/remove terms for your site |
-| Optional | `hooks/macros.py` | Adjust SSH auth method if not using Kerberos |
+| Optional | `hooks/macros.py` | Adjust SSH auth method if needed |

@@ -22,14 +22,14 @@ This is important to internalize because it changes how you plan your work. Befo
 
 ## `scp` — Copying Individual Files
 
-`scp` (secure copy) is the simplest transfer tool. It works like `cp`, but one side of the copy can be a remote machine. You'll authenticate the same way you connect via SSH — with your NetID credentials.
+`scp` (secure copy) is the simplest transfer tool. It works like `cp`, but one side of the copy can be a remote machine. You'll authenticate the same way you connect via SSH — with your SSH key.
 
-Replace `netid` in the examples below with your actual Dartmouth NetID.
+Replace `username` in the examples below with your {{ cluster.name }} username.
 
 ### Copy a file *to* the cluster
 
 ```bash
-scp myfile.txt netid@{{ cluster.login_node }}:~/
+scp myfile.txt username@{{ cluster.login_node }}:~/
 ```
 
 This copies `myfile.txt` from your current directory on your laptop to your home directory (`~/`) on the cluster.
@@ -37,7 +37,7 @@ This copies `myfile.txt` from your current directory on your laptop to your home
 ### Copy a file *from* the cluster
 
 ```bash
-scp netid@{{ cluster.login_node }}:~/results/output.csv ./
+scp username@{{ cluster.login_node }}:~/results/output.csv ./
 ```
 
 This pulls `output.csv` from the `results/` directory in your cluster home directory into your current local directory.
@@ -45,7 +45,7 @@ This pulls `output.csv` from the `results/` directory in your cluster home direc
 ### Copy a directory
 
 ```bash
-scp -r mydir/ netid@{{ cluster.login_node }}:~/
+scp -r mydir/ username@{{ cluster.login_node }}:~/
 ```
 
 The `-r` flag copies recursively, transferring `mydir/` and all its contents.
@@ -62,13 +62,13 @@ These properties make rsync the right default choice for most HPC workflows.
 ### Sync a local directory to the cluster
 
 ```bash
-rsync -avz myproject/ netid@{{ cluster.login_node }}:~/myproject/
+rsync -avz myproject/ username@{{ cluster.login_node }}:~/myproject/
 ```
 
 ### Sync results back from the cluster
 
 ```bash
-rsync -avz netid@{{ cluster.login_node }}:~/results/ ./results/
+rsync -avz username@{{ cluster.login_node }}:~/results/ ./results/
 ```
 
 ### What the flags mean
@@ -84,7 +84,7 @@ rsync -avz netid@{{ cluster.login_node }}:~/results/ ./results/
     You can add `--dry-run` (or `-n`) to see exactly what rsync *would* transfer, without actually moving any files. This is useful when syncing large directories to avoid surprises.
 
     ```bash
-    rsync -avzn myproject/ netid@{{ cluster.login_node }}:~/myproject/
+    rsync -avzn myproject/ username@{{ cluster.login_node }}:~/myproject/
     ```
 
 ## Globus — For Large Datasets
@@ -103,7 +103,7 @@ Globus is a managed file transfer service designed for research data. It runs as
 {{ institution.short_name }} maintains a Globus endpoint for {{ cluster.name }}. Setting it up requires installing the Globus Connect Personal client on your laptop. For setup instructions and the endpoint name, visit the [{{ institution.short_name }} Research Computing support site]({{ institution.support_url }}).
 
 !!! note "Globus for shared data"
-    Globus also makes it easy to share datasets with collaborators at other institutions — they don't need an account at Dartmouth, just a Globus account (free). This is particularly useful for sharing large genomics datasets or simulation outputs.
+    Globus also makes it easy to share datasets with collaborators at other institutions — they don't need an account at {{ institution.short_name }}, just a Globus account (free). This is particularly useful for sharing large genomics datasets or simulation outputs.
 
 ## A Typical Job Data Workflow
 
@@ -116,7 +116,7 @@ Now that you know the tools, here's how they fit into a real job. The key insigh
 
 ```mermaid
 flowchart LR
-    A["Your Laptop"] -->|"rsync / Globus"| B["Long-Term Storage\n(DartFS)"]
+    A["Your Laptop"] -->|"rsync / Globus"| B["Work Storage\n({{ storage.work_path }})"]
     B -->|"cp in job script"| C["Scratch\n(fast I/O)"]
     C -->|"Job reads & writes"| C
     C -->|"cp in job script"| B
@@ -156,13 +156,13 @@ flowchart LR
 
     ```bash
     tar -czf mydata.tar.gz mydata/
-    rsync -avz mydata.tar.gz netid@{{ cluster.login_node }}:~/
+    rsync -avz mydata.tar.gz username@{{ cluster.login_node }}:~/
     ```
 
     Unpack on the cluster side once it arrives.
 
 !!! warning "Don't store large datasets in your home directory"
-    Home directories have small quotas and are on slower storage. Use scratch (`{{ storage.scratch_path }}/`) for active job data, and {{ storage.shared_name }} for long-term storage. See [Storage Fundamentals](storage.md) for guidance on which tier to use.
+    Home directories have small quotas and are on slower storage. Use scratch (`{{ storage.scratch_path }}/`) for active job data, and your work directory (`{{ storage.work_path }}/`) for long-term storage. See [Storage Fundamentals](storage.md) for guidance on which tier to use.
 
 ### GUI option
 

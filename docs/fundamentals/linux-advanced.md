@@ -17,7 +17,7 @@ This article picks up where [Linux Basics](linux-basics.md) left off. You should
 
 You've already set up your workspace from the basic tour. Now it's time to go deeper: control who can access your files, chain commands together, and manage software modules.
 
-Enter your NetID below, then click **SSH into {{ cluster.name }} →** to begin.
+Enter your {{ institution.username_label }} below, then click **SSH into {{ cluster.name }} →** to begin.
 
 <div class="terminal-tour" data-tour="advanced" data-cluster-name="{{ cluster.name }}" markdown="0"></div>
 

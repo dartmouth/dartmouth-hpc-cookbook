@@ -15,10 +15,10 @@
     //  INSTITUTION CONFIG — Edit this block to adapt
     // ═══════════════════════════════════════════════════════
     var CONFIG = {
-        clusterName: "Discovery",
-        hostname: "discovery.dartmouth.edu",
-        sharedMemoryHostname: "andes.dartmouth.edu",
-        defaultUsername: "f00001",
+        clusterName: "Unity",
+        hostname: "login.unityhpc.org",
+        sharedMemoryHostname: "",
+        defaultUsername: "f00001_dartmouth_edu",
     };
     // ═══════════════════════════════════════════════════════
 
@@ -130,26 +130,18 @@
                 action: "login", targetHost: hostname, flags: []
             },
             {
-                title: "Handling Graphical Apps",
-                prompt: "You want to create data visualizations with matplotlib on the cluster. You'll need X11 forwarding.",
-                goal: "Add the " + C.bold + "-Y" + C.reset + " flag to your ssh command to enable X11 forwarding.",
-                check: function (c) { return (c === "ssh -Y " + username + "@" + hostname) || (c === "ssh " + username + "@" + hostname + " -Y"); },
-                hint: "Type: ssh -Y " + username + "@" + hostname,
-                action: "login", targetHost: hostname, flags: ["-Y"]
+                title: "Verbose Mode for Troubleshooting",
+                prompt: "Your connection is failing and you need to diagnose why. Verbose mode shows every step of the SSH handshake.",
+                goal: "Add the " + C.bold + "-v" + C.reset + " flag to your ssh command for diagnostic output.",
+                check: function (c) { return (c === "ssh -v " + username + "@" + hostname) || (c === "ssh " + username + "@" + hostname + " -v"); },
+                hint: "Type: ssh -v " + username + "@" + hostname,
+                action: "login", targetHost: hostname, flags: ["-v"]
             },
             {
-                title: "Targeting a Specific System",
-                prompt: "Instead of the general cluster, you specifically need to connect to a large shared-memory system for a memory-intensive task.",
-                goal: "Connect to " + C.bold + sharedMemoryHostname + C.reset + " using SSH.",
-                check: function (c) { return c === "ssh " + username + "@" + sharedMemoryHostname; },
-                hint: "Type: ssh " + username + "@" + sharedMemoryHostname,
-                action: "login", targetHost: sharedMemoryHostname, flags: []
-            },
-            {
-                title: "Troubleshooting: Typos",
-                prompt: "Let's see what happens when you type the wrong password. Remember, characters don't show up when you type passwords!",
-                goal: "Run " + C.bold + "ssh " + username + "@" + hostname + C.reset + ". When prompted, deliberately type " + C.bold + "wrongpassword" + C.reset + " and hit Enter.",
-                check: function (c) { return c === "ssh " + username + "@" + hostname; }, // The check for 'wrongpassword' is handled in state machine
+                title: "Troubleshooting: Authentication",
+                prompt: "Let's see what happens when your SSH key isn't properly configured.",
+                goal: "Run " + C.bold + "ssh " + username + "@" + hostname + C.reset + " to see a 'Permission denied' error when the key is missing.",
+                check: function (c) { return c === "ssh " + username + "@" + hostname; },
                 hint: "First, type: ssh " + username + "@" + hostname,
                 action: "wrong_password", targetHost: hostname, flags: []
             },
@@ -311,19 +303,7 @@
                             }, 500);
                         } else {
                             // Valid command, simulate connecting
-                            var isNewHost = (m.targetHost === sharedMemoryHostname && state.missionIdx === 2);
-                            if (isNewHost) {
-                                state.writeln("The authenticity of host '" + m.targetHost + " (129.170.x.x)' can't be established.");
-                                state.writeln("ED25519 key fingerprint is SHA256:abc123xyz...");
-                                state.writeln("Are you sure you want to continue connecting (yes/no/[fingerprint])?");
-                                setTimeout(function () {
-                                    state.writeln(C.dim + "(Auto-accepting for this simulation...)" + C.reset);
-                                    state.writeln("Warning: Permanently added '" + m.targetHost + "' (ED25519) to the list of known hosts.");
-                                    promptPassword();
-                                }, 1500);
-                            } else {
-                                promptPassword();
-                            }
+                            promptPassword();
 
                             function promptPassword() {
                                 state.isPasswordPrompt = true;

@@ -1,0 +1,57 @@
+{{ $partitionList := index site.Data (.Get 0) -}}
+{{ $columnKeys := index site.Data (.Get 1) -}}
+{{ $meta := site.Data.partition_meta -}}
+{{ $notesList := site.Data.partition_notes -}}
+
+
+
+<table class="w-full" id="nodeList">
+    <thead class="text-left bg-main border-main text-white dark:bg-main-dark border dark:border-main-dark">
+        <tr class="">
+            <th>General<br>Access</th>
+            {{ range $columnKeys }}
+            <th class="{{ if not .mobile }}hidden lg:table-cell{{ end }}">{{ .display | safeHTML }}</th>
+            {{ end }}
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody class="">
+        {{ range $partition := where (where $partitionList "name" "in" $meta.general) "name" "not in" $meta.hidden }}
+        {{ template "partitionitem" (dict "meta" $meta "partition" $partition "columnKeys" $columnKeys "notesList" $notesList)}}
+        {{ end }}
+        {{ range $partition := where (where $partitionList "name" "not in" $meta.general) "name" "not in" $meta.hidden }}
+        {{ template "partitionitem" (dict "meta" $meta "partition" $partition "columnKeys" $columnKeys "notesList" $notesList)}}
+        {{ end }}
+    </tbody>
+</table>
+
+<h3>Notes</h3>
+<ul class="list-outside">
+    {{ range $notesList }}
+    <li id="{{ .symbol | safeURL }}" class="custom-marker" style="--marker: '{{ .symbol }}'">{{ .note | markdownify }}
+    </li>
+    {{ end }}
+</ul>
+
+{{ define "partitionitem" }}
+<tr>
+    <td>
+        {{ if in .meta.general .partition.name }}
+        <div class="material-symbols-rounded">check</div>
+        {{ end }}
+    </td>
+    {{ $partition := .partition }}
+    {{ range $key := .columnKeys }}
+    {{ $classes := "" }}
+    {{ if not .mobile }}{{ $classes = "hidden lg:table-cell" }}{{ end }}
+    <td class="{{ $classes }}">{{ index $partition $key.id }}</td>
+    {{ end }}
+    <td class="text-xs">
+        <ul class="comma-list">
+            {{ range where .notesList "partitions" "intersect" (slice | append .partition.name) }}
+            <li><a href="{{ (printf "#%s" .symbol) | safeURL }}">{{ .symbol }}</a></li>
+            {{ end }}
+        </ul>
+    </td>
+</tr>
+{{ end }}

@@ -19,7 +19,7 @@ If you've never used the command line before, this can feel disorienting. This a
 
 You've just been given access to {{ cluster.name }}. The previous grad student left behind some data on a lab volume. Your mission: find it, understand it, and set up your own workspace.
 
-Enter your NetID below to personalize the simulation, then click **SSH into {{ cluster.name }} →** to begin.
+Enter your {{ institution.username_label }} below to personalize the simulation, then click **SSH into {{ cluster.name }} →** to begin.
 
 <div class="terminal-tour" data-cluster-name="{{ cluster.name }}" markdown="0"></div>
 
@@ -28,13 +28,13 @@ Enter your NetID below to personalize the simulation, then click **SSH into {{ c
 When you SSH into {{ cluster.name }}, you see something like this:
 
 ```
-[f00abc@discovery ~]$
+[username@login1 ~]$
 ```
 
 This is your **shell prompt**. It tells you:
 
-- **`f00abc`**: your username (your NetID)
-- **`discovery`**: the name of the host you're logged into
+- **`username`**: your username
+- **`login1`**: the name of the login node you're connected to
 - **`~`**: your current directory (`~` is shorthand for your home directory)
 - **`$`**: you're logged in as a regular user (not root)
 
@@ -51,7 +51,7 @@ pwd
 ```
 
 ```
-/dartfs/rc/home/c/f00abc
+{{ storage.home_path }}/username
 ```
 
 ### What's here? — `ls`
@@ -77,7 +77,7 @@ Add flags to get more detail:
 `cd` (change directory) moves you to a new location:
 
 ```bash
-cd /dartfs/rc/lab/C/ChenLab   # absolute path
+cd {{ storage.work_path }}/pi_chen       # absolute path
 cd my_project                  # relative path (inside current dir)
 cd ..                          # go up one level
 cd ~                           # go home
@@ -138,7 +138,7 @@ cp -r my_dir/ backup_dir/              # copy a whole directory (-r = recursive)
 
 ```bash
 mv old_name.txt new_name.txt           # rename
-mv file.txt /dartfs/rc/lab/C/ChenLab/ # move to another directory
+mv file.txt {{ storage.work_path }}/pi_chen/  # move to another directory
 ```
 
 !!! warning "There's no Recycle Bin"
@@ -168,7 +168,7 @@ grep -r "TODO" my_project/        # search recursively through a directory
 
 ```bash
 find . -name "*.csv"              # find all CSV files in current directory
-find /dartfs/rc/lab -name "*.bam" # find BAM files in the lab volume
+find {{ storage.work_path }} -name "*.bam"  # find BAM files in work storage
 find . -newer reference.txt       # files newer than reference.txt
 ```
 
@@ -189,15 +189,13 @@ Linux uses a single unified filesystem tree rooted at `/`. There are no drive le
 
 ```
 /
-├── dartfs/
-│   └── rc/
-│       ├── home/
-│       │   └── c/
-│       │       └── f00abc/      ← your home directory (~)
-│       └── lab/
-│           └── C/
-│               └── ChenLab/     ← a lab storage volume
-└── scratch/                     ← fast scratch storage
+├── home/
+│   └── username/                ← your home directory (~)
+├── work/
+│   └── pi_chen/                 ← your PI group's work directory
+├── scratch/                     ← fast temporary storage
+├── project/                     ← allocated shared storage
+└── datasets/                    ← curated read-only datasets
 ```
 
 ### Absolute vs. relative paths
@@ -205,8 +203,8 @@ Linux uses a single unified filesystem tree rooted at `/`. There are no drive le
 An **absolute path** starts from `/` and unambiguously identifies a location regardless of where you currently are:
 
 ```bash
-cd /dartfs/rc/lab/C/ChenLab
-cat /dartfs/rc/home/c/f00abc/README.txt
+cd {{ storage.work_path }}/pi_chen
+cat {{ storage.home_path }}/username/README.txt
 ```
 
 A **relative path** is relative to your current directory. If you're already in your home directory:
@@ -254,5 +252,5 @@ With these fundamentals in hand, you're ready to go deeper:
 
 - [**Editing Files in the Terminal**](editing.md): Edit job scripts and config files with nano or vi
 - [**Linux — Permissions, Pipes & the Environment**](linux-advanced.md): File permissions, pipes, redirection, and shell configuration
-- [**Storage on {{ cluster.name }}**](storage.md): Understand your home directory, lab volumes, and scratch space
+- [**Storage on {{ cluster.name }}**](storage.md): Understand your home directory, work storage, and scratch space
 - [**Submitting your first job**](../getting-started/what-is-hpc.md): Put the scheduler to work with `sbatch`

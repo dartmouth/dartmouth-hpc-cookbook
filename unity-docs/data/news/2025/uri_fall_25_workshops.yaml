@@ -1,0 +1,169 @@
+header:
+  - key: date
+    name: Date
+    weight: 0
+  - key: time
+    name: Time (Eastern)
+    weight: 10
+  - key: name
+    name: Workshop Name
+    weight: 20
+  - key: link
+    name: Zoom Link
+    weight: 30
+
+subtables:
+  id: category
+  entries:
+    - key: ai_tools
+      title: AI Tools
+      weight: 0
+      description: |
+        Workshops on learning to use artifical intelligence tools for different use cases.
+    - key: r
+      title: R Series
+      weight: 20
+      description: |
+        Workshops on R.
+    - key: spss_sas
+      title: SPSS & SAS
+      weight: 20
+      description: |
+        Workshops how to use SPSS (Statistical Package for the Social Sciences) and SAS (Statistical Analysis System).
+    - key: bioinformatics
+      title: Bioinformatics
+      weight: 20
+      description: |
+        Workshops on bioinformatics on the Unity cluster.
+    - key: unity
+      title: Introduction to Unity
+      weight: 30
+      description: |
+        Workshops to get to know the Unity cluster.
+    - key: mpi
+      title: MPI
+      weight: 30
+      description: |
+        Workshops on MPI.
+
+items:
+  - category: ai_tools
+    date: Thu, Sep 18
+    time: 4:00 - 5:00 pm
+    name: 'AI Tools: For Researchers'
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/Vhi5ZF34Tx2PEw92VEZQhA)'
+  - category: ai_tools
+    date: Thu, Oct 02
+    time: 4:00 - 5:00 pm
+    name: 'AI Tools: Personal Productivity'
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/Vhi5ZF34Tx2PEw92VEZQhA)'
+  - category: ai_tools
+    date: Thu, Oct 16
+    time: 4:00 - 5:00 pm
+    name: 'AI Tools: Image and Art'
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/Vhi5ZF34Tx2PEw92VEZQhA)'
+  - category: ai_tools
+    date: Thu, Oct 23
+    time: 4:00 - 5:00 pm
+    name: 'AI Tools: Programming'
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/Vhi5ZF34Tx2PEw92VEZQhA)'
+  - category: ai_tools
+    date: Thu, Oct 30
+    time: 4:00 - 5:00 pm
+    name: 'AI Tools: Writing'
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/Vhi5ZF34Tx2PEw92VEZQhA)'
+  - category: ai_tools
+    date: Thu, Dec 4
+    time: 4:00 - 5:00 pm
+    name: 'AI Tools: Video + Music'
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/Vhi5ZF34Tx2PEw92VEZQhA)'
+  - category: ai_tools
+    date: Thu, Sep 11; Thu, Oct 9; Thu, Nov 13
+    time: 4:00 - 5:00 pm
+    name: AI Tools for Educators
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/oaz-UYa4Tq-iJBiteEA7BQ)'
+  - category: r
+    date: Week of Sep 29 - Oct 3
+    time: 4:00 - 5:00 pm
+    name: R Series
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/xsyhGRT9RI-txDw4nKMNLA)'
+  - category: r
+    date: Week of Nov 17 - Nov 21
+    time: 4:00 - 5:00 pm
+    name: R Series
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/OcxZr5C7R0OzLk8IdP2HNg)'
+  - category: spss_sas
+    date: Mon, Sep 22
+    time: 4:00 - 5:00 pm
+    name: SPSS/ SAS
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/jTHYHdrvRJCzxL7nnpw9Kg)'
+  - category: spss_sas
+    date: Thu, Oct 23
+    time: 4:00 - 5:00 pm
+    name: SPSS/ SAS
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/j3Tbsw_iS_CdCGRGMovwnA)'
+  - category: spss_sas
+    date: Tue, Nov 11
+    time: 4:00 - 5:00 pm
+    name: SPSS/ SAS
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/SqzRGbBXTW2GfHv1brS5Wg)'
+  - category: python
+    date: Thu, Sep 4
+    time: 12:30-1:30 PM
+    name: Python workshop
+    link: '[Zoom link](https://uri-edu.zoom.us/j/95707465966)'
+  - category: python
+    date: Fri, Sep 5
+    time: 12:30-1:30 PM
+    name: Python workshop
+    link: '[Zoom link](https://uri-edu.zoom.us/j/95707465966)'
+  - category: bioinformatics
+    date: Mon, Sep 22
+    time: 12:30-1:30 PM
+    name: Bioinformatics
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/5BbnYPOeRdu-XOIb-Tapbg)'
+  - category: bioinformatics
+    date: Mon, Oct 20
+    time: 12:30-1:30 PM
+    name: Bioinformatics
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/KHQeiN3AQf-CfYvJ5900SQ)'
+  - category: bioinformatics
+    date: Mon, Nov 10
+    time: 12:30-1:30 PM
+    name: Bioinformatics
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/0pTWutQHSACRPR-NP2T47g)'
+  - category: unity
+    date: Wed, Sep 3
+    time: 12:30-1:30 PM
+    name: Introduction to Unity
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/YbSRJNlZQXW74LMUVRD05A)'
+  - category: unity
+    date: Wed, Sep 24
+    time: 12:30-1:30 PM
+    name: Introduction to Unity
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/YbSRJNlZQXW74LMUVRD05A)'
+  - category: unity
+    date: Wed, Oct 15
+    time: 12:30-1:30 PM
+    name: Introduction to Unity
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/YbSRJNlZQXW74LMUVRD05A)'
+  - category: unity
+    date: Wed, Nov 5
+    time: 12:30-1:30 PM
+    name: Introduction to Unity
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/YbSRJNlZQXW74LMUVRD05A)'
+  - category: gen_ai
+    date: Thu, Nov 6
+    time: 4:00 - 5:00 pm
+    name: Generative AI
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/uPQ2jDzySBeUBj5QZKBvuw)'
+  - category: gen_ai
+    date: Thu, Nov 20
+    time: 4:00 - 5:00 pm
+    name: Generative AI
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/uPQ2jDzySBeUBj5QZKBvuw)'
+  - category: mpi
+    date: Tue, Sep 30
+    time: 5:00 - 6:15 pm
+    name: MPI in Rust
+    link: '[Zoom link (Registration)](https://uri-edu.zoom.us/meeting/register/MkwG6eIZRn6eO4tplmr4Pw#/registration)'

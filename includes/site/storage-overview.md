@@ -1,33 +1,46 @@
 <!-- includes/site/storage-overview.md
      Institution-specific: describes the storage systems available at your site.
      Replace this file with your own storage details when forking the cookbook.
-     You can use any Jinja2 variables from site.yml, e.g. {{ storage.shared_name }}.
+     You can use any Jinja2 variables from site.yml, e.g. {{ storage.home_path }}.
 -->
 
-## Storage at {{ institution.short_name }}
+## Storage on {{ cluster.name }}
 
-{{ institution.short_name }} provides several storage options for researchers. Here's how they map to the tiers described above:
+{{ cluster.name }} provides a tiered storage system. Here's how each tier maps to the concepts described above:
 
-### {{ storage.shared_name }} (Long-Term Shared Storage)
+| Storage | Path | Quota | Backed Up | Best For |
+|:--------|:-----|:------|:----------|:---------|
+| **Home** | `{{ storage.home_path }}` | {{ storage.home_quota }} | Yes | Init files, scripts, configuration |
+| **Work** | `{{ storage.work_path }}/pi_<group>` | {{ storage.work_quota }} (shared per PI group) | Yes | Primary job I/O, research data, results |
+| **Scratch** | `{{ storage.scratch_path }}` | {{ storage.scratch_quota }} soft cap | No | Fast temporary workspace for active jobs |
+| **Project** | `{{ storage.project_path }}` | By allocation | Varies | Staged data, cross-group sharing |
+| **Datasets** | `{{ storage.datasets_path }}` | Read-only | N/A | 120+ curated AI/ML and bioinformatics datasets |
 
-**{{ storage.shared_name }}** is {{ institution.short_name }}'s shared network storage, available from all campus HPC systems as well as your desktop. It's designed for storing research data, datasets, and results that need to persist long-term. {{ storage.shared_name }} is backed up and accessible from {{ cluster.name }}, Andes, Polaris, and other campus systems.
+### Work Storage (`{{ storage.work_path }}`)
 
-This is where you should keep your important research data — the datasets you'll reuse, the results you want to preserve, and anything you'd need to recover if something went wrong.
+Your PI group's **work directory** is the primary location for research data and job I/O. Each PI group gets {{ storage.work_quota }} of shared storage by default. This is where you should keep datasets you're actively using, job input files, and results.
 
-For details on requesting a {{ storage.shared_name }} allocation and getting started, see the [{{ institution.support_team }} {{ storage.shared_name }} documentation]({{ storage.shared_url }}).
+### Scratch Storage (`{{ storage.scratch_path }}`)
 
-### Scratch on {{ cluster.name }}
+Scratch provides high-speed temporary storage for running jobs. Files on scratch are **not backed up** and are subject to cleanup policies. Use scratch for intermediate results and temporary files during computation, then copy important results back to your work directory.
 
-{{ cluster.name }} provides high-speed scratch storage at `{{ storage.scratch_path }}`. When you have an account on {{ cluster.name }}, you'll have a personal scratch directory where your jobs can read and write data quickly. Files on scratch are **not backed up** and are subject to a purge policy — don't rely on scratch for long-term storage.
+Scratch space is managed through the [HPC Workspace]({{ cluster.docs_url }}managing-files/hpc-workspace/) system.
 
-### Your Home Directory
+### Curated Datasets (`{{ storage.datasets_path }}`)
 
-Your home directory on {{ cluster.name }} (`~`) is persistent and backed up, but has a limited quota. Use it for scripts, configuration files, and small personal files. Avoid running jobs or storing large datasets here.
+{{ cluster.name }} provides 120+ pre-staged AI/ML models and bioinformatics databases at `{{ storage.datasets_path }}`. These include popular models (Llama, Whisper, DINO), databases (AlphaFold, BLAST, UniProt), and benchmark datasets (ImageNet, COCO). Using these saves you from downloading large files and counting them against your storage quota.
 
 ### Which Storage Should I Use?
 
-| Storage | Speed | Capacity | Persistence | Best for |
-|:--------|:------|:---------|:------------|:---------|
-| **{{ storage.shared_name }}** | Moderate | Large (by allocation) | Backed up | Research data, datasets, long-term results |
-| **Scratch** (`{{ storage.scratch_path }}`) | Fast | Large | Purged periodically | Job I/O, temporary files, intermediate results |
-| **Home** (`~`) | Moderate | Small (quota) | Backed up | Scripts, config files, small personal files |
+| I need to... | Use |
+|:-------------|:----|
+| Store scripts and config files | **Home** (`{{ storage.home_path }}`) |
+| Run jobs and store research data | **Work** (`{{ storage.work_path }}/pi_<group>`) |
+| Fast temporary workspace for a running job | **Scratch** (`{{ storage.scratch_path }}`) |
+| Share data across groups or stage large datasets | **Project** (`{{ storage.project_path }}`) — request allocation first |
+| Use a pre-staged ML model or reference database | **Datasets** (`{{ storage.datasets_path }}`) |
+
+!!! warning "Job I/O: use Work or Scratch"
+    All job I/O should use `{{ storage.work_path }}` or `{{ storage.scratch_path }}`, which are high-performance parallel filesystems. Do **not** run jobs that read/write heavily from `{{ storage.project_path }}` or `{{ storage.home_path }}`.
+
+For full storage documentation, see the [{{ cluster.name }} storage overview]({{ cluster.docs_url }}cluster_specs/storage/).

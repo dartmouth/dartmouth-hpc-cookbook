@@ -75,9 +75,10 @@ need depends on your operating system.
       client.
 
     !!! note
-        If you plan to run graphical applications on the cluster (see
-        [X11 Forwarding](#x11-forwarding-graphical-applications) below), MobaXterm is
-        the easier choice because it handles the X11 setup for you.
+        Most graphical work on {{ cluster.name }} should go through
+        [Open OnDemand](#running-graphical-applications) in your browser, no SSH
+        client setup needed. If you do plan to use X11 forwarding, MobaXterm bundles
+        an X11 server and is the easier choice.
 
 ## Step 2: Connect to the Cluster
 
@@ -93,21 +94,19 @@ Before you can connect, make sure you meet two requirements:
 The very first time you connect to a new remote machine, your SSH client won't recognize it. It will stop and show you a message similar to this:
 
 ```text
-The authenticity of host 'discovery.dartmouth.edu (129.170.x.x)' can't be established.
+The authenticity of host '{{ cluster.login_node }} (x.x.x.x)' can't be established.
 ED25519 key fingerprint is SHA256:abc123xyz...
 Are you sure you want to continue connecting (yes/no/[fingerprint])?
 ```
 
 This is SSH protecting you from "man-in-the-middle" attacks. The remote server presents a unique "fingerprint." Type `yes` and press ++enter++. Your client will save this fingerprint and won't ask you again unless the server's identity changes (which occasionally happens during major system upgrades).
 
-### Entering Your Password
+### Authenticating
 
-Once the connection is established, you'll be prompted for your password. Type it in, but note that the cursor won't move and no characters will appear. This is normal! It's a security feature, not a bug. Press ++enter++ when you've finished typing.
+Once the connection is established, you'll be authenticated using your SSH key. If your key is properly configured (see [account setup](account.md)), you'll be logged in automatically. If you set a passphrase on your key, you may be prompted to enter it.
 
-!!! warning "Nothing Shows When I Type My Password!"
-    This catches almost everyone the first time. When you type your password at an SSH
-    prompt, the terminal deliberately shows nothing. No dots, no asterisks, no cursor
-    movement. Just type your password and press ++enter++.
+!!! tip "SSH key not working?"
+    If you're asked for a password instead of being authenticated by key, make sure you've added your private key with `ssh-add` and that the corresponding public key is uploaded in the {{ cluster.name }} portal. See the [account setup instructions](account.md) for details.
 
 ## Step 3: Verify You're Connected
 
@@ -129,24 +128,47 @@ remote machine, not your laptop.
     happen on separate compute nodes managed by the job scheduler. We'll cover job
     submission in a later section.
 
-    On shared-memory systems, there typically is no separate login node.
-    You SSH directly into the machine itself and run your work there. Be mindful of
-    other users who may be sharing the same system.
 
-## X11 Forwarding: Graphical Applications
+## Running graphical applications
 
-Most of your work on the cluster will be through the command line. But occasionally you
-may need to run an application with a graphical interface: A plotting tool, MATLAB's desktop, or maybe a config tool.
+Most of your work on {{ cluster.name }} will be through the command line, but you'll
+occasionally need a real graphical interface: a plotting tool, an IDE, MATLAB's
+desktop, a visualization app.
 
-**X11 forwarding** lets the cluster send graphical output back to your local screen
-over the SSH connection. You enable it by adding the `-Y` flag:
+For that, **use [Open OnDemand]({{ cluster.ondemand_url }})**, {{ cluster.name }}'s
+web portal. It runs your graphical application as a batch job on a compute node and
+streams the desktop to your browser over VNC. No SSH client, no X11 server, no setup
+on your laptop. See the [Open OnDemand recipes](../recipes/open-ondemand/getting-started.md)
+for a walkthrough.
 
-```bash
-ssh -Y username@hostname
-```
+!!! tip "What you can launch from Open OnDemand"
+    JupyterLab, RStudio, VS Code, MATLAB, Mathematica, and a full Linux Virtual
+    Desktop. If your tool isn't on that list, the Virtual Desktop will run almost
+    anything you'd otherwise reach for X11 to use.
 
-For this to work, your local machine needs an **X11 server**, which is the software that knows
-how to draw those remote windows on your screen.
+### When you really need X11
+
+The old way to run a remote GUI is **X11 forwarding**: SSH carries the graphical
+output back to a local X server on your laptop. It still works, but it's the wrong
+tool for most jobs on a modern cluster (see the warning below).
+
+If you do need it, two rules:
+
+1. **Don't run GUIs on the login node.** The login node is a shared gateway. Heavy
+   processes there get killed and they slow the node down for everyone.
+2. **Launch the GUI from a compute node** by combining `ssh -Y` with an interactive
+   Slurm allocation:
+
+    ```bash
+    ssh -Y your_{{ institution.username_label | lower }}{{ institution.username_suffix }}@{{ cluster.login_node }}
+    salloc -c 2 -p {{ cluster.default_partition }} --x11 xclock
+    ```
+
+    The `--x11` flag tells Slurm to forward X back through your SSH session. You
+    cannot do this with `sbatch`, only `salloc`.
+
+For this to work, your local machine also needs an **X11 server**, which is the
+software that draws the remote windows on your screen.
 
 === "macOS"
 
@@ -169,15 +191,12 @@ how to draw those remote windows on your screen.
       [Xming](http://www.straightrunning.com/XmingNotes/), and enable X11 forwarding
       in PuTTY's configuration.
 
-!!! warning "Complex GUI applications will be slow"
-    X11 forwarding works by sending every screen update over the network, one
-    round-trip at a time. Simple, lightweight GUIs (an `xterm`, a small plot window)
-    are usually fine, but complex applications like MATLAB's desktop, Jupyter notebooks
-    in a browser, RStudio, or heavy visualization tools will feel painfully sluggish
-    and often unusable. This is a fundamental limitation of the X11 protocol, not
-    something a faster network alone can fix.
-
-{% include "site/x11-alternatives.md" %}
+!!! warning "Why Open OnDemand exists"
+    X11 forwarding sends every screen update over the network, one round-trip at a
+    time. A small `xclock` or a quick plot window is fine. A full IDE, MATLAB's
+    desktop, RStudio, or any visualization tool feels painfully sluggish and often
+    unusable. That isn't a network problem, it's the X11 protocol itself, which is
+    why {{ cluster.name }}'s recommendation is OnDemand for any non-trivial GUI.
 
 ## Troubleshooting
 
@@ -212,13 +231,13 @@ how to draw those remote windows on your screen.
 | SSH | Encrypted protocol for remote terminal access |
 | SSH client | The program on your machine that initiates the connection |
 | Login node | The shared machine you land on after connecting |
-| X11 forwarding | Sending graphical output from the cluster to your screen |
+| Open OnDemand | Web portal that runs graphical apps on compute nodes, streamed to your browser |
 
 ## Next Steps
 
 ## Practice SSH Connections
 
-Ready to try it out? This interactive widget simulates a local terminal on your machine. You can practice logging in, handling X11 forwarding, and dealing with common errors before you try the real thing.
+Ready to try it out? This interactive widget simulates a local terminal on your machine. You can practice logging in and dealing with common errors before you try the real thing.
 
 <div class="ssh-simulator" data-cluster-name="{{ cluster.name }}" markdown="0"></div>
 
