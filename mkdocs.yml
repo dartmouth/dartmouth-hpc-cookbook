@@ -10,11 +10,13 @@ extra_css:
   - stylesheets/quiz.css
   - stylesheets/terminal-tour.css
   - stylesheets/ssh-simulator.css
+  - stylesheets/username-personalize.css
 
 extra_javascript:
   - javascripts/quiz.js
   - javascripts/linux-terminal-tour.js
   - javascripts/ssh-simulator.js
+  - javascripts/username-personalize.js
 
 # Institution-specific variables (cluster name, institution name, etc.)
 # are loaded from site.yml by the macros plugin — see hooks/macros.py.

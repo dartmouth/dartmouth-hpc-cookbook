@@ -88,6 +88,8 @@ For deeper detail on key management and connection options, see [{{ cluster.name
 
 ## Step 4: Connect
 
+{% include "username-input.md" %}
+
 Once your key is loaded, connect to the cluster:
 
 ```bash
@@ -95,6 +97,7 @@ ssh your_{{ institution.username_label | lower }}{{ institution.username_suffix 
 ```
 
 Replace `your_{{ institution.username_label | lower }}` with your actual {{ institution.username_label }}.
+{: .personalize-hint }
 
 !!! tip "Create a shell alias"
     Add this to `~/.bashrc` or `~/.zshrc` so you can simply type `unity` to connect:
@@ -113,7 +116,7 @@ For the full SSH walkthrough including running graphical applications and troubl
 
 Every directory you can write to on {{ cluster.name }} has a **quota**, a limit on how much space it can use. Quotas exist to make sure no single user (or runaway program) consumes more than their fair share of a shared resource.
 
-{{ cluster.name }} doesn't expose the classic `quota` command. Instead, use `df` (disk free) to see how much space is left under the quota of any directory you have access to:
+Use `df` (disk free) to see how much space is left under the quota of any directory you have access to:
 
 ```bash
 df -h ~

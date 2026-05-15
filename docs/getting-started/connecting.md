@@ -87,6 +87,8 @@ Before you can connect, make sure you meet two requirements:
 1. **You have a cluster account.** If you haven't yet, see [Request an Account](account.md) to learn how to get one.
 2. **You're on the right network.** As a security measure, most HPC centers don't expose their clusters to the open internet. Make sure you are on {{ institution.short_name }}'s network or connected through a VPN before you try to SSH in.
 
+{% include "username-input.md" %}
+
 {% include "site/connecting-details.md" %}
 
 ### The First Connection: Host Key Verification
