@@ -241,7 +241,7 @@ software that draws the remote windows on your screen.
 
 Ready to try it out? This interactive widget simulates a local terminal on your machine. You can practice logging in and dealing with common errors before you try the real thing.
 
-<div class="ssh-simulator" data-cluster-name="{{ cluster.name }}" markdown="0"></div>
+<div class="ssh-simulator" data-cluster-name="{{ cluster.name }}" data-username-suffix="{{ institution.username_suffix }}" markdown="0"></div>
 
 ## Next Steps
 

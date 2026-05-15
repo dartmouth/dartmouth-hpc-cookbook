@@ -19,6 +19,7 @@
         hostname: "login.unityhpc.org",
         sharedMemoryHostname: "",
         defaultUsername: "f00001_dartmouth_edu",
+        usernameSuffix: "_dartmouth_edu",
     };
     // ═══════════════════════════════════════════════════════
 
@@ -161,13 +162,23 @@
         var clusterName = container.getAttribute("data-cluster-name") || CONFIG.clusterName;
         var hostname = CONFIG.hostname;
         var sharedMemoryHostname = CONFIG.sharedMemoryHostname;
+        var usernameSuffix = container.getAttribute("data-username-suffix");
+        if (usernameSuffix === null) usernameSuffix = CONFIG.usernameSuffix;
         var els = buildDOM(container, clusterName);
 
         els.input.addEventListener("input", function () { els.btn.disabled = !els.input.value.trim(); });
         els.input.addEventListener("keydown", function (e) { if (e.key === "Enter" && els.input.value.trim()) els.btn.click(); });
 
         els.btn.addEventListener("click", function () {
-            var username = els.input.value.trim() || CONFIG.defaultUsername;
+            var rawInput = els.input.value.trim();
+            var username;
+            if (rawInput) {
+                username = (usernameSuffix && !rawInput.endsWith(usernameSuffix))
+                    ? rawInput + usernameSuffix
+                    : rawInput;
+            } else {
+                username = CONFIG.defaultUsername;
+            }
 
             els.splash.style.display = "none";
             els.termContainer.className = "ss-terminal-container active";
