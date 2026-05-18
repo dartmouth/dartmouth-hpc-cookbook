@@ -157,7 +157,7 @@ nav:
       - recipes/python/uv.md
       - recipes/python/pytorch.md
       - recipes/python/transformers.md
-      - recipes/python/multi-gpu.md
+      # - recipes/python/multi-gpu.md
       - recipes/python/conda.md
     - R:
       - recipes/r/getting-started.md

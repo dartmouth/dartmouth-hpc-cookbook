@@ -20,6 +20,8 @@ This file provides guidance to agents when working with code in this repository.
 - **`includes/site/`** contains institution-specific content blocks pulled in via `{% include "site/filename.md" %}` — replace these when forking.
 
 ## Non-Obvious Patterns
+- **Scratch storage paths:** Unity organizes scratch as workspaces (e.g., `/scratch/workspace/<name>`), not as `/scratch/$USER/`. Do not use `{{ storage.scratch_path }}/$USER/` in recipe examples because it produces a path that does not exist on the cluster. Use generic placeholders like `/path/to/your/scratch/` instead. A dedicated recipe/article on scratch workspaces will cover the specifics.
+- **Multi-GPU jobs require `--nodes`:** Unity's Slurm configuration requires `--nodes=1` (or `--constraint=mpi`) when requesting more than one GPU. Always include `nodes=1` in `sbatch_template()` calls that use `gres="gpu:2"` or higher.
 - Build-time SSH macros (`remote_cmd`, `system_stats`, `cluster_stats`) use SSH key auth by default (controlled by `build.ssh_auth` in `site.yml`). Without access, they silently fall back to placeholder admonitions.
 - Custom MkDocs Material color schemes are `dartmouth-light` and `dartmouth-dark` (not the standard `default`/`slate`).
 - Headings use "Dartmouth Ruzicka" font; body uses "National 2" — both loaded from local files in `docs/stylesheets/fonts/`.

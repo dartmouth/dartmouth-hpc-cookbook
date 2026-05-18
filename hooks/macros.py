@@ -84,6 +84,28 @@ def _substitute_vars(text: str, site_config: dict) -> str:
     return re.sub(r"\{\{\s*([\w.]+)\s*\}\}", _replace, text)
 
 
+def _parse_annotated_int(val: "int | str") -> tuple[int, str]:
+    """Extract a numeric value and display string from a possibly-annotated int.
+
+    Parameters that are normally integers (``nodes``, ``cpus``, etc.) can
+    optionally be passed as strings with an embedded MkDocs Material code
+    annotation marker, e.g. ``"1  # (3)!"``.  This helper returns the
+    integer portion (for conditional logic) and the full string (for
+    rendering into the sbatch script).
+
+    >>> _parse_annotated_int(4)
+    (4, '4')
+    >>> _parse_annotated_int("1  # (3)!")
+    (1, '1  # (3)!')
+    """
+    if isinstance(val, int):
+        return val, str(val)
+    text = str(val)
+    match = re.match(r"\s*(\d+)", text)
+    numeric = int(match.group(1)) if match else 0
+    return numeric, text
+
+
 def _generate_glossary_tooltips(site_config: dict):
     """Write includes/glossary.md (tooltip definitions) from glossary.yml.
 
@@ -526,12 +548,12 @@ def define_env(env):
         job_name: str = "my_job",
         partition: str = site_config.get("cluster", {}).get("default_partition", "cpu"),
         time: str = "01:00:00",
-        cpus: int = 1,
+        cpus: "int | str" = 1,
         mem: str = "4G",
-        gpus: int = 0,
+        gpus: "int | str" = 0,
         gres: str = "",
-        ntasks_per_node: int = 0,
-        nodes: int = 0,
+        ntasks_per_node: "int | str" = 0,
+        nodes: "int | str" = 0,
         constraint: str = "",
         modules: list[str] | None = None,
         commands: str = "echo 'Hello from the cluster!'",
@@ -556,7 +578,9 @@ def define_env(env):
         markers directly in parameter values (``gres``, ``constraint``,
         ``modules`` entries, ``commands`` lines) and pass the
         corresponding annotation texts as an ordered list via
-        ``annotations``.
+        ``annotations``.  Numeric parameters (``nodes``, ``cpus``,
+        ``gpus``, ``ntasks_per_node``) also accept strings with
+        annotation markers, e.g. ``nodes="1  # (1)!"``.
 
         Parameters:
             gres: Raw ``--gres`` value (e.g. ``"gpu:1  # (1)!"``).
@@ -569,10 +593,12 @@ def define_env(env):
             {{ sbatch_template(
                 job_name="torch-smoke",
                 partition="gpu",
-                gres="gpu:1  # (1)!",
-                constraint="sm_75  # (2)!",
+                nodes="1  # (1)!",
+                gres="gpu:2  # (2)!",
+                constraint="sm_75  # (3)!",
                 annotations=[
-                    "Request one GPU.",
+                    "Keep both GPUs on the same node.",
+                    "Request two GPUs.",
                     "Turing (7.5) or newer.",
                 ]
             ) }}
@@ -580,22 +606,28 @@ def define_env(env):
         # Resolve any {{ var }} placeholders in the commands string
         commands = _substitute_vars(commands, site_config)
 
+        # Parse numeric params that may carry annotation markers
+        nodes_val, nodes_str = _parse_annotated_int(nodes)
+        cpus_val, cpus_str = _parse_annotated_int(cpus)
+        gpus_val, gpus_str = _parse_annotated_int(gpus)
+        ntasks_val, ntasks_str = _parse_annotated_int(ntasks_per_node)
+
         script = f"""```bash
 #!/bin/bash
 #SBATCH --job-name={job_name}
 #SBATCH --partition={partition}
 #SBATCH --time={time}"""
 
-        if nodes > 0:
-            script += f"\n#SBATCH --nodes={nodes}"
+        if nodes_val > 0:
+            script += f"\n#SBATCH --nodes={nodes_str}"
 
-        if ntasks_per_node > 0:
-            script += f"\n#SBATCH --ntasks-per-node={ntasks_per_node}"
+        if ntasks_val > 0:
+            script += f"\n#SBATCH --ntasks-per-node={ntasks_str}"
             # Only emit --cpus-per-task for hybrid MPI+OpenMP jobs
-            if cpus > 1:
-                script += f"\n#SBATCH --cpus-per-task={cpus}"
+            if cpus_val > 1:
+                script += f"\n#SBATCH --cpus-per-task={cpus_str}"
         else:
-            script += f"\n#SBATCH --cpus-per-task={cpus}"
+            script += f"\n#SBATCH --cpus-per-task={cpus_str}"
 
         script += f"\n#SBATCH --mem={mem}"
         script += "\n#SBATCH --output=%x_%j.out"
@@ -603,8 +635,8 @@ def define_env(env):
 
         if gres:
             script += f"\n#SBATCH --gres={gres}"
-        elif gpus > 0:
-            script += f"\n#SBATCH --gres=gpu:{gpus}"
+        elif gpus_val > 0:
+            script += f"\n#SBATCH --gres=gpu:{gpus_str}"
 
         if constraint:
             script += f"\n#SBATCH --constraint={constraint}"
