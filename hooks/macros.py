@@ -529,46 +529,55 @@ def define_env(env):
         cpus: int = 1,
         mem: str = "4G",
         gpus: int = 0,
+        gres: str = "",
         ntasks_per_node: int = 0,
         nodes: int = 0,
+        constraint: str = "",
         modules: list[str] | None = None,
         commands: str = "echo 'Hello from the cluster!'",
+        annotations: list[str] | None = None,
     ):
         """
         Generate a templated sbatch script. Useful for recipe pages.
 
-        The ``commands`` string may contain ``{{ var }}`` placeholders from
-        site.yml (e.g. ``{{ storage.scratch_path }}``) — they are resolved
-        at build time using the same substitution as the rest of the page.
+        The ``commands`` string may contain ``{{ var }}`` placeholders
+        from site.yml (e.g. ``{{ storage.scratch_path }}``) — they are
+        resolved at build time using the same substitution as the rest
+        of the page.
 
         For MPI jobs, set ``ntasks_per_node`` (MPI ranks per node) and
         ``nodes`` (number of nodes).  The total rank count is
         ``nodes × ntasks_per_node``.  When ``ntasks_per_node > 0`` and
-        ``cpus`` is at its default of 1, ``--cpus-per-task`` is omitted so
-        the script stays clean for pure-MPI jobs.  Set ``cpus > 1``
+        ``cpus`` is at its default of 1, ``--cpus-per-task`` is omitted
+        so the script stays clean for pure-MPI jobs.  Set ``cpus > 1``
         alongside ``ntasks_per_node`` for hybrid MPI+OpenMP jobs.
 
-        Usage in Markdown:
-            {{ sbatch_template(
-                job_name="pytorch_train",
-                partition="gpu",
-                gpus=1,
-                mem="32G",
-                modules=["python/3.11", "cuda/12.2"],
-                commands="python train.py --epochs 50"
-            ) }}
+        To add MkDocs Material code annotations, embed ``# (N)!``
+        markers directly in parameter values (``gres``, ``constraint``,
+        ``modules`` entries, ``commands`` lines) and pass the
+        corresponding annotation texts as an ordered list via
+        ``annotations``.
+
+        Parameters:
+            gres: Raw ``--gres`` value (e.g. ``"gpu:1  # (1)!"``).
+                  Overrides ``gpus`` when set.
+            annotations: Ordered list of annotation texts matching the
+                  ``# (N)!`` markers embedded in parameter values.
+
+        Usage in Markdown::
 
             {{ sbatch_template(
-                job_name="mpi_hello",
-                nodes=2,
-                ntasks_per_node=4,
-                mem="4G",
-                modules=["openmpi"],
-                commands="mpirun ./hello_mpi"
+                job_name="torch-smoke",
+                partition="gpu",
+                gres="gpu:1  # (1)!",
+                constraint="sm_75  # (2)!",
+                annotations=[
+                    "Request one GPU.",
+                    "Turing (7.5) or newer.",
+                ]
             ) }}
         """
-        # Resolve any {{ var }} placeholders in the commands string so that
-        # callers can write e.g. {{ storage.scratch_path }} inside commands.
+        # Resolve any {{ var }} placeholders in the commands string
         commands = _substitute_vars(commands, site_config)
 
         script = f"""```bash
@@ -592,8 +601,13 @@ def define_env(env):
         script += "\n#SBATCH --output=%x_%j.out"
         script += "\n#SBATCH --error=%x_%j.err"
 
-        if gpus > 0:
+        if gres:
+            script += f"\n#SBATCH --gres={gres}"
+        elif gpus > 0:
             script += f"\n#SBATCH --gres=gpu:{gpus}"
+
+        if constraint:
+            script += f"\n#SBATCH --constraint={constraint}"
 
         script += "\n"
 
@@ -603,6 +617,15 @@ def define_env(env):
                 script += f"module load {mod}\n"
 
         script += f"\n# Run your work\n{commands}\n```"
+
+        # Append MkDocs Material code annotations if provided
+        if annotations:
+            script += "\n\n"
+            for i, text in enumerate(annotations, 1):
+                ann_lines = text.strip().split("\n")
+                script += f"{i}.  {ann_lines[0]}\n"
+                for cont in ann_lines[1:]:
+                    script += f"    {cont}\n"
 
         return script
 

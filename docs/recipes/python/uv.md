@@ -70,7 +70,7 @@ rebuilds it from the lockfile. Don't check it into version control.
 ### 1. Load uv
 
 ```bash
-module load uv
+module load uv/latest
 ```
 
 This is required on both login nodes and in batch jobs.
@@ -130,7 +130,7 @@ uv init --python 3.11 myproject
 ### 6. Use in a Batch Job
 
 !!! warning "Remember to load `uv` in every batch job"
-    Include `module load uv` in your sbatch script or via the `modules` argument of `sbatch_template`. This ensures the uv commands are available.
+    Include `module load uv/latest` in your sbatch script or via the `modules` argument of `sbatch_template`. This ensures the uv commands are available.
 
 
 {{ sbatch_template(
@@ -139,7 +139,7 @@ uv init --python 3.11 myproject
     time="01:00:00",
     cpus=1,
     mem="8G",
-    modules=["uv"],
+    modules=["uv/latest"],
     commands="cd /path/to/myproject\nuv run python myscript.py"
 ) }}
 
@@ -202,14 +202,6 @@ The cache is purely a speed optimization. It's safe to delete at any time becaus
 `uv` will simply re-download what it needs on the next install. That makes it
 a good candidate for scratch storage, which is fast and has generous space
 limits but is not permanent.
-
-!!! tip "Move the `uv` cache to scratch"
-    Add this line to your `~/.bashrc` so the cache goes to scratch
-    automatically:
-    ```bash
-    export UV_CACHE_DIR={{ storage.scratch_path }}/$USER/.uv-cache
-    ```
-    Log out and back in (or run `source ~/.bashrc`) for it to take effect.
 
 To reclaim space at any time, prune entries that are no longer needed by any
 project:

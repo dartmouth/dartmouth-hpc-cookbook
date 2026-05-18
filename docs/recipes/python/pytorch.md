@@ -11,121 +11,159 @@ tags:
 
 !!! abstract "What we're cooking"
     How to install PyTorch with GPU acceleration on {{ cluster.name }} using
-    [`uv`](uv.md), how to pick the right CUDA index for your target GPU, and
-    how to verify that everything works in a batch job.
+    [`uv`](uv.md) and how to verify that everything works in a batch job.
 
 PyTorch bundles its own CUDA libraries for GPU support, so there is no need
 to rely on system CUDA or to install your own CUDA separately. We recommend
 using [`uv` to manage projects](uv.md) involving PyTorch.
 
-There is a major footgun, however: **PyTorch distributes its GPU-enabled
-packages through a custom package index that is specific to a CUDA version.**
-Using the wrong CUDA version can result in silent failures, degraded
-performance, or crashes.
+Recent versions of `uv` can automatically detect your GPU and install the
+right PyTorch build. For most users, this is all you need.
 
-## Step 1: Check the CUDA Version for Your Target GPU
+## Step 1: Know your GPU's compute capability
 
-| Generation | GPUs on {{ cluster.name }} | Supported CUDA versions |
-|---|---|---|
-| Volta | V100 | ≥ 9.0, < 13.0 |
-| Ampere | A100 | ≥ 11.0 |
-| Hopper | H100, Grace Hopper | ≥ 12.0 |
-| Lovelace | L40S | ≥ 12.0 |
-| Turing | RTX 2080, RTX 2080 Ti | ≥ 10.0 |
+Every NVIDIA GPU has a *compute capability* version that determines which
+software features it supports. PyTorch drops support for older compute
+capabilities over time, so check whether your target GPU is supported
+before setting up your environment.
 
-!!! warning "Multiple GPU generations? Pick a common CUDA version"
-    If you want your code to run on different GPUs with minimal friction,
-    consider maintaining separate projects or using a CUDA version that is
-    supported by all targeted GPUs (e.g., CUDA 12.8).
+| Generation | GPUs on {{ cluster.name }} | Compute Capability | Default PyTorch | Notes |
+|---|---|---|---|---|
+| Maxwell | GTX TITAN X, Tesla M40 | 5.2 | :material-close: No | Dropped in PyTorch 2.x |
+| Pascal | GTX 1080 Ti | 6.1 | :material-close: No | Dropped in PyTorch 2.x |
+| Volta | V100 | 7.0 | :material-alert: No | Needs `cu126` index (see below) |
+| Turing | RTX 2080 :material-lock:, RTX 2080 Ti, Quadro RTX 8000 | 7.5 | :material-check: Yes | |
+| Ampere | A100, A40, RTX A4000, A16 :material-lock: | 8.0 / 8.6 | :material-check: Yes | |
+| Ada Lovelace | L40S, L4 | 8.9 | :material-check: Yes | |
+| Hopper | H100, Grace Hopper | 9.0 | :material-check: Yes | |
 
-    If you update the CUDA index URL later, re-resolve your dependencies
-    with:
+:material-lock: = PI-owned partition only. See the [Unity GPU list](https://docs.unity.rc.umass.edu/documentation/tools/gpus/) for current availability.
 
-    ```bash
-    uv lock --upgrade-package torch
-    ```
+!!! warning "Maxwell, Pascal, and Volta GPUs need special handling"
+    The default PyTorch wheels from PyPI require compute capability ≥ 7.5
+    (Turing or newer). Maxwell and Pascal GPUs (CC 5.x and 6.x) are
+    fully dropped. Volta GPUs like the V100 (CC 7.0) are no longer
+    supported by the default build either.
 
-## Step 2: Add the Matching PyTorch Index to Your `pyproject.toml`
+    To use a V100, install PyTorch from the `cu126` index instead of PyPI
+    (see [Pinning a specific CUDA version](#pinning-a-specific-cuda-version)
+    below). For Maxwell/Pascal, you would need PyTorch 1.x.
 
-For example, if your target GPU supports CUDA 12.8:
+### Requesting a compatible GPU with `--constraint`
 
-```toml
-[[tool.uv.index]]
-name = "pytorch-cu128"
-url = "https://download.pytorch.org/whl/cu128"
-explicit = true
+The `gpu` partition on {{ cluster.name }} includes GPUs from every
+generation in the table above. If you submit a job without specifying
+which GPU you want, Slurm may schedule you on an older node where
+PyTorch will crash or fail with a cuDNN compatibility error.
+
+Use Slurm's `--constraint` flag to request a GPU with at least a certain
+compute capability. The feature tags follow the pattern `sm_XX`, where
+`XX` maps to the compute capability (e.g., `sm_75` for Turing, `sm_80`
+for Ampere):
+
+```bash
+#SBATCH --constraint=sm_75   # Turing (7.5) or newer
 ```
 
-Or for a GPU that requires CUDA 11.8:
+This ensures your job lands on a node with a GPU that the default
+PyTorch build supports. All the `sbatch` examples in this recipe
+include this constraint.
 
-```toml
-[[tool.uv.index]]
-name = "pytorch-cu118"
-url = "https://download.pytorch.org/whl/cu118"
-explicit = true
-```
+!!! tip "Targeting a specific generation"
+    You can also use GPU-specific feature tags like `v100`, `a100`,
+    `l40s`, or `h100` to request a particular model. Run
+    `sinfo -o "%N %f" -p gpu` to see which features are available on
+    each node.
 
-Setting `explicit = true` means only packages that you explicitly assign to
-this index will be fetched from it — everything else comes from PyPI as
-usual.
+## Step 2: Install PyTorch
 
-## Step 3: Pin Packages to the Index and Install
-
-You also need to tell `uv` *which* packages should come from the PyTorch
-index. Add a `[tool.uv.sources]` section to your `pyproject.toml`:
-
-```toml
-[tool.uv.sources]
-torch = [{ index = "pytorch-cu128" }]
-torchvision = [{ index = "pytorch-cu128" }]
-torchaudio = [{ index = "pytorch-cu128" }]  # (1)!
-```
-
-1. Only include the packages you actually need. `torchaudio` is shown
-   here for completeness.
-
-Then install as usual:
+PyTorch publishes CUDA-enabled wheels on PyPI, so a plain `uv add`
+gets you GPU support on Linux without any extra configuration:
 
 ```bash
 uv add torch torchvision
 ```
 
-`uv` resolves versions from the custom index for `torch` and `torchvision`,
-and fetches everything else (NumPy, Pillow, etc.) from PyPI.
+That's it for GPUs with compute capability 7.5 and above (Turing
+onward). The default wheel bundles the latest CUDA runtime PyTorch
+supports.
 
-## Working Across Environments
+### Pinning a specific CUDA version
 
-We often develop code intended to run on the cluster on another system, like our personal laptop. These systems often don't have a CUDA-compatible GPU, so we don't want to install the heavy CUDA-enabled PyTorch build. We can use `uv`'s marker system to install different builds on different platforms. For example, if you develop on macOS or Windows without a CUDA-supported GPU, you can put the following in your `pyproject.toml`:
+If you need V100 support or need to interoperate with other compiled
+CUDA code, configure a PyTorch index explicitly in your `pyproject.toml`.
+For V100 GPUs, use the `cu126` index (the last version to support CC 7.0):
 
 ```toml
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
+
 [tool.uv.sources]
-torch = [
-  { index = "pytorch-cpu", marker = "sys_platform != 'linux'" },
-  { index = "pytorch-cu128", marker = "sys_platform == 'linux'" },
-]
-torchvision = [
-  { index = "pytorch-cpu", marker = "sys_platform != 'linux'" },
-  { index = "pytorch-cu128", marker = "sys_platform == 'linux'" },
-]
-
-[[tool.uv.index]]
-name = "pytorch-cpu"
-url = "https://download.pytorch.org/whl/cpu"
-explicit = true
-
-[[tool.uv.index]]
-name = "pytorch-cu128"
-url = "https://download.pytorch.org/whl/cu128"
-explicit = true
+torch = [{ index = "pytorch-cu126" }]
+torchvision = [{ index = "pytorch-cu126" }]
 ```
-That way you can use the same project across all systems, but you only sync the packages you really need on each platform.
+
+For other cases where you want a specific CUDA version:
+
+```toml
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu130" }]
+torchvision = [{ index = "pytorch-cu130" }]
+```
+
+Setting `explicit = true` means only packages that you explicitly
+assign to this index will be fetched from it; everything else comes
+from PyPI as usual.
+
+If you change the CUDA index URL later, re-resolve your dependencies
+with:
+
+```bash
+uv lock --upgrade-package torch
+```
+
+!!! tip "Using `uv pip` instead of a project?"
+    If you're installing into a virtual environment without a
+    `pyproject.toml`, `uv pip install` supports automatic GPU detection:
+
+    ```bash
+    uv pip install torch torchvision --torch-backend=auto
+    ```
+
+    Or set `UV_TORCH_BACKEND=auto` in your shell profile to make it the
+    default.
 
 
-## Test Your Environment
+## Test your environment
 
-It's usually a good idea to run a simple test script after setting up an environment to test that everything is set up correctly (a so-called *smoke test*).
+Let's walk through a complete smoke test to verify that PyTorch, CUDA,
+and GPU access all work together. This is a good habit any time you set
+up a new environment.
 
-Save the following as `smoke_test.py`:
+**1. Create a project directory and initialize it:**
+
+```bash
+mkdir ~/torch-test && cd ~/torch-test
+module load uv/latest
+uv init
+```
+
+**2. Add PyTorch as a dependency:**
+
+```bash
+uv add torch
+```
+
+**3. Create the smoke test script:**
+
+[Create a file](../../fundamentals/editing.md) called `smoke_test.py` with the following contents:
 
 ```python
 import torch
@@ -140,7 +178,7 @@ for i in range(torch.cuda.device_count()):
     props = torch.cuda.get_device_properties(i)
     print(
         f"  [{i}] {props.name}"
-        f" — {props.total_mem / 1024**3:.1f} GB,"
+        f" — {props.total_memory / 1024**3:.1f} GB,"
         f" compute capability {props.major}.{props.minor}"
     )
 
@@ -150,28 +188,43 @@ y = x @ x.T
 print(f"\nSmoke test passed: matmul on {x.device} produced shape {y.shape}")
 ```
 
-Run it on the partition of your choice:
+**4. Create the job script:**
+
+[Create a file](../../fundamentals/editing.md) called `smoke_test.sh`:
 
 {{ sbatch_template(
     job_name="torch-smoke",
-    partition="gpuq",
+    partition="gpu",
     time="00:05:00",
     cpus=1,
     mem="8G",
-    gpus=1,
-    modules=["uv"],
-    commands="nvidia-smi\necho '---'\ncd /path/to/myproject\nuv run python smoke_test.py"
+    gres="gpu:1  (1)",
+    constraint="sm_75  (2)",
+    modules=["uv/latest  # (3)!"],
+    commands="nvidia-smi  # (4)!\necho '---'\nuv run python smoke_test.py  # (5)!",
+    annotations=[
+        "Request one GPU. Slurm won't allocate a GPU unless you ask.",
+        "Only run on nodes with compute capability ≥ 7.5 (Turing or newer), which the default PyTorch build supports.",
+        "Makes `uv` available in the job. Without this, `uv run` will fail. See [Use in a Batch Job](uv.md#6-use-in-a-batch-job).",
+        "Prints GPU info so you can confirm which GPU you got.",
+        "Runs your script inside the project's virtual environment. `uv run` automatically syncs dependencies before executing.",
+    ]
 ) }}
 
-!!! warning "Remember to load `uv` in every batch job"
-    The `module load uv` line is essential. Without it, `uv run` won't be
-    found and your job will fail immediately. See
-    [Use in a Batch Job](uv.md#6-use-in-a-batch-job) for details.
+**5. Submit the job:**
 
-A successful run should produce output that looks something like this:
+```bash
+sbatch smoke_test.sh
+```
+
+Check on it with `squeue --me`. When it finishes, look at the
+output file (`torch-smoke_<jobid>.out`).
+
+**6. Check the output:**
+
+A successful run should produce something like this:
 
 ```
-Wed Mar 11 21:36:46 2026
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 580.65.06              Driver Version: 580.65.06      CUDA Version: 13.0     |
 +-----------------------------------------+------------------------+----------------------+
@@ -179,28 +232,23 @@ Wed Mar 11 21:36:46 2026
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
-|   0  Tesla V100-SXM2-32GB           Off |   00000000:18:00.0 Off |                    0 |
-| N/A   32C    P0             41W /  300W |       0MiB /  32768MiB |      0%   E. Process |
-|                                         |                        |                  N/A |
+|   0  NVIDIA A100-SXM4-80GB          On |   00000000:18:00.0 Off |                    0 |
+| N/A   30C    P0             62W /  400W |       0MiB /  81920MiB |      0%   E. Process |
+|                                         |                        |             Disabled |
 +-----------------------------------------+------------------------+----------------------+
-
-+-----------------------------------------------------------------------------------------+
-| Processes:                                                                              |
-|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
-|        ID   ID                                                               Usage      |
-|=========================================================================================|
-|  No running processes found                                                             |
-+-----------------------------------------------------------------------------------------+
 ---
-PyTorch version: 2.10.0+cu128
+PyTorch version: 2.11.0+cu130
 CUDA available:  True
-CUDA version:    12.8
-cuDNN version:   91002
+CUDA version:    13.0
+cuDNN version:   92000
 GPU count:       1
-  [0] Tesla V100-SXM2-32GB — 31.7 GB, compute capability 7.0
+  [0] NVIDIA A100-SXM4-80GB — 79.1 GB, compute capability 8.0
 
 Smoke test passed: matmul on cuda:0 produced shape torch.Size([1000, 1000])
 ```
+
+The key things to check: `CUDA available: True`, a GPU listed with the
+expected compute capability, and a successful matmul at the end.
 
 !!! info "Need a custom CUDA toolkit or other compiled libraries alongside PyTorch?"
     In most cases PyTorch's bundled CUDA libraries are sufficient. If you
@@ -208,7 +256,7 @@ Smoke test passed: matmul on cuda:0 produced shape torch.Size([1000, 1000])
     interoperability with other compiled code, consider using a conda-based
     environment manager or a container-based workflow instead.
 
-## Managing the PyTorch Cache
+## Managing the PyTorch cache
 
 When downloading pre-trained model weights, PyTorch
 needs a place to store them. By default, it uses `~/.cache/torch/` in your home
@@ -223,13 +271,16 @@ Functions like `torch.hub.load()` and the pretrained model APIs in
 `$TORCH_HOME/hub/` (default: `~/.cache/torch/hub/`). A single model can
 easily be several gigabytes.
 
-Point `TORCH_HOME` at your scratch directory so downloads land there instead:
+Create a directory on scratch for your PyTorch cache (see the
+[storage guide](../../fundamentals/storage.md) for how scratch works on
+{{ cluster.name }}), then point `TORCH_HOME` at it:
 
 ```bash
-export TORCH_HOME={{ storage.scratch_path }}/$USER/torch
+mkdir -p /path/to/your/scratch/torch
+export TORCH_HOME=/path/to/your/scratch/torch
 ```
 
-PyTorch reads it at import time, so set this *before* your
+PyTorch reads `TORCH_HOME` at import time, so set this *before* your
 Python process starts. You can confirm the active location
 from inside Python:
 
@@ -244,21 +295,20 @@ Add the `export` line to your job script before calling `uv run`:
 
 {{ sbatch_template(
     job_name="torch-train",
-    partition="gpuq",
+    partition="gpu",
     time="04:00:00",
     cpus=4,
     mem="32G",
     gpus=1,
-    modules=["uv"],
-    commands="export TORCH_HOME={{ storage.scratch_path }}/$USER/torch\n\ncd /path/to/myproject\nuv run python train.py"
+    constraint="sm_75",
+    modules=["uv/latest"],
+    commands="export TORCH_HOME=/path/to/your/scratch/torch\n\ncd /path/to/myproject\nuv run python train.py"
 ) }}
 
 !!! tip "Set cache path in your shell profile"
     To avoid repeating this export in every job script, add it to your
     `~/.bashrc`. It will be inherited by all batch jobs automatically.
-    Just remember that scratch may be purged periodically, triggering PyTorch
-    to re-download any pretrained weights.
 
-## See Also
+## See also
 
 - [Getting Started with uv](uv.md) — The recommended way to manage Python projects on {{ cluster.name }}
