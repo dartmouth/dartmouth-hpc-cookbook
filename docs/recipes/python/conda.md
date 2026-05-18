@@ -1,12 +1,12 @@
 ---
-title: "Conda/Mamba Environments"
-description: "When and how to use Conda or Mamba as an alternative Python environment manager on {{ cluster.name }}"
+title: "Conda Environments"
+description: "When and how to use Conda on {{ cluster.name }} for managing non-Python dependencies alongside Python"
 tags:
   - python
   - conda
 ---
 
-# Conda/Mamba Environments
+# Conda Environments
 
 !!! abstract "What we're cooking"
     When to reach for Conda instead of `uv`, how to load it on
@@ -15,12 +15,12 @@ tags:
 
 The recommended environment manager for most Python work on {{ cluster.name }}
 is [`uv`](uv.md). It's faster, lighter, and purpose-built for Python. But Conda
-solves a different problem: managing *non-Python* dependencies alongside Python.
-If you need it, this recipe shows you how to use it well.
+solves a different problem: it manages *non-Python* compiled libraries and tools
+alongside Python. If you need that, this recipe shows you how to use it well.
 
 ---
 
-## When to Use Conda Instead of uv
+## When to use Conda instead of uv
 
 Default to `uv`. Reach for Conda when one of these is true:
 
@@ -29,122 +29,139 @@ Default to `uv`. Reach for Conda when one of these is true:
 | You need non-Python software (GDAL, HDF5, CUDA toolkit, R packages) | Conda manages compiled libraries, not just Python packages |
 | You received an `environment.yml` from a collaborator | Reproducing someone else's Conda environment is one command |
 | You need bioinformatics tools from [Bioconda](https://bioconda.github.io/) | Tools like `samtools`, `bwa`, and `STAR` live there, not on PyPI |
-| You need a very specific Python version that isn't available via modules | Conda can install any Python version into an environment |
 
 If none of these apply, stick with `uv`. Conda environments are larger, slower
 to create, and more prone to dependency conflicts.
 
 ---
 
-## Mamba vs. Conda
-
-Mamba is a drop-in replacement for the `conda` command. It reimplements the
-dependency solver in C++, which makes environment creation and package
-installation **significantly faster** — often 5–10× on complex environments.
-
-Every `conda` command can be replaced with `mamba`:
-
-```bash
-mamba create -n myenv python=3.11   # same as: conda create ...
-mamba install numpy                  # same as: conda install ...
-mamba env export > environment.yml   # same as: conda env export ...
-```
-
-Check what's available on {{ cluster.name }}:
-
-```bash
-module avail mamba
-module avail conda
-```
-
-Load whichever is available, preferring `mamba`:
-
-```bash
-module load mamba    # if available
-# or
-module load miniconda
-```
-
----
-
-## Loading Conda on the Cluster
+## Loading Conda on the cluster
 
 {{ cluster.name }} provides a shared Conda installation via the module system.
-Always use it — never install your own Anaconda or Miniconda in your home
+Always use it; never install your own Anaconda or Miniconda in your home
 directory.
 
 ```bash
-module load miniconda   # exact name may vary; check: module avail conda
+module load conda/latest
 ```
+
+This loads [Miniforge](https://github.com/conda-forge/miniforge), a lightweight
+Conda distribution that uses `conda-forge` as its default channel and ships with
+the fast `libmamba` solver built in. From your perspective it works exactly like
+any other Conda installation.
 
 !!! danger "Do not install Anaconda in your home directory"
     A full Anaconda installation contains hundreds of pre-installed packages and
-    can consume **5–10 GB** of your home quota before you've created a single
+    can consume **5-10 GB** of your home quota before you've created a single
     environment. The module-provided installation is shared across all users and
     counts against no one's quota. Use it.
 
-After loading the module, initialize Conda for your shell session:
-
-```bash
-conda init bash   # or: conda init zsh
-```
-
-You only need to run `conda init` once. It adds a small block to your
-`~/.bashrc` (or `~/.zshrc`) that activates the base environment automatically
-on login. Restart your shell (or `source ~/.bashrc`) after running it.
-
 ---
 
-## Creating and Activating Environments
+## Creating and activating environments
 
-### Default location (home directory)
+After loading the module, create and activate an environment:
 
 ```bash
-conda create -n myenv python=3.11
+module load conda/latest
+
+conda create -n myenv python=3.12
 conda activate myenv
 conda install numpy scipy
 ```
 
-This creates the environment under `~/.conda/envs/myenv`. That's fine for
-small environments, but Conda environments grow quickly. See the quota warning
-below.
+By default, this creates the environment under `~/.conda/envs/myenv`. That's
+fine for small environments, but Conda environments grow quickly. See the next
+section for how to keep them off your home directory.
 
-### Preferred: store on scratch
+---
 
-For any environment larger than a few hundred megabytes, create it on scratch
-instead:
+## Keep large environments off your home directory
+
+Conda environments can balloon to several gigabytes each. A typical scientific
+environment with NumPy, SciPy, and a few compiled libraries easily reaches
+1-3 GB. Add a bioinformatics stack or geospatial tools and you're looking at
+5-20 GB.
+
+{{ cluster.name }} home directories have a limited quota ({{ storage.home_quota }}).
+Filling it up will break logins and job submissions.
+
+Create environments on [scratch storage](../../fundamentals/storage.md) or in
+your PI's `/work` directory instead:
 
 ```bash
-conda create --prefix {{ storage.scratch_path }}/envs/myenv python=3.11
-conda activate {{ storage.scratch_path }}/envs/myenv
+# Option 1: scratch (fast, but may be purged periodically)
+conda create --prefix /path/to/your/scratch/envs/myenv python=3.12
+
+# Option 2: /work (persistent, shared with your PI group)
+mkdir -p /work/pi_yourpi/envs
+conda create --prefix /work/pi_yourpi/envs/myenv python=3.12
 ```
 
 The `--prefix` flag sets an explicit path instead of a name. Activation works
-the same way — just pass the full path instead of the name.
+the same way; just pass the full path:
 
-!!! tip "Set a default env location in `.condarc`"
-    To make all environments land on scratch automatically, add this to
-    `~/.condarc`:
+```bash
+conda activate /path/to/your/scratch/envs/myenv
+```
+
+See the [storage guide](../../fundamentals/storage.md) for how scratch and
+`/work` are organized on {{ cluster.name }}.
+
+!!! tip "Set a default env location"
+    To make all environments land outside your home directory automatically,
+    add these to your `~/.condarc`:
 
     ```yaml
     envs_dirs:
-      - {{ storage.scratch_path }}/envs
+      - /path/to/your/scratch/envs
       - ~/.conda/envs
     ```
 
     After this, `conda create -n myenv` will create the environment at
-    `{{ storage.scratch_path }}/envs/myenv` by default.
+    `/path/to/your/scratch/envs/myenv` by default.
+
+    Alternatively, set environment variables in your `~/.bashrc`:
+
+    ```bash
+    export CONDA_ENVS_PATH=/path/to/your/scratch/envs
+    export CONDA_PKGS_DIRS=/path/to/your/scratch/conda-pkgs
+    ```
+
+    The `CONDA_PKGS_DIRS` variable redirects the package cache too, which can
+    also eat significant home directory space.
+
+!!! warning "Check your environment sizes"
+    ```bash
+    du -sh ~/.conda/envs/*
+    du -sh ~/.conda/pkgs
+    ```
+
+    Remove environments you no longer need:
+
+    ```bash
+    conda env remove -n old-env
+    # or for prefix-based:
+    conda env remove --prefix /path/to/your/scratch/envs/old-env
+    ```
+
+    The package cache (`~/.conda/pkgs`) is safe to clear at any time:
+
+    ```bash
+    conda clean --all
+    ```
 
 ---
 
-## Installing from Channels
+## Installing from channels
 
 Conda packages are distributed through *channels*. The two most important are:
 
-- **`conda-forge`** — community-maintained, broad coverage, usually more
-  up-to-date than `defaults`. Use this for most packages.
-- **`bioconda`** — bioinformatics tools: aligners, variant callers, genome
-  browsers, and more.
+- **`conda-forge`**: community-maintained, broad coverage, usually more
+  up-to-date than `defaults`. This is the default channel on {{ cluster.name }}
+  because the module loads Miniforge.
+- **`bioconda`**: bioinformatics tools (aligners, variant callers, genome
+  browsers, and more).
 
 Install from a specific channel with `-c`:
 
@@ -155,8 +172,8 @@ conda install -c bioconda samtools
 
 ### Setting channel priority in `.condarc`
 
-For any project that uses conda-forge or bioconda regularly, configure your
-`~/.condarc` file to set channel order and enforce strict priority:
+For any project that uses bioconda regularly, configure your `~/.condarc` file
+to set channel order and enforce strict priority:
 
 ```yaml
 channels:
@@ -168,17 +185,74 @@ channel_priority: strict
 
 `strict` priority means Conda will not mix packages across channels for the
 same dependency. This prevents subtle version conflicts that can arise when
-conda-forge and defaults both supply a package.
-
-!!! warning "Slow `conda install`? Try mamba or set strict priority"
-    The `conda` solver can be very slow on complex environments, especially
-    without strict channel priority. If installation hangs at "Solving
-    environment…", either switch to `mamba` (same commands, much faster solver)
-    or add `channel_priority: strict` to your `.condarc`.
+multiple channels supply the same package.
 
 ---
 
-## Exporting and Restoring Environments
+## Example: Geospatial analysis with GDAL
+
+This example shows why Conda exists: GDAL is a C/C++ library for reading and
+writing geospatial data formats. Installing it with `pip` requires system-level
+headers and build tools that you don't have on the cluster. Conda installs the
+compiled library and its Python bindings together.
+
+### Create the environment
+
+```bash
+module load conda/latest
+
+conda create --prefix /path/to/your/scratch/envs/geo python=3.12
+conda activate /path/to/your/scratch/envs/geo
+
+conda install -c conda-forge gdal rasterio geopandas
+```
+
+### Write a test script
+
+Save this as `check_geo.py`:
+
+```python
+import rasterio
+import geopandas as gpd
+from osgeo import gdal
+
+print(f"GDAL version: {gdal.__version__}")
+print(f"Rasterio version: {rasterio.__version__}")
+print(f"GeoPandas version: {gpd.__version__}")
+
+# Quick check that GDAL can list its supported drivers
+drivers = [gdal.GetDriver(i).ShortName for i in range(gdal.GetDriverCount())]
+print(f"GDAL knows {len(drivers)} raster/vector drivers")
+print("Sample drivers:", drivers[:10])
+```
+
+### Submit a batch job
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=geo-test
+#SBATCH --partition=cpu
+#SBATCH --time=00:10:00
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=4G
+#SBATCH --output=%x_%j.out
+#SBATCH --error=%x_%j.err
+
+# Load Conda and activate the environment
+module load conda/latest
+conda activate /path/to/your/scratch/envs/geo
+
+python check_geo.py
+```
+
+The key point: the `conda install` brought in the compiled GDAL library, its
+system dependencies (libproj, libgeos, etc.), and the Python bindings, all
+resolved together. Trying this with `pip install gdal` on the cluster would
+fail because the C headers aren't available.
+
+---
+
+## Exporting and restoring environments
 
 ### Export an environment
 
@@ -198,7 +272,7 @@ conda env export --from-history > environment.yml
 | `--from-history` | Portable across platforms, re-resolves versions | Less precisely pinned |
 
 **Recommendation:** Use `--from-history` when sharing environments with
-collaborators or between machines (e.g., laptop → cluster). Use the full export
+collaborators or between machines (e.g., laptop to cluster). Use the full export
 when you need a snapshot that must be bit-for-bit reproducible.
 
 ### Restore an environment
@@ -213,103 +287,62 @@ recreate the exact environment.
 
 ---
 
-## Using Conda Environments in Slurm Jobs
+## Using Conda environments in Slurm jobs
 
-`conda activate` relies on shell functions that aren't available in a non-interactive
-batch job by default. A bare `conda activate myenv` in a batch script will fail
-silently or with an error like:
-
-```
-CommandNotFoundError: Your shell has not been properly configured to use 'conda activate'.
-```
-
-The fix is to source Conda's shell integration before activating:
+In batch scripts, load the module and activate your environment the same way
+you would interactively:
 
 ```bash
-source $(conda info --base)/etc/profile.d/conda.sh
+module load conda/latest
 conda activate myenv
 ```
 
-### Complete Slurm batch script
+See the [geospatial example above](#submit-a-batch-job) for a complete Slurm
+script.
+
+---
+
+## Using Conda environments in Jupyter
+
+If you use JupyterLab through [Open OnDemand](../open-ondemand/apps.md), you
+can register any Conda environment as a Jupyter kernel so it appears in the
+kernel picker.
+
+First, activate your environment and install `ipykernel`:
 
 ```bash
-#!/bin/bash
-#SBATCH --job-name=conda-job
-#SBATCH --output=logs/%x_%j.out
-#SBATCH --time=02:00:00
-#SBATCH --mem=16G
-#SBATCH --cpus-per-task=4
-
-# Load the module-provided Conda
-module load miniconda
-
-# Initialize Conda for this non-interactive shell
-source $(conda info --base)/etc/profile.d/conda.sh
-
-# Activate your environment
+module load conda/latest
 conda activate myenv
-# or, for a prefix-based environment:
-# conda activate {{ storage.scratch_path }}/envs/myenv
 
-python my_script.py
+conda install ipykernel
 ```
 
-### Alternative: use the environment's Python directly
-
-If you want to avoid activation entirely, call Python using its full path
-inside the environment:
+Then register it:
 
 ```bash
-/path/to/envs/myenv/bin/python my_script.py
+python -m ipykernel install --user --name myenv --display-name "My Conda Env"
 ```
 
-This works without any `conda activate` and is useful for simple one-liners.
-You can find the path with `conda env list`.
+The `--display-name` is what shows up in the JupyterLab kernel menu. After
+registering, reload the JupyterLab page (or restart the server) and the new
+kernel will appear.
 
-!!! tip "Find your environment's Python path"
-    ```bash
-    conda activate myenv
-    which python
-    ```
-    Copy the output path and use it directly in your Slurm script.
+To remove a kernel you no longer need:
 
----
-
-## Home Directory Quota Warning
-
-Conda environments can balloon to several gigabytes each. A typical scientific
-environment with NumPy, SciPy, and a few other packages easily reaches 1–3 GB.
-Add PyTorch or a bioinformatics stack and you're looking at 5–20 GB.
-
-{{ cluster.name }} home directories have a limited quota. Filling it up will
-break logins and job submissions.
-
-**Keep environments on scratch or a project directory.** Configure `.condarc`
-to default to scratch (see the `envs_dirs` tip above), or always use `--prefix`
-with a scratch path when creating environments.
-
-!!! warning "Check your environment sizes"
-    ```bash
-    du -sh ~/.conda/envs/*
-    du -sh {{ storage.scratch_path }}/envs/*
-    ```
-
-    Remove environments you no longer need:
-
-    ```bash
-    conda env remove -n old-env
-    # or for prefix-based:
-    conda env remove --prefix {{ storage.scratch_path }}/envs/old-env
-    ```
+```bash
+jupyter kernelspec uninstall myenv
+```
 
 ---
 
-## Common Pitfalls
+{% include "site/conda-presets.md" %}
+
+## Common pitfalls
 
 !!! danger "Installing Anaconda in your home directory"
     Don't do it. The full Anaconda distribution is 5+ GB before you install
-    anything. Use `module load miniconda` to access a shared installation that
-    doesn't count against your quota.
+    anything. Use `module load conda/latest` to access a shared installation
+    that doesn't count against your quota.
 
 !!! warning "Mixing pip and conda in the same environment"
     It's sometimes necessary (if a package isn't on any Conda channel), but
@@ -321,29 +354,15 @@ with a scratch path when creating environments.
     - Use pip for the remaining packages as a final step.
     - Don't run `conda install` again after using `pip` in the same environment.
 
-!!! danger "`conda activate` fails in batch jobs"
-    `conda activate` requires shell functions that aren't set up in
-    non-interactive scripts. Always add this line before activating in a Slurm
-    job:
-
-    ```bash
-    source $(conda info --base)/etc/profile.d/conda.sh
-    ```
-
-!!! tip "Environment creation is painfully slow"
-    Switch to `mamba` — it uses the same syntax as `conda` but resolves
-    dependencies far faster. Also set `channel_priority: strict` in your
-    `~/.condarc` to reduce the search space.
-
 ---
 
-## Next Steps
+## Next steps
 
-- **Prefer `uv` for pure Python work** — see the [uv recipe](uv.md) for a
+- **Prefer `uv` for pure Python work**: see the [uv recipe](uv.md) for a
   faster, simpler workflow when you don't need non-Python dependencies.
-- **Submit your first job** — once your environment is ready, the
+- **Submit your first job**: once your environment is ready, the
   [interactive jobs](../slurm/interactive-jobs.md) recipe walks you through
   testing it before committing to a batch run.
-- **Containers as an alternative** — for fully reproducible, shareable
+- **Containers as an alternative**: for fully reproducible, shareable
   environments that include system libraries, see the
   [Apptainer recipe](../containers/apptainer.md).

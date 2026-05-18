@@ -305,8 +305,8 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
        home unavailable on a compute node. If your environment lives in `$HOME`,
        try `ls $HOME` inside the job script and check the output.
     4. **Use the correct activation method for your tool.**
-       conda requires `source /path/to/conda.sh && conda activate myenv`;
-       a plain `conda activate` without the shell initialization will silently fail.
+       For conda, load the module first (`module load conda/latest`) then
+       `conda activate myenv`. For `uv`, use `uv run` directly.
 
     !!! tip
         Add `which python && python --version` near the top of your job script.
@@ -426,7 +426,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     | `~/.cache/pip` | pip download and wheel cache |
     | `~/.cache/uv` | uv package cache |
     | `~/.local/lib/python*/` | pip user-install packages |
-    | `~/miniconda3/` or `~/anaconda3/` | Conda environments and packages |
+    | `~/.conda/` | Conda environments and packages |
     | `~/.matlab/` | MATLAB temp files and toolbox caches |
 
     **Solutions:**

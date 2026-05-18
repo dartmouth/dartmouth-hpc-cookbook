@@ -31,10 +31,9 @@ description: "Common tasks and where to find them in the {{ institution.short_na
 | I want to...                          | Go here                                                                  |
 | ------------------------------------- | ------------------------------------------------------------------------ |
 | Set up a Python environment           | [Getting Started with uv](../recipes/python/uv.md)                      |
-| Use Conda/Mamba instead               | [Conda/Mamba Environments](../recipes/python/conda.md)                   |
+| Use Conda instead                     | [Conda Environments](../recipes/python/conda.md)                        |
 | Run PyTorch on a GPU                  | [PyTorch with GPU Support](../recipes/python/pytorch.md)                 |
 | Use HuggingFace Transformers          | [Transformers & HuggingFace](../recipes/python/transformers.md)          |
-| Train across multiple GPUs            | [Multi-GPU and Multi-Node Training](../recipes/python/multi-gpu.md)      |
 | Run R on the cluster                  | [R on the Cluster](../recipes/r/getting-started.md)                      |
 | Run a MATLAB batch job                | [Running MATLAB Batch Jobs](../recipes/matlab/batch-job.md)              |
 
