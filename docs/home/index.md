@@ -8,7 +8,7 @@ description: "Practical recipes for High-Performance Computing at {{ institution
 Welcome to the **{{ institution.short_name }} HPC Cookbook**, a practical guide to using {{ institution.short_name }}'s High-Performance Computing resources. Whether you're submitting your first batch job or scaling a deep learning pipeline across multiple GPUs, you'll find what you need here.
 
 !!! warning "What is this?"
-     This "cookbook" is first and foremost a learning resource, not the official documentation for {{ institution.name }}'s HPC systems. While there is significant overlap, this cookbook is opinionated and selective in how it presents information and the available options and concepts. The goal is to offer you an engaging and scaffolded learning path, not full coverage of everything {{ institution.name }} has to offer. For the official documentation, please visit [{{ institution.support_url }}]({{ institution.support_url }}).
+     This "cookbook" is first and foremost a learning resource, not the official documentation for {{ institution.name }}'s HPC systems. While there is significant overlap, this cookbook is opinionated and selective in how it presents information and the available options and concepts. The goal is to offer you an engaging and scaffolded learning path, not full coverage of everything {{ institution.name }} or {{ cluster.name }} has to offer. For the official documentation, please visit [{{ institution.support_url }}]({{ institution.support_url }}) or [{{ cluster.docs_url }}]({{ cluster.docs_url }}).
 
 
 ---
@@ -40,11 +40,11 @@ Welcome to the **{{ institution.short_name }} HPC Cookbook**, a practical guide 
 
     [:octicons-arrow-right-24: Browse recipes](../recipes/index.md)
 
--   :material-server:{ .lg .middle } **Cluster Reference**
+-   :material-book-alphabet:{ .lg .middle } **Reference**
 
     ---
 
-    Hardware specs, partition details, software modules, and the Slurm cheat sheet.
+    Glossary of HPC terms, topic tags, and links to the official cluster documentation.
 
     [:octicons-arrow-right-24: Reference](../reference/index.md)
 
