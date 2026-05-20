@@ -19,10 +19,10 @@
     //  INSTITUTION CONFIG — Edit this block to adapt
     // ═══════════════════════════════════════════════════════
     var CONFIG = {
-        clusterName: "Discovery",
-        homePathFn: function (username) { return "/dartfs/rc/home/" + username.slice(-1) + "/" + username; },
-        labVolume: "/dartfs/rc/lab/C/ChenLab",
-        defaultUsername: "f00001",
+        clusterName: "Unity",
+        homePathFn: function (username) { return "/home/" + username; },
+        labVolume: "/work/pi_chen",
+        defaultUsername: "f00001_dartmouth_edu",
     };
     // ═══════════════════════════════════════════════════════
 
@@ -102,7 +102,7 @@
 
         var label = document.createElement("label");
         label.className = "tt-netid-label";
-        label.textContent = "Enter your NetID to begin:";
+        label.textContent = "Enter your username to begin:";
 
         var input = document.createElement("input");
         input.type = "text";
