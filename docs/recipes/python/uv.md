@@ -246,6 +246,31 @@ anywhere.
     version that created it — after changing versions, delete `.venv/` and
     run `uv sync` to rebuild.
 
+## Register Your Environment as a Jupyter Kernel
+
+If you use JupyterLab through [Open OnDemand](../open-ondemand/apps.md), the default kernel uses the system Python, which doesn't have your project's packages. To use your `uv`-managed environment in a notebook, register it as a custom kernel:
+
+```bash
+module load uv/latest
+cd /path/to/myproject
+uv add ipykernel           # (1)!
+uv run python -m ipykernel install --user --name myproject --display-name "My Project"  # (2)!
+```
+
+1. `ipykernel` is the package that lets Jupyter talk to your virtual environment.
+2. `--name` is an internal identifier; `--display-name` is the human-readable label you'll see in JupyterLab's kernel picker.
+
+The next time you launch a JupyterLab session, your custom kernel appears in the **New Launcher** and the **Kernel → Change Kernel** menu. Select it and you'll have access to all the packages in your `uv` environment.
+
+!!! tip "One kernel per project"
+    Register a separate kernel for each project that needs different packages. This keeps environments isolated and avoids dependency conflicts between notebooks.
+
+To remove a kernel you no longer need:
+
+```bash
+jupyter kernelspec uninstall myproject
+```
+
 ## Quick Start
 
 Here the essence of everything above, distilled into a copy-paste recipe for starting a new
