@@ -1,0 +1,14 @@
+#!/bin/bash
+
+NODE_VERSION="20.10.0"
+HUGO_VERSION="0.125.7"
+
+HUGO_URL="https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.tar.gz"
+NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz"
+
+wget $HUGO_URL -O hugo.tar.gz
+wget $NODE_URL -O node.tar.xz
+
+mkdir -p build_tools/bin
+tar xvf hugo.tar.gz -C ./build_tools/bin
+tar xvf node.tar.xz --strip-components=1 -C ./build_tools

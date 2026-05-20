@@ -1,0 +1,15 @@
+general:
+    - cpu
+    - gpu
+    - cpu-long
+    - gpu-long
+    - power9
+    - power9-gpu
+    - cpu-preempt
+    - gpu-preempt
+    - arm-preempt
+    - power9-gpu-preempt
+    - arm-gpu
+hidden:
+    - building
+    - uri-richamp

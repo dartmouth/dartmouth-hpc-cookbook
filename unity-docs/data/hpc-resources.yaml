@@ -1,0 +1,55 @@
+header:
+  - key: name
+    name: Resource
+    weight: 0
+  - key: experience
+    name: Experience Level
+    weight: 20
+  - key: description
+    name: Description
+    weight: 10
+
+subtables:
+  id: category
+  entries:
+    - key: general
+      title: General Resources
+      weight: 0
+      description: |
+        General resources for software development and using HPC and Linux systems.
+
+items:
+  - category: general
+    name: '[HPC Carpentry](https://hpc-carpentry.github.io/hpc-intro/)'
+    description: |
+      General lessons on using HPC environments and systems.
+    experience: All
+  - category: general
+    name: '[Software Carpentry](https://software-carpentry.org/lessons/index.html)'
+    description: |
+      Lessons on software development, Python, and R, which can be useful for
+      pre- or post-processing data, as well as computation.
+    experience: All
+  - category: general
+    name: '[Shell Command Tutorial (Software Carpentry)](https://swcarpentry.github.io/shell-novice/)'
+    description: |
+      Explains general concepts for navigating and using the terminal on
+      Linux-based systems (i.e., most HPC systems).
+    experience: Beginner
+  - category: general
+    name: '[Better Scientific Software (BSSw)](https://bssw.io/)'
+    description: |
+      BSSw provides a central hub for the community to address pressing
+      challenges in software productivity, quality, and sustainability.
+    experience: All
+  - category: general
+    name: '[hpc.social](https://hpc.social/)'
+    description: |
+      `hpc.social` is a hub for the HPC community.
+    experience: All
+  - category: general
+    name: '[Best Practices for Software Development in the Research Environment](https://www.cac.cornell.edu/education/training/StampedeJan2015/BestPracticesForSoftwareDevelopment.pdf)'
+    description: |
+        Goes over best practices for coding, software lifecycle,
+        and improving code in the context of research environments.
+    experience: All

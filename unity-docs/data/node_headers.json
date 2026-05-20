@@ -1,0 +1,45 @@
+[
+    {
+        "id": "general_use",
+        "display": "Open<br>Access",
+        "type": "bool",
+        "mobile": false
+    },
+    {
+        "id": "nodes_folded",
+        "display": "Node Names",
+        "mobile": true
+    },
+    {
+        "id": "count",
+        "display": "Quantity",
+        "mobile": false
+    },
+    {
+        "id": "cores",
+        "display": "Core Count",
+        "mobile": false
+    },
+    {
+        "id": "ram",
+        "display": "Memory",
+        "unit": "GB",
+        "mobile": false
+    },
+    {
+        "id": "gpu_model",
+        "display": "GPU",
+        "mobile": true
+    },
+    {
+        "id": "gpu_count",
+        "display": "GPU Count",
+        "mobile": false
+    },
+    {
+        "id": "vram",
+        "display": "VRAM",
+        "unit": "GB",
+        "mobile": false
+    }
+]

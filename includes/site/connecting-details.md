@@ -4,34 +4,21 @@
      You can use any Jinja2 variables from site.yml, e.g. {{ institution.name }}.
 -->
 
-Each of {{ institution.short_name }}'s HPC systems has its own address:
+{{ cluster.name }} offers two ways to connect:
 
-| Host | Description | Address |
-|------|-------------|---------|
-| Discovery | {{ institution.short_name }}'s primary HPC cluster with a shared job scheduler | `{{ cluster.login_node }}` |
-| Andes | Large shared-memory system for memory-intensive workloads | `andes.dartmouth.edu` |
-| Polaris | Large shared-memory system for memory-intensive workloads  | `polaris.dartmouth.edu` |
-| Babylon | Thayer / CS shared-memory nodes (12 hosts) | `babylon1.dartmouth.edu` – `babylon12.dartmouth.edu` |
+| Method | Address | Best For |
+|--------|---------|----------|
+| **SSH** (command line) | `{{ cluster.login_node }}` | Terminal access, scripts, file transfers |
+| **Open OnDemand** (web portal) | [{{ cluster.ondemand_url }}]({{ cluster.ondemand_url }}) | Jupyter, RStudio, VS Code, file browser |
 
-To connect, use your NetID (which is also your HPC account name) and the address (a.k.a. hostname) of the system you want to log in to.
-
-For example, to log into the Discovery cluster:
+To connect via SSH, use your {{ institution.short_name }} {{ institution.username_label }} in the format `{{ institution.username_label | lower }}_dartmouth_edu`:
 
 ```bash
-ssh your_netid@{{ cluster.login_node }}
+ssh your_{{ institution.username_label | lower }}_dartmouth_edu@{{ cluster.login_node }}
 ```
 
-To connect to one of {{ institution.short_name }}'s shared-memory systems:
+!!! note "SSH key required"
+    {{ cluster.name }} uses SSH key authentication. If you haven't set up your key yet, see the [account setup instructions](account.md#step-3-generate-an-ssh-key).
 
-```bash
-ssh your_netid@andes.dartmouth.edu
-ssh your_netid@polaris.dartmouth.edu
-```
-
-If you are a member of Thayer or in the CS program, you can log into one of the Babylon systems, for example:
-
-```bash
-ssh your_netid@babylon1.dartmouth.edu
-```
-
-To help you choose, check out the [Babylon usage page](https://cluster-usage.thayer.dartmouth.edu/) and pick one with a low user count.
+!!! note "Open OnDemand uses separate SSO"
+    The Open OnDemand web portal at [{{ cluster.ondemand_url }}]({{ cluster.ondemand_url }}) requires a separate SSO login through your institutional identity provider.

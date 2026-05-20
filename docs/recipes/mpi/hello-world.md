@@ -26,6 +26,9 @@ run as many simultaneous processes spread across multiple nodes, communicating
 by sending messages over the network. Each process has its own private memory;
 if it needs data from another process, it has to explicitly ask for it.
 
+!!! tip "New to parallel programming?"
+    If concepts like distributed memory, message passing, and processes vs. threads are unfamiliar, read the [Distributed Computing fundamentals](../../fundamentals/distributed-computing.md) article first. It explains *why* this model exists and when to use it. This recipe focuses on the *how*.
+
 **Open MPI** is the most widely used implementation of the MPI standard and
 the one available on {{ cluster.name }}.
 
@@ -46,16 +49,19 @@ Every MPI program revolves around a few key ideas:
 A rank-0 process is conventionally used as the "root" for coordination, but
 all ranks run the same executable.
 
-## Step 1: Load the Open MPI Module
+## Step 1: Load the Open MPI module
 
 ```bash
-module load openmpi
+module load openmpi/5.0.3
 ```
 
 This makes the `mpicc` compiler wrapper and `mpirun` launcher available.
 You need this on both login nodes and in every batch job.
 
-## Step 2: Write the Program
+!!! note "Available Open MPI versions"
+    {{ cluster.name }} provides several Open MPI versions: `openmpi/4.1.6` and `openmpi/5.0.3`, plus CUDA-enabled variants (`openmpi/5.0.3-cuda12.6`). You must specify a version; bare `module load openmpi` will not work. Use `module avail openmpi` to see what's currently installed.
+
+## Step 2: Write the program
 
 Create a file called `hello_mpi.c`:
 
@@ -110,7 +116,7 @@ You'll get an executable called `hello_mpi`. There's nothing special about
 this binary. `mpicc` produces a normal ELF executable; the MPI runtime
 is just a library linked into it.
 
-## Step 4: Test Interactively
+## Step 4: Test interactively
 
 Before submitting a full batch job, it's worth doing a quick sanity check
 on the login node:
@@ -123,10 +129,10 @@ mpirun -np 4 ./hello_mpi
 in no guaranteed order:
 
 ```
-Hello from rank 2 of 4 on discovery-login1
-Hello from rank 0 of 4 on discovery-login1
-Hello from rank 3 of 4 on discovery-login1
-Hello from rank 1 of 4 on discovery-login1
+Hello from rank 2 of 4 on login1
+Hello from rank 0 of 4 on login1
+Hello from rank 3 of 4 on login1
+Hello from rank 1 of 4 on login1
 ```
 
 !!! warning "Login nodes are for quick tests only"
@@ -134,33 +140,46 @@ Hello from rank 1 of 4 on discovery-login1
     by everyone on the cluster. The test above with 4 processes for a
     fraction of a second is fine; running 64 ranks for an hour is not.
 
-## Step 5: Submit a Batch Job
+## Step 5: Submit a batch job
 
 Now let's run across two nodes, with 4 ranks per node (8 total):
 
 {{ sbatch_template(
     job_name="mpi_hello",
-    partition="standard",
+    partition="cpu",
     time="00:05:00",
     nodes=2,
     ntasks_per_node=4,
-    mem="1G",
-    modules=["openmpi"],
-    commands="mpirun ./hello_mpi"
+    mem_per_cpu="2G",
+    modules=["openmpi/5.0.3"],
+    commands="export OMP_NUM_THREADS=1\nmpirun ./hello_mpi"
 ) }}
 
 A few things worth noting in this script:
 
+- **`--partition=cpu`** submits to the general-access CPU partition (48-hour max).
 - **`--nodes=2`** requests exactly 2 nodes. Slurm will choose which ones.
 - **`--ntasks-per-node=4`** tells Slurm to place 4 MPI ranks on each node,
   giving 8 processes in total. This is clearer than `--ntasks=8` alone
   because it makes the per-node layout explicit and guarantees the ranks
   are evenly spread.
-- **`--mem=1G`** is the total memory *per node* (not per task). Adjust as
-  needed for real workloads.
+- **`--mem-per-cpu=2G`** requests 2 GB of memory per core. For MPI jobs this
+  is more natural than `--mem` (total per node), because the memory scales
+  automatically if you change the number of ranks.
+- **`OMP_NUM_THREADS=1`** prevents libraries linked with OpenMP support (common
+  in scientific computing) from spawning extra threads that compete with your
+  MPI ranks for cores. Always set this for pure-MPI jobs.
 - **`mpirun`** (without `-np`) reads the task count from Slurm's environment
-  and launches the right number of processes on the right nodes. You don't
-  need to specify hostnames manually.
+  and launches the right number of processes on the right nodes. No hostnames
+  or extra flags needed. You can also use `srun ./hello_mpi` instead;
+  `srun` is Slurm-native and works the same way. `mpirun` is the more
+  portable choice if you run the same script on other clusters.
+
+!!! tip "Faster scheduling for short test runs"
+    For quick MPI tests under 2 hours, submit to `cpu-preempt` instead.
+    Preempt partitions have access to more hardware (idle nodes owned by
+    other groups), so your job may start faster. The tradeoff: your job
+    can be killed after 2 hours if a priority user needs the node.
 
 Submit the job:
 
@@ -168,7 +187,7 @@ Submit the job:
 sbatch mpi_hello.sh
 ```
 
-## Understanding the Output
+## Understanding the output
 
 After the job completes, read the output file:
 
@@ -198,10 +217,33 @@ Notice two things:
    `printf` does not synchronise across ranks. Real programs coordinate
    output (or avoid printing from every rank) to avoid this.
 
-## Common Pitfalls
+## Scaling up: InfiniBand and the `mpi` partition
+
+The hello-world example above runs fine on any two nodes. For real MPI
+workloads that exchange messages frequently (simulations, iterative solvers,
+domain decomposition), network latency matters.
+
+{{ cluster.name }} has a dedicated **`mpi` partition** with InfiniBand-connected
+nodes, purpose-built for tightly coupled multi-node jobs. These nodes have 64
+cores and 250 GB of memory each, with a 2-day time limit.
+
+To target this partition and request the InfiniBand interconnect:
+
+```bash
+#SBATCH --partition=mpi
+#SBATCH --constraint=ib
+```
+
+If you don't need the `mpi` partition specifically but still want low-latency
+networking on the `cpu` partition, you can add `--constraint=ib` there too.
+
+!!! tip "Consistent CPU architecture with `--constraint=mpi`"
+    If you use `--ntasks` without specifying `--nodes` (letting Slurm scatter ranks across any available nodes), add `--constraint=mpi` to ensure all tasks land on nodes with the same CPU model. Mixed architectures can cause subtle performance differences or, in rare cases, crashes with optimized binaries.
+
+## Common pitfalls
 
 ??? failure "command not found: mpicc / mpirun"
-    You forgot `module load openmpi`. Add it to both your interactive
+    You forgot `module load openmpi/5.0.3`. Add it to both your interactive
     session and your batch script.
 
 ??? failure "Compiled with `gcc` instead of `mpicc`"
@@ -214,11 +256,17 @@ Notice two things:
     If your output shows only one hostname, you probably forgot `--nodes`
     in your job script. Without it, Slurm is free to pack all tasks onto a
     single node (which it often prefers, since it avoids network traffic).
-    Set both `--nodes` and `--ntasks` explicitly.
+    Set both `--nodes` and `--ntasks-per-node` explicitly.
 
 ??? failure "Job failed immediately with a process manager error"
     This usually means `mpirun` couldn't contact the processes on the
-    remote node. Common causes: (1) you loaded a different version of
-    Open MPI at compile time vs. run time. Always use the same module;
-    (2) the job's allocated nodes can't reach each other over the cluster
-    network (rare, but worth checking with your support team).
+    remote node. Common causes:
+
+    1. **Mismatched Open MPI version**: You loaded a different version of
+       `openmpi` at compile time vs. run time. Always use the same module
+       for both. Check with `module list`.
+    2. **Mismatched MPI implementation**: If you compiled against Open MPI
+       but try to run with Intel MPI (or vice versa), the program will crash.
+       An MPI binary is tied to the implementation it was built with.
+    3. **Network issue**: The allocated nodes can't reach each other (rare,
+       but worth checking with the {{ institution.support_team }} team).

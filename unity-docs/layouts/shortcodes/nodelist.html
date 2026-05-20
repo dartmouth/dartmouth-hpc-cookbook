@@ -1,0 +1,81 @@
+{{ $nodelist := index site.Data (.Get 0) -}}
+{{ $columnKeys := index site.Data (.Get 1) -}}
+<div>
+<div id="filter">
+    <div class="mb-4 border border-zinc-200 dark:border-zinc-600 rounded-md p-2 flex items-center  focus-within:border-accent dark:text-accent-dark  focus-within:text-accent">
+        <span class="material-symbols-rounded pr-2">search</span>
+        <form class="flex flex-grow" autocomplete="off"  onsubmit="return false;"><input type="text" onkeyup="setFilterTerm(this)" placeholder="Filter Node List" class="bg-transparent focus:outline-none flex-grow"></form>
+    </div>
+    <div class="flex flex-col lg:flex-row lg:justify-start mb-4 lg:items-center flex-wrap">
+        <div class="flex basis-1/3">
+            <div id="cpu-hide" class="material-symbols-rounded pr-2 hover:cursor-pointer" onclick="toggleNodeFilterSetting('cpu', 'uncheck')">check_box</div>
+            <div id="cpu-show" class="material-symbols-rounded pr-2 hidden hover:cursor-pointer" onclick="toggleNodeFilterSetting('cpu', 'check')">check_box_outline_blank</div>
+            <div>Show CPU-only nodes</div>
+        </div>
+        <div class="flex basis-1/3">
+            <div id="gpu-hide" class="material-symbols-rounded pr-2 hover:cursor-pointer" onclick="toggleNodeFilterSetting('gpu', 'uncheck')">check_box</div>
+            <div id="gpu-show" class="material-symbols-rounded pr-2 hidden hover:cursor-pointer" onclick="toggleNodeFilterSetting('gpu', 'check')">check_box_outline_blank</div>
+            <div>Show GPU nodes</div>
+        </div>
+        <div class="flex basis-1/3">
+            <div id="open-hide" class="material-symbols-rounded pr-2 hidden hover:cursor-pointer" onclick="toggleNodeFilterSetting('open', 'uncheck')">check_box</div>
+            <div id="open-show" class="material-symbols-rounded pr-2 hover:cursor-pointer" onclick="toggleNodeFilterSetting('open', 'check')">check_box_outline_blank</div>
+            <div>Show only Open Access nodes</div>
+        </div>
+        <form class="flex basis-1/3 items-center" autocomplete="off"  onsubmit="return false;">
+            <div class="pr-2">Min RAM (G):</div>
+            <input onchange="toggleNodeFilterSetting('ram', this.valueAsNumber)" onkeyup="toggleNodeFilterSetting('ram', this.valueAsNumber)" value="0" class="border border-zinc-200 dark:border-zinc-600 rounded-md p-1 flex items-center  focus-within:border-umass-red dark:text-umass-red-desaturated  focus-within:text-umass-red bg-transparent focus:outline-none" type="number" id="minram" name="minram" min="0" max="10000">
+        </form>
+        <form class="flex basis-1/3 items-center" autocomplete="off"  onsubmit="return false;">
+            <div class="pr-2">Min VRAM (G):</div>
+            <input onchange="toggleNodeFilterSetting('vram', this.valueAsNumber)" onkeyup="toggleNodeFilterSetting('vram', this.valueAsNumber)"  value="0" class="border border-zinc-200 dark:border-zinc-600 rounded-md p-1 flex items-center  focus-within:border-umass-red dark:text-umass-red-desaturated  focus-within:text-umass-red bg-transparent focus:outline-none" type="number" id="minvram" name="minvram" min="0" max="10000">
+        </form>
+    </div>
+</div>
+<table class="w-full" id="nodeList">
+    <thead class="text-left bg-main border-main text-white dark:bg-main-dark border dark:border-main-dark">
+    <tr class="">
+        <th class="w-12"></th>
+    {{ range $columnKeys }}
+    <th class="py-4 {{ if not .mobile }}hidden lg:table-cell{{ end }} pr-4">{{ .display | safeHTML }}</th>
+    {{ end }}
+    </tr>
+    </thead>
+    <tbody class="hidden-row-table">
+    {{ range $node := $nodelist }}
+    <tr id="noderow-{{ md5 $node.nodes_folded }}" class="main-row node-entry"
+    {{ range $nodekey, $nodeval := $node }}
+    data-{{ replace $nodekey "_" "" }}="{{ $nodeval }}"
+    {{ end }}
+    >
+        <td class="text-zinc-900 text-opacity-20 dark:text-white dark:text-opacity-20 pl-4">
+            <div id="expand-nodeinfo-{{ md5 $node.nodes_folded }}" class="material-symbols-rounded hover:cursor-pointer"  onclick="nodeToggle('{{ md5 $node.nodes_folded }}')">add_circle</div>
+            <div id="collapse-nodeinfo-{{ md5 $node.nodes_folded }}" class="material-symbols-rounded hidden hover:cursor-pointer"  onclick="nodeToggle('{{ md5 $node.nodes_folded }}')">cancel</div>
+        </td>
+        {{ range $columnKeys }}
+        {{ $classes := "" }}
+        {{ if not .mobile }}{{ $classes = "hidden lg:table-cell" }}{{ end }}
+        {{ if eq .type "bool" }}
+        <td class="{{ $classes }}">{{ if (index $node .id) }}<div class="material-symbols-rounded">check</div>{{ end }}</td>
+        {{ else if (index $node .id) }}
+        {{ if .partial }}
+        <td class="{{ $classes }}">{{ partial .partial (index $node .id) }}</td>
+        {{ else }}
+        <td class="{{ $classes }}">{{ if .unit }}{{ int (index $node .id) }}  {{ .unit }}{{ else }}{{ index $node .id }}{{ end }}</td>
+        {{ end }}
+        {{ else }}
+        <td class="{{ $classes }} text-opacity-30 text-zinc-900 dark:text-white dark:text-opacity-30">N/A</td>
+        {{ end }}
+    {{ end }}
+    </tr>
+    <tr id="moreinfo-{{ md5 $node.nodes_folded }}" class="hidden node-moreinfo">
+        <td class="hidden lg:block"></td>
+        <td colspan="{{ add (len $columnKeys) 1 }} lg:{{ len $columnKeys }}">
+            {{ partial "nodeinfo.html" $node }}
+        </td>
+    </tr>
+    {{ end }}
+    <tr id="no-nodes" class="hidden"><td colspan="100"><span class="flex justify-center italic">No nodes match the current query!</span></td></tr>
+    </tbody>
+</table>
+</div>

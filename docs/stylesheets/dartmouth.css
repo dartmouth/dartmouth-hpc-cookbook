@@ -318,13 +318,29 @@
 }
 
 /* ==========================================================================
-   CWG logo in site footer
+   Logos in site footer
    ========================================================================== */
 
-.md-footer-meta .footer-cwg-logo {
+.md-footer-meta .footer-cwg-logo,
+.md-footer-meta .footer-rr-logo {
   height: 2rem;
   vertical-align: middle;
   opacity: 0.9;
+}
+
+.md-footer-meta .footer-rr-logo {
+  margin-left: 0.75rem;
+}
+
+/* ==========================================================================
+   Admonition body text size
+   The Material theme shrinks admonition content to 0.8rem; restore it to
+   match regular body text. The title (.admonition-title) is left unchanged.
+   ========================================================================== */
+
+.md-typeset .admonition > :not(.admonition-title),
+.md-typeset details > :not(summary) {
+  font-size: 0.7rem;
 }
 
 /* ==========================================================================

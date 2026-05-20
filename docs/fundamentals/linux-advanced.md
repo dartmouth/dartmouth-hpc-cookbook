@@ -1,12 +1,12 @@
 ---
-title: Linux — Permissions, Pipes & the Environment
+title: Advanced Linux
 description: "File permissions, pipes, redirection, environment variables, dotfiles, and modules on {{ institution.short_name }}'s HPC cluster"
 tags:
   - fundamentals
   - linux
 ---
 
-# Linux — Permissions, Pipes & the Environment
+# Advanced Linux: Permissions, Pipes & the Environment
 
 This article picks up where [Linux Basics](linux-basics.md) left off. You should already be comfortable navigating the filesystem and managing files. Here you'll learn how Linux controls access to files, how to chain commands together with pipes, and how to configure your shell environment.
 
@@ -17,7 +17,7 @@ This article picks up where [Linux Basics](linux-basics.md) left off. You should
 
 You've already set up your workspace from the basic tour. Now it's time to go deeper: control who can access your files, chain commands together, and manage software modules.
 
-Enter your NetID below, then click **SSH into {{ cluster.name }} →** to begin.
+Enter your {{ institution.username_label }} below, then click **SSH into {{ cluster.name }} →** to begin.
 
 <div class="terminal-tour" data-tour="advanced" data-cluster-name="{{ cluster.name }}" markdown="0"></div>
 
@@ -88,13 +88,29 @@ some_noisy_command > /dev/null 2>&1   # throw away stdout and stderr
 
 ### Environment variables
 
-Your shell has **environment variables** — named values that affect how programs run. The most important one is `$PATH`, which tells the shell where to look for commands:
+Your shell has **environment variables** — named values that affect how programs run. The most important one is `$PATH`:
 
 ```bash
 echo $PATH
+/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+```
+
+`$PATH` is a colon-separated list of directories. When you type a command like `python`, the shell searches these directories from left to right looking for an executable with that name. If it finds one, it runs it. If it doesn't find one in any of them, you get the familiar error:
+
+```
+-bash: python: command not found
+```
+
+This is what people mean when they say something is "not on your `PATH`": The software may be installed on the system, but the directory containing its executable isn't in your `$PATH`, so your shell doesn't know where to find it. You'll run into this often on a cluster where hundreds of software packages are installed but only a handful are available by default, managed through [environment modules](modules.md).
+
+Other common environment variables:
+
+```bash
 echo $HOME    # your home directory
 echo $USER    # your username
 ```
+
+`$HOME` and `$USER` are useful when writing scripts that need to work across different machines or different users. Instead of hardcoding a path like `/home/c/f00abc/results`, you can write `$HOME/results`, which resolves correctly regardless of who runs the script or what the home directory convention is on that system. This matters on HPC clusters especially: Your labmate's home directory is in a different location than yours, and other institutions structure their paths differently than {{ institution.short_name }}. Scripts that lean on environment variables instead of hardcoded paths require fewer modifications to run on a different system or under a different account.
 
 ### Dotfiles
 
@@ -114,10 +130,10 @@ source ~/.bashrc
 
 ### Environment modules on {{ cluster.name }}
 
-Now that you know about `$PATH`, here's the practical payoff: {{ cluster.name }} uses an **environment modules** system so you never have to edit `$PATH` by hand. When you load a module, the system updates your environment variables automatically:
+Now that you know about `$PATH`, here's the practical payoff: {{ cluster.name }} uses an **environment modules** system so you don't have to edit `$PATH` by hand. When you load a module, the system updates your environment variables automatically:
 
 ```bash
-module load python/3.11    # makes Python 3.11 available
+module load openmpi/5.0.3  # makes Open MPI available in version 5.0.3
 module list                # see what's currently loaded
 ```
 

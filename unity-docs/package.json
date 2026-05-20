@@ -1,0 +1,43 @@
+{
+    "name": "unity-website",
+    "version": "0.0.1",
+    "description": "The website for the Unity cluster at UMass Amherst, URI, and UMass Dartmouth",
+    "main": "public/index.html",
+    "scripts": {
+        "start": "",
+        "dev": "hugo serve -p 1313 --bind 0.0.0.0",
+        "vale": "apptainer exec docker://jdkato/vale vale --config='.vale/vale.ini'",
+        "styles": "bash .vale/setup_styles.sh",
+        "build": "hugo --minify",
+        "search": "pagefind",
+        "node-install": "npm install && (cd themes/unity ; npm install)",
+        "pagedev": "concurrently \"nodemon\"  \"http-server ./public -a 0.0.0.0 -p 1313 -s\"",
+        "clean": "rm -r ./resources ./public",
+        "docker:install": "./scripts/dev_helpers/linux/docker-install",
+        "docker:dev": "./scripts/dev_helpers/linux/docker-dev"
+    },
+    "author": "The Unity Team",
+    "license": "CC-BY-NC-SA 4.0",
+    "devDependencies": {
+        "concurrently": "^8.2.2",
+        "http-server": "^14.1.1",
+        "nodemon": "^3.0.1",
+        "pagefind": "^1.0.4"
+    },
+    "nodemonConfig": {
+        "verbose": true,
+        "watch": [
+            "content",
+            "assets",
+            "data",
+            "hugo.yaml",
+            "themes",
+            "layouts"
+        ],
+        "exec": "(cd themes/unity ; npm run css) && hugo -b http://localhost:1313 --minify && pagefind",
+        "ext": "md,js,css,html,yaml,json,svg",
+        "ignore": [
+            "themes/unity/static/css/*"
+        ]
+    }
+}

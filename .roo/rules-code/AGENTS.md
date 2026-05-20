@@ -8,3 +8,4 @@
 - Custom color schemes are `dartmouth-light` / `dartmouth-dark` in `docs/stylesheets/dartmouth.css` — do not use Material's `default`/`slate`.
 - Quiz HTML must follow `.slide-quiz > .quiz-slide` structure with `data-answer` and `data-explain` attributes on `.quiz-slide` elements.
 - The `sbatch_template()` macro in `hooks/macros.py` generates Slurm job scripts — use it in recipe pages instead of writing raw sbatch blocks.
+- **Index Pages:** The `index.md` files in each category (e.g., `recipes/index.md`, `articles/index.md`) act as directories and landing pages. When adding new recipes or articles, you *must* also update the corresponding `index.md` to link to the new content so it is discoverable.

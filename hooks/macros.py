@@ -84,6 +84,28 @@ def _substitute_vars(text: str, site_config: dict) -> str:
     return re.sub(r"\{\{\s*([\w.]+)\s*\}\}", _replace, text)
 
 
+def _parse_annotated_int(val: "int | str") -> tuple[int, str]:
+    """Extract a numeric value and display string from a possibly-annotated int.
+
+    Parameters that are normally integers (``nodes``, ``cpus``, etc.) can
+    optionally be passed as strings with an embedded MkDocs Material code
+    annotation marker, e.g. ``"1  # (3)!"``.  This helper returns the
+    integer portion (for conditional logic) and the full string (for
+    rendering into the sbatch script).
+
+    >>> _parse_annotated_int(4)
+    (4, '4')
+    >>> _parse_annotated_int("1  # (3)!")
+    (1, '1  # (3)!')
+    """
+    if isinstance(val, int):
+        return val, str(val)
+    text = str(val)
+    match = re.match(r"\s*(\d+)", text)
+    numeric = int(match.group(1)) if match else 0
+    return numeric, text
+
+
 def _generate_glossary_tooltips(site_config: dict):
     """Write includes/glossary.md (tooltip definitions) from glossary.yml.
 
@@ -128,13 +150,15 @@ def define_env(env):
     if short:
         env.conf["site_name"] = f"{short} HPC Cookbook"
 
-    # Inject CWG logo into the site-wide footer via the copyright field.
+    # Inject logos into the site-wide footer via the copyright field.
     # Use an absolute URL (anchored to site_url) so the path resolves
     # correctly from any page depth.
     site_url = env.conf.get("site_url", "").rstrip("/")
     env.conf["copyright"] = (
         f'<img src="{site_url}/assets/cwg-logo.png"'
         f' alt="CWG Logo" class="footer-cwg-logo">'
+        f'<img src="{site_url}/assets/rr-logo.png"'
+        f' alt="Research Computing Logo" class="footer-rr-logo">'
     )
 
     # Generate tooltip file from the single glossary YAML, substituting
@@ -259,9 +283,8 @@ def define_env(env):
         Returns the output wrapped in a fenced code block. Falls back to
         an info admonition when SSH is unavailable (e.g., in CI or off-VPN).
 
-        Uses GSSAPI (Kerberos) for authentication. Before building, obtain
-        a Kerberos ticket for your realm (see ``build.kerberos_realm`` in
-        site.yml).  Then run ``mkdocs build`` or ``mkdocs serve`` as usual.
+        Authentication method is controlled by ``build.ssh_auth`` in site.yml
+        (``key`` or ``gssapi``).  See CUSTOMIZING.md for details.
 
         Usage in Markdown:
             {{ remote_cmd("login.example.edu", "free -h") }}
@@ -291,21 +314,31 @@ def define_env(env):
     def _ssh_cmd(host: str, command: str) -> str | None:
         """Run a command on a remote host via SSH. Returns stdout or None.
 
-        Uses GSSAPI (Kerberos) for passwordless authentication. Requires
-        a valid Kerberos ticket (see ``build.kerberos_realm`` in site.yml).
+        Authentication method is controlled by ``build.ssh_auth`` in site.yml:
+        - ``gssapi``: Uses GSSAPI (Kerberos) — requires a valid ticket.
+        - ``key`` (default): Uses standard key-based SSH authentication.
         """
+        build_config = site_config.get("build", {})
+        ssh_auth = build_config.get("ssh_auth", "key")
+
+        ssh_opts = [
+            "ssh",
+            "-o", "BatchMode=yes",
+            "-o", "ConnectTimeout=5",
+            "-o", "StrictHostKeyChecking=accept-new",
+        ]
+
+        if ssh_auth == "gssapi":
+            ssh_opts += [
+                "-o", "GSSAPIAuthentication=yes",
+                "-o", "GSSAPIDelegateCredentials=yes",
+            ]
+
+        ssh_opts += [host, command]
+
         try:
             result = subprocess.run(
-                [
-                    "ssh",
-                    "-o", "BatchMode=yes",
-                    "-o", "ConnectTimeout=5",
-                    "-o", "StrictHostKeyChecking=accept-new",
-                    "-o", "GSSAPIAuthentication=yes",
-                    "-o", "GSSAPIDelegateCredentials=yes",
-                    host,
-                    command,
-                ],
+                ssh_opts,
                 capture_output=True,
                 text=True,
                 timeout=15,
@@ -513,52 +546,76 @@ def define_env(env):
     @env.macro
     def sbatch_template(
         job_name: str = "my_job",
-        partition: str = "standard",
+        partition: str = site_config.get("cluster", {}).get("default_partition", "cpu"),
         time: str = "01:00:00",
-        cpus: int = 1,
+        cpus: "int | str" = 1,
         mem: str = "4G",
-        gpus: int = 0,
-        ntasks_per_node: int = 0,
-        nodes: int = 0,
+        mem_per_cpu: str = "",
+        gpus: "int | str" = 0,
+        gres: str = "",
+        ntasks_per_node: "int | str" = 0,
+        nodes: "int | str" = 0,
+        constraint: str = "",
         modules: list[str] | None = None,
         commands: str = "echo 'Hello from the cluster!'",
+        annotations: list[str] | None = None,
     ):
         """
         Generate a templated sbatch script. Useful for recipe pages.
 
-        The ``commands`` string may contain ``{{ var }}`` placeholders from
-        site.yml (e.g. ``{{ storage.scratch_path }}``) — they are resolved
-        at build time using the same substitution as the rest of the page.
+        The ``commands`` string may contain ``{{ var }}`` placeholders
+        from site.yml (e.g. ``{{ storage.scratch_path }}``) — they are
+        resolved at build time using the same substitution as the rest
+        of the page.
 
         For MPI jobs, set ``ntasks_per_node`` (MPI ranks per node) and
         ``nodes`` (number of nodes).  The total rank count is
         ``nodes × ntasks_per_node``.  When ``ntasks_per_node > 0`` and
-        ``cpus`` is at its default of 1, ``--cpus-per-task`` is omitted so
-        the script stays clean for pure-MPI jobs.  Set ``cpus > 1``
+        ``cpus`` is at its default of 1, ``--cpus-per-task`` is omitted
+        so the script stays clean for pure-MPI jobs.  Set ``cpus > 1``
         alongside ``ntasks_per_node`` for hybrid MPI+OpenMP jobs.
 
-        Usage in Markdown:
-            {{ sbatch_template(
-                job_name="pytorch_train",
-                partition="gpu",
-                gpus=1,
-                mem="32G",
-                modules=["python/3.11", "cuda/12.2"],
-                commands="python train.py --epochs 50"
-            ) }}
+        To add MkDocs Material code annotations, embed ``# (N)!``
+        markers directly in parameter values (``gres``, ``constraint``,
+        ``modules`` entries, ``commands`` lines) and pass the
+        corresponding annotation texts as an ordered list via
+        ``annotations``.  Numeric parameters (``nodes``, ``cpus``,
+        ``gpus``, ``ntasks_per_node``) also accept strings with
+        annotation markers, e.g. ``nodes="1  # (1)!"``.
+
+        Parameters:
+            mem_per_cpu: Per-CPU memory (e.g. ``"2G"``).  When set,
+                  emits ``--mem-per-cpu`` instead of ``--mem``.
+                  Preferred for MPI jobs where memory scales with
+                  the number of tasks.
+            gres: Raw ``--gres`` value (e.g. ``"gpu:1  # (1)!"``).
+                  Overrides ``gpus`` when set.
+            annotations: Ordered list of annotation texts matching the
+                  ``# (N)!`` markers embedded in parameter values.
+
+        Usage in Markdown::
 
             {{ sbatch_template(
-                job_name="mpi_hello",
-                nodes=2,
-                ntasks_per_node=4,
-                mem="4G",
-                modules=["openmpi"],
-                commands="mpirun ./hello_mpi"
+                job_name="torch-smoke",
+                partition="gpu",
+                nodes="1  # (1)!",
+                gres="gpu:2  # (2)!",
+                constraint="sm_75  # (3)!",
+                annotations=[
+                    "Keep both GPUs on the same node.",
+                    "Request two GPUs.",
+                    "Turing (7.5) or newer.",
+                ]
             ) }}
         """
-        # Resolve any {{ var }} placeholders in the commands string so that
-        # callers can write e.g. {{ storage.scratch_path }} inside commands.
+        # Resolve any {{ var }} placeholders in the commands string
         commands = _substitute_vars(commands, site_config)
+
+        # Parse numeric params that may carry annotation markers
+        nodes_val, nodes_str = _parse_annotated_int(nodes)
+        cpus_val, cpus_str = _parse_annotated_int(cpus)
+        gpus_val, gpus_str = _parse_annotated_int(gpus)
+        ntasks_val, ntasks_str = _parse_annotated_int(ntasks_per_node)
 
         script = f"""```bash
 #!/bin/bash
@@ -566,23 +623,31 @@ def define_env(env):
 #SBATCH --partition={partition}
 #SBATCH --time={time}"""
 
-        if nodes > 0:
-            script += f"\n#SBATCH --nodes={nodes}"
+        if nodes_val > 0:
+            script += f"\n#SBATCH --nodes={nodes_str}"
 
-        if ntasks_per_node > 0:
-            script += f"\n#SBATCH --ntasks-per-node={ntasks_per_node}"
+        if ntasks_val > 0:
+            script += f"\n#SBATCH --ntasks-per-node={ntasks_str}"
             # Only emit --cpus-per-task for hybrid MPI+OpenMP jobs
-            if cpus > 1:
-                script += f"\n#SBATCH --cpus-per-task={cpus}"
+            if cpus_val > 1:
+                script += f"\n#SBATCH --cpus-per-task={cpus_str}"
         else:
-            script += f"\n#SBATCH --cpus-per-task={cpus}"
+            script += f"\n#SBATCH --cpus-per-task={cpus_str}"
 
-        script += f"\n#SBATCH --mem={mem}"
+        if mem_per_cpu:
+            script += f"\n#SBATCH --mem-per-cpu={mem_per_cpu}"
+        else:
+            script += f"\n#SBATCH --mem={mem}"
         script += "\n#SBATCH --output=%x_%j.out"
         script += "\n#SBATCH --error=%x_%j.err"
 
-        if gpus > 0:
-            script += f"\n#SBATCH --gres=gpu:{gpus}"
+        if gres:
+            script += f"\n#SBATCH --gres={gres}"
+        elif gpus_val > 0:
+            script += f"\n#SBATCH --gres=gpu:{gpus_str}"
+
+        if constraint:
+            script += f"\n#SBATCH --constraint={constraint}"
 
         script += "\n"
 
@@ -592,6 +657,15 @@ def define_env(env):
                 script += f"module load {mod}\n"
 
         script += f"\n# Run your work\n{commands}\n```"
+
+        # Append MkDocs Material code annotations if provided
+        if annotations:
+            script += "\n\n"
+            for i, text in enumerate(annotations, 1):
+                ann_lines = text.strip().split("\n")
+                script += f"{i}.  {ann_lines[0]}\n"
+                for cont in ann_lines[1:]:
+                    script += f"    {cont}\n"
 
         return script
 

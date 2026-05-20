@@ -1,0 +1,13 @@
+FROM node:lts-bullseye-slim
+
+ARG hugoVersion='0.125.7'
+ARG TARGETARCH
+
+ENV TZ="America/New_York"
+
+RUN mkdir /build
+COPY requirements.txt /build/requirements.txt
+RUN apt-get update && apt-get install -y wget curl zip git tzdata python3 python3-pip tini procps
+RUN wget "https://github.com/gohugoio/hugo/releases/download/v${hugoVersion}/hugo_extended_${hugoVersion}_linux-${TARGETARCH}.tar.gz" -O hugo.tar.gz && tar xvf hugo.tar.gz -C /bin
+RUN pip install -r /build/requirements.txt && rm -r /build
+RUN git config --system --add safe.directory "/site"

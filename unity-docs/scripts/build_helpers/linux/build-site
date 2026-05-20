@@ -1,0 +1,6 @@
+#!/bin/bash
+
+npm install
+(cd themes/unity && npm install && npm run css)
+hugo -b $1 --minify
+npm run search

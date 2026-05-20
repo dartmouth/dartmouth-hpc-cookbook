@@ -1,0 +1,104 @@
+{{ $nodeGroupList := index site.Data (.Get 0) -}}
+{{ $meta := site.Data.partition_meta -}}
+
+    {{ $partitionData := dict }}
+    {{ range $nodeGroupList }}
+      {{ if eq .gpu_model nil }}
+      {{ $cpuModel := .cpus }}
+      {{ $ram := .ram }}
+      {{ $coresPerNode := .cores }}
+      {{ $cpuModelKey := delimit  (slice $cpuModel $coresPerNode $ram) "," }}
+      {{ $totalCPUs := mul .cores .count }}
+      {{ $groupRamPerCpu := math.Floor (div .ram .cores) }}
+      {{ $count := .count }}
+      {{ range .partitions }}
+        {{ $partition := . }}
+        {{ if strings.Contains $partition "gpu" }}
+            {{ continue }}
+        {{ end }}
+        {{ if not (index $partitionData $partition) }}
+          {{ $partitionData = merge $partitionData (dict $partition (dict $cpuModelKey (dict "name" $cpuModel "ram" $ram "nodes" $count "count" $totalCPUs "per" (slice $groupRamPerCpu)))) }}
+        {{ else if not (index (index $partitionData $partition) $cpuModelKey) }}
+          {{ $existingCountList := index (index (index $partitionData $partition) $cpuModelKey) "per" }}
+          {{ $newCountList := union $existingCountList (slice $groupRamPerCpu) }}
+          {{ $existingCount := default 0 (index (index (index $partitionData $partition) $cpuModelKey) "count") }}
+          {{ $newCount := add $existingCount $totalCPUs }}
+          {{ $existingNodeCount := default 0 (index (index (index $partitionData $partition) $cpuModelKey) "nodes") }}
+          {{ $newNodeCount := add $existingNodeCount $count }}
+          {{ $partitionData = merge $partitionData (dict $partition (merge (index $partitionData $partition) (dict $cpuModelKey (dict "name" $cpuModel "ram" $ram "nodes" $newNodeCount "count" $newCount "per" $newCountList )))) }}
+        {{ else }}
+          {{ $existingCountList := index (index (index $partitionData $partition) $cpuModelKey) "per" }}
+          {{ $newCountList := union $existingCountList (slice $groupRamPerCpu) }}
+          {{ $existingCount := default 0 (index (index (index $partitionData $partition) $cpuModelKey) "count") }}
+          {{ $newCount := add $existingCount $totalCPUs }}
+          {{ $existingNodeCount := index (index (index $partitionData $partition) $cpuModelKey) "nodes" }}
+          {{ $newNodeCount := add $existingNodeCount $count }}
+          {{ $partitionData = merge $partitionData (dict $partition (merge (index $partitionData $partition) (dict $cpuModelKey (dict "name" $cpuModel "ram" $ram "nodes" $newNodeCount "count" $newCount "per" $newCountList )))) }}
+        {{ end }}
+      {{ end }}
+      {{ end }}
+    {{ end }}
+    {{ $gatherPartitionData := dict }}
+    {{ range $partition, $cpuModels := $partitionData }}
+          {{ $gatherPartitionData = merge $gatherPartitionData (dict $partition (sort $cpuModels "count")) }}
+    {{ end }}
+    {{ $sortedPartitionData := dict }}
+    {{ range $partition, $cpuModels := $gatherPartitionData }}
+          {{ $sortedPartitionData = merge $sortedPartitionData (dict $partition (sort $cpuModels "ram")) }}
+    {{ end }}
+
+<table class="w-full" id="nodeList">
+    <thead class="text-left bg-main border-main text-white dark:bg-main-dark border dark:border-main-dark">
+    <tr>
+      <th>General<br/>Access</th>
+      <th>Partition</th>
+      <th>CPU Model</th>
+      <th>Nodes</th>
+      <th>Total cores</th>
+      <th>RAM<br/>(GB)</th>
+      <th>RAM(GB) Per CPU<br/></th>
+    </tr>
+    </thead>
+    <tbody class="">
+        {{ range $partition, $cpuModels := $sortedPartitionData }}
+            {{ if in $meta.general $partition }}
+                {{ template "cpuitems" (dict "partition" $partition "cpus" $cpuModels "meta" $meta "span" ($cpuModels | len) )}}
+            {{ end }}
+        {{ end }}
+        {{ range $partition, $cpuModels := $sortedPartitionData }}
+            {{ if not (in $meta.general $partition) }}
+                {{ template "cpuitems" (dict "partition" $partition "cpus" $cpuModels "meta" $meta "span" ($cpuModels | len) )}}
+            {{ end }}
+        {{ end }}
+    </tbody>
+</table>
+
+{{ define "cpuitems" }}
+    <!-- Render the table -->
+    {{ $lastPartition := "" }}
+    {{ $partition := .partition }}
+    {{ $meta := .meta }}
+    {{ $span := .span }}
+      {{ range $cpuModel, $cpuCounts := .cpus }}
+        <tr>
+          {{ if ne $lastPartition $partition  }}
+          <td rowspan="{{ $span }}">
+              {{ if in $meta.general $partition }}
+              <div class="material-symbols-rounded">check</div>
+              {{ end }}
+          </td>
+          {{ end }}
+          {{ if ne $lastPartition $partition  }}
+          <td rowspan="{{ $span }}">
+              {{ $partition }}
+              {{ $lastPartition = $partition }}
+          </td>
+          {{ end }}
+          <td>{{ index $cpuCounts "name" }}</td>
+          <td>{{ index $cpuCounts "nodes" }}</td>
+          <td>{{ index $cpuCounts "count" }}</td>
+          <td>{{ index $cpuCounts "ram" }}</td>
+          <td>{{ delimit (index $cpuCounts "per" | sort) "," }}</td>
+        </tr>
+      {{ end }}
+{{ end }}

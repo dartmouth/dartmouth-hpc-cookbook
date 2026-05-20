@@ -24,7 +24,7 @@ There are two key architectural models to understand:
 
 !!! note
 
-    We can still leverage shared memory within an individual node in the cluster to allow all of that node's CPUs to work together. Only once we want to scale out across multiple nodes is when we are required to use a distributed memory programming model.
+    We can still leverage shared memory within an individual node in the cluster to allow all of that node's CPUs to work together. Only once we want to scale out across multiple nodes is when we are required to use a distributed memory programming model. To learn more about these paradigms, see [Parallel Programming](../fundamentals/parallel-programming.md).
 
 
 
@@ -63,6 +63,21 @@ Beyond raw computing power, HPC workloads also depend on **storage**. Most clust
 
 
 
+## The {{ cluster.name }} Cluster
+
+This cookbook is written for **{{ cluster.name }}**, a multi-institutional HPC cluster at the Massachusetts Green High Performance Computing Center (MGHPCC). It is shared across many participating universities (including {{ institution.short_name }}), giving researchers access to a much larger pool of resources than any one institution could provide alone.
+
+{{ cluster.name }} provides:
+
+- **{{ cluster.scheduler }}** job scheduling with dedicated resources for every job
+- **Diverse GPUs** including H100, A100, L40S, V100, and Grace Hopper accelerators
+- **Mixed CPU architectures** — AMD EPYC, Intel Xeon, ARM Grace, and POWER9
+- **Tiered storage** — home, work, scratch, project, and curated datasets
+- **120+ curated datasets** for AI/ML and bioinformatics research
+- **Open OnDemand** web portal for interactive sessions, Jupyter, RStudio, and more
+
+For full hardware specifications and policies, see the [{{ cluster.name }} documentation]({{ cluster.docs_url }}).
+
 {% include "site/systems-overview.md" %}
 
 ## How You Interact with an HPC Cluster
@@ -98,4 +113,5 @@ Now that you have a sense of what HPC is and how {{ institution.short_name }}'s 
 
 - [**Request an account**](account.md) for our HPC systems
 - [**Connect to our HPC systems**](connecting.md) via SSH
+- [**Parallel Programming**](../fundamentals/parallel-programming.md) — Understand concurrent, parallel, and distributed programming paradigms
 - [**Submit your first job**](first-job.md) with {{ cluster.scheduler }}

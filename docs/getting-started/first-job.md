@@ -7,9 +7,9 @@ tags:
 
 # Submit Your First Job
 
-You have an account. You're connected to {{ cluster.name }}. Let's put the cluster to work.
+You have an [account](account.md). You're [connected to {{ cluster.name }}](connecting.md). Let's put the cluster to work.
 
-By the end of this page you'll have submitted a job, watched it move through the queue, and read its output — the full cycle described in [What is HPC?](what-is-hpc.md), for real.
+By the end of this page you'll have submitted a job, watched it move through the queue, and read its output. It's time to do the full cycle described in [What is HPC?](what-is-hpc.md) for real!
 
 !!! tip "New to the command line?"
     This guide assumes you can navigate directories and edit files in a terminal. If that's unfamiliar, work through [Linux Basics](../fundamentals/linux-basics.md) first — it won't take long.
@@ -32,6 +32,7 @@ Paste the following:
 #SBATCH --time=00:05:00           # allow up to 5 minutes (it'll be much faster)
 #SBATCH --output=first-job.out    # write output to this file
 
+sleep 30                        # (1)!
 echo "Hello from $(hostname)"
 echo "Job ID: $SLURM_JOB_ID"
 echo "Running as: $USER"
@@ -44,7 +45,7 @@ Let's break that down:
 
 - `#!/bin/bash` tells Linux to run the script with Bash.
 - Lines starting with `#SBATCH` are **directives** — instructions to the scheduler, not regular comments. Each one requests a specific resource or sets an option.
-- Everything after the directives is your actual work. Here it's just a few `echo` commands so we can verify where and how the job ran.
+- Everything after the directives is your actual work. Here it's just a few `echo` commands so we can verify where and how the job ran. We also threw in a `sleep` command in the beginning to have a chance to see the job in the queue. Otherwise it would finish too quickly.
 
 That's the anatomy of every job script you'll ever write: directives at the top, commands below. The directives will get more interesting as your work does, but the structure stays the same.
 
@@ -89,7 +90,7 @@ Running as: f00abc
 Thu Mar 12 10:15:42 EDT 2026
 ```
 
-Notice the hostname: it's a **compute node**, not the login node you're typing on. Try running `hostname` right now in your terminal and compare — they'll be different. Your job ran somewhere else entirely, scheduled and managed without you having to think about which machine was available.
+Notice the hostname: it's a **compute node**, not the login node you're typing on. Try running `hostname` right now in your terminal and compare. They'll be different! Your job ran somewhere else entirely, scheduled and managed without you having to think about which machine was available.
 
 That's the core loop: **write a script, submit it, collect results**. Everything else you'll learn about {{ cluster.name }} builds on this.
 
@@ -107,7 +108,7 @@ Don't worry about memorizing `sacct` flags right now. We'll cover job monitoring
 
 You just completed the full HPC workflow. Now it's time to build the skills that let you do real work on the cluster:
 
-- [**Linux Basics**](../fundamentals/linux-basics.md) — navigate the filesystem and manage files from the command line
-- [**Storage on {{ cluster.name }}**](../fundamentals/storage.md) — understand where to put your data and why it matters
-- [**Modules**](../fundamentals/modules.md) — load the software you need for your research
-- [**Job Scheduling**](../fundamentals/scheduling.md) — request the right resources, run parallel work, and use job arrays
+- [**Linux Basics**](../fundamentals/linux-basics.md): Navigate the filesystem and manage files from the command line
+- [**Storage on {{ cluster.name }}**](../fundamentals/storage.md): Understand where to put your data and why it matters
+- [**Modules**](../fundamentals/modules.md): Load the software you need for your research
+- [**Job Scheduling**](../fundamentals/scheduling.md): Request the right resources, run parallel work, and use job arrays

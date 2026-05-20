@@ -1,0 +1,1 @@
+Read all AGENTS.md files in this repo to get your bearings.
