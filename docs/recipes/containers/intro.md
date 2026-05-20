@@ -14,17 +14,19 @@ description: "What containers are, why they matter on {{ cluster.name }}, and wh
 
 In the early twentieth century, global shipping was a logistical nightmare.
 Every port, ship, and truck used different loading conventions. Cargo had to be
-manually repacked at every transfer point — slow, expensive, and error-prone.
+manually repacked at every transfer point, which was slow, expensive, and
+error-prone.
 The invention of the standardized *shipping container* changed everything: pack
 your goods once, and they move unchanged from factory to freighter to freight
-train to warehouse, because the container is the interface.
+train to warehouse, because the container is the interface each station knows
+how to handle.
 
 Software has the same problem. A data-processing pipeline that runs perfectly
 on your laptop may fail on the cluster because the cluster has a different
 version of a C library, a different Python, or a dependency your code assumed
 was globally installed. Reproducing a colleague's results means recreating
-their entire software environment — often an underdocumented and frustrating
-exercise.
+their entire software environment, which is often an underdocumented and
+frustrating exercise.
 
 **Software containers** solve this the same way shipping containers did: bundle
 your application *together with everything it needs* — the runtime, libraries,
@@ -39,7 +41,7 @@ machine), so containers are fast to start and have almost no overhead.
 ## Why Containers Matter on HPC
 
 Clusters like {{ cluster.name }} are shared infrastructure. You cannot install
-software globally — you don't have root access, and even if you did, changes
+software globally: You don't have root access, and even if you did, changes
 would affect everyone. The standard approach is [environment modules](../../fundamentals/modules.md),
 which work well for common software the system administrators maintain. But
 modules have limits:
@@ -54,7 +56,7 @@ modules have limits:
   version, but the underlying system libraries can still differ between clusters
   or over time as the cluster is updated. A container carries its own libraries.
 - **Published research software** — many computational tools are now distributed
-  as Docker images. Using the published image directly is more reliable than
+  as container images. Using the published image directly is more reliable than
   trying to replicate the build from scratch.
 
 ## Docker vs. Apptainer
@@ -103,10 +105,18 @@ This is the most practical question, and the answer is usually straightforward:
 | Software isn't in the module system and can't be pip-installed | **Apptainer** |
 | You're sharing an environment with collaborators on other institutions | **Apptainer** |
 
+!!! tip "Where is `conda`?"
+    You might notice `conda` is absent from this overview. On HPC, `conda` doesn't
+    solve any particular problem better than `uv` or Apptainer. If you find an
+    `environment.yml` for a project you want to replicate, or you inherit a legacy
+    project that uses `conda`, it's totally fine to keep using it. But if you get to
+    choose, consider the tools above first.
+
 In practice, containers and modules are complementary. A container image often
-*includes* a Python runtime and packages — you don't need a separate virtual
+*includes* a Python runtime and packages, so you don't need a separate virtual
 environment inside it. But you might still load a module (like MPI) and bind it
 into the container at runtime to get the cluster's optimized version.
+
 
 ## Container Terminology
 
@@ -114,7 +124,7 @@ A few terms come up constantly when working with containers. They're worth
 knowing before diving into the hands-on material:
 
 **Image**
-:   The static, read-only bundle — the filesystem snapshot that defines the
+:   The static, read-only bundle. It's a filesystem snapshot that defines the
     software environment. Think of it as the blueprint. An image is a file;
     you don't "run" an image, you run a *container* based on it.
 
@@ -129,16 +139,24 @@ knowing before diving into the hands-on material:
     shared, so pulling an image that shares layers with one you already have is
     fast.
 
+**Host**
+:   The "real" machine your container runs on. On an HPC cluster, the host is
+    whichever compute node Slurm assigned your job to. The host has its own
+    operating system, filesystems, and hardware (GPUs, network, etc.). When
+    documentation says "on the host," it means *outside* the container.
+
 **Bind mount**
 :   A way to expose a directory from the host system inside the container.
-    By default, the container sees only its own filesystem — your cluster home
-    directory and scratch space are invisible. Bind mounts bridge that gap.
+    By default, the container sees only its own filesystem. Typically, your
+    cluster home directory and scratch space are invisible.
+    Bind mounts bridge that gap.
     On {{ cluster.name }}, common paths like your home directory are typically
     auto-mounted, but for scratch and project directories you'll bind them
     explicitly.
 
 **Registry**
 :   A server that stores and distributes images. The main ones you'll encounter:
+
     - [Docker Hub](https://hub.docker.com/) — the default public registry,
       home to most open-source software images
     - [NGC (NVIDIA Container Registry)](https://catalog.ngc.nvidia.com/) —
@@ -147,8 +165,8 @@ knowing before diving into the hands-on material:
 
 **.sif file**
 :   Apptainer's native image format (Singularity Image Format). When you pull
-    a Docker image with Apptainer, it is converted to a `.sif` file — a single,
-    portable file you can copy anywhere.
+    a Docker image with Apptainer, it is converted to a single,
+    portable `.sif` file you can copy anywhere.
 
 ## What's Next
 

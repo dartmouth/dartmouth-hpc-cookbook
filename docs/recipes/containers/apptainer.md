@@ -13,7 +13,19 @@ description: "How to pull, run, and build Apptainer containers on {{ cluster.nam
 New to containers? Read [Containers on HPC: An Introduction](intro.md) first
 for the conceptual background and a decision framework for when to use them.
 
-## Step 1: Pull an Image
+## Load Apptainer
+
+Apptainer is available on {{ cluster.name }} as a module. Load it before
+running any `apptainer` commands:
+
+```bash
+module load apptainer/latest
+```
+
+Add this line to your batch scripts too, so the commands are available when
+the job runs.
+
+## Step 1: Pull an image
 
 Apptainer can pull images directly from Docker Hub or any Docker-compatible
 registry. Pulled images are converted to Apptainer's native `.sif` format —
@@ -32,11 +44,13 @@ Each command produces a `.sif` file in the current directory (e.g.,
 
 !!! warning "Don't store `.sif` files in your home directory"
     Container images can be several gigabytes. Your home directory has a
-    quota — filling it will break jobs and logins. Store `.sif` files on
-    scratch or a project directory instead:
+    quota ({{ storage.home_quota }}); filling it will break jobs and logins.
+    Store `.sif` files in a scratch workspace or your work directory instead.
+    See [Storage Fundamentals](../../fundamentals/storage.md) for how to
+    set up scratch space.
 
     ```bash
-    cd {{ storage.scratch_path }}/$USER
+    cd /path/to/your/scratch
     apptainer pull docker://nvcr.io/nvidia/pytorch:24.01-py3
     ```
 
@@ -81,14 +95,18 @@ apptainer shell ubuntu_22.04.sif
 ```
 
 This drops you into a shell *inside* the container. Useful for exploring the
-environment, debugging, or prototyping. Your shell prompt will change to
-`Apptainer>` to remind you you're inside the container.
+environment, debugging, or prototyping. Your shell prompt changes to
+`Apptainer>` to remind you where you are.
 
 ```
 Apptainer> python3 --version
 Python 3.10.12
 Apptainer> exit
 ```
+
+Type `exit` or press ++ctrl+d++ to leave the container shell and return to
+your normal cluster session.
+
 
 ## Step 3: Bind Mounts — Accessing Your Files
 
@@ -99,8 +117,8 @@ them explicitly.
 Use `--bind` (or `-B`) to mount paths from the cluster into the container:
 
 ```bash
-# Mount a scratch directory as /data inside the container
-apptainer exec --bind {{ storage.scratch_path }}/$USER:/data \
+# Mount a scratch workspace as /data inside the container
+apptainer exec --bind /path/to/your/scratch:/data \
     pytorch_24.01-py3.sif python /data/train.py
 ```
 
@@ -109,17 +127,17 @@ paths:
 
 ```bash
 apptainer exec \
-    --bind {{ storage.scratch_path }}/$USER:/data \
+    --bind /path/to/your/scratch:/data \
     --bind /path/to/my/code:/code \
     pytorch_24.01-py3.sif python /code/train.py --data-dir /data
 ```
 
 !!! note "Auto-mounted paths on {{ cluster.name }}"
     Apptainer on {{ cluster.name }} automatically binds your home directory
-    and `/tmp` into every container, so files in your home are accessible
-    without an explicit `--bind`. Paths on `{{ storage.scratch_path }}` and
-    other shared filesystems may also be auto-bound depending on the site
-    configuration — try accessing them first before adding an explicit mount.
+    and `/tmp` into every container, so files in `$HOME` are accessible
+    without an explicit `--bind`. Other paths (`{{ storage.work_path }}`,
+    `{{ storage.scratch_path }}`) are **not** auto-bound. If your data
+    lives outside your home, you need an explicit `--bind`.
 
 **Persistent bind paths with `$APPTAINER_BINDPATH`**
 
@@ -127,7 +145,7 @@ If you always bind the same directories, set this environment variable in
 your `~/.bashrc` or at the top of your job script:
 
 ```bash
-export APPTAINER_BINDPATH="{{ storage.scratch_path }}/$USER:/data"
+export APPTAINER_BINDPATH="/path/to/your/scratch:/data"
 ```
 
 Apptainer reads this variable and applies those mounts to every container
@@ -196,60 +214,59 @@ From: ubuntu:22.04
 Save this as `myenv.def`, then build the image:
 
 ```bash
-# Build using --fakeroot (rootless build — works on the cluster)
-apptainer build --fakeroot myenv.sif myenv.def
+apptainer build --ignore-fakeroot-command myenv.sif myenv.def
 ```
 
-The `--fakeroot` flag allows you to build images without actual root access
-by using a Linux user namespace feature. It is available on {{ cluster.name }}
-for most use cases.
+The `--ignore-fakeroot-command` flag tells Apptainer to skip the fakeroot
+helper even if it is not configured on the system. On {{ cluster.name }},
+this is the recommended way to build images without root access.
 
 !!! tip "Complex builds: build locally, copy to cluster"
     Some builds require network access, very long compile times, or steps that
-    don't work cleanly under `--fakeroot`. In those cases, build the image on
-    your own machine (where you have Docker or Apptainer with root), then copy
-    the `.sif` file to the cluster with `scp` or `rsync`.
+    don't work cleanly on the cluster. In those cases, build the image on your
+    own machine (where you have Docker or Apptainer with root), then copy the
+    `.sif` file to the cluster with `scp` or `rsync`.
 
     ```bash
     # On your local machine
     apptainer build myenv.sif myenv.def
 
     # Copy to cluster scratch
-    scp myenv.sif {{ cluster.login_node }}:{{ storage.scratch_path }}/$USER/
+    scp myenv.sif {{ cluster.login_node }}:/path/to/your/scratch/
     ```
 
 ## Step 6: Running Containers in a Slurm Job
 
-`apptainer exec` slots naturally into a batch script — just replace the bare
+`apptainer exec` slots naturally into a batch script. Just replace the bare
 Python call with the containerized version:
 
 {{ sbatch_template(
     job_name="container-train",
-    partition="gpuq",
+    partition="gpu",
     time="04:00:00",
     cpus=4,
     mem="32G",
     gpus=1,
-    commands="# Path to your SIF file\nSIF={{ storage.scratch_path }}/$USER/pytorch_24.01-py3.sif\n\n# Bind scratch into the container at /data\napptainer exec --nv \\\\\n    --bind {{ storage.scratch_path }}/$USER:/data \\\\\n    \"$SIF\" \\\\\n    python /data/train.py --output /data/results"
+    commands="# Path to your SIF file (store in a scratch workspace, not home)\nSIF=/path/to/your/scratch/pytorch_24.01-py3.sif\n\n# Bind scratch into the container at /data\napptainer exec --nv \\\\\n    --bind /path/to/your/scratch:/data \\\\\n    \"$SIF\" \\\\\n    python /data/train.py --output /data/results"
 ) }}
 
 Key points for container jobs:
 
-- Set `SIF` as a variable at the top — easy to swap images without hunting
-  through the script
-- Use `--nv` if your workload uses the GPU
-- Use `--bind` to expose your data and output directories
-- No `module load` is needed for the software inside the container — it's all
-  bundled in the image. You may still need to load cluster modules for things
-  *outside* the container (e.g., if launching MPI across nodes).
+- Set `SIF` as a variable at the top for easy swapping without hunting
+  through the script.
+- Use `--nv` if your workload uses the GPU.
+- Use `--bind` to expose your data and output directories.
+- No `module load` is needed for the software *inside* the container; it's
+  all bundled in the image. You may still need to load cluster modules for
+  things outside the container (e.g., if launching MPI across nodes).
 
 ## Common Pitfalls
 
 !!! warning "`.sif` files in home will fill your quota"
     GPU-capable container images routinely exceed 5–10 GB. A few pulls into
-    your home directory will exhaust your quota and cause jobs and logins to
-    fail. Always pull images to `{{ storage.scratch_path }}/$USER` or a project
-    directory, and keep a note of where they live.
+    your home directory will exhaust your {{ storage.home_quota }} quota and
+    cause jobs and logins to fail. Always pull images to a scratch workspace
+    or `{{ storage.work_path }}`, and keep a note of where they live.
 
 !!! warning "CUDA driver vs. toolkit version mismatch"
     If your container was built against CUDA 12.4 but the node's driver only
