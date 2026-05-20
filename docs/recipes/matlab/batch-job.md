@@ -1,5 +1,5 @@
 ---
-title: "Running MATLAB Batch Jobs"
+title: "Running MATLAB batch jobs"
 description: "How to run MATLAB scripts as non-interactive batch jobs on {{ cluster.name }}"
 tags:
   - matlab
@@ -7,16 +7,22 @@ tags:
   - intermediate
 ---
 
-# Running MATLAB Batch Jobs
+# Running MATLAB batch jobs
 
 !!! abstract "What we're cooking"
-    How to submit MATLAB scripts as batch jobs on {{ cluster.name }} — from a minimal
+    How to submit MATLAB scripts as batch jobs on {{ cluster.name }}, from a minimal
     single-core script to parallel and GPU-accelerated jobs.
 
 !!! warning "License required"
-    MATLAB is commercial software. {{ cluster.name }} provides a site license for
-    {{ institution.name }} users, but license tokens are shared — during peak hours
-    your job may wait to acquire one. See [Common Pitfalls](#common-pitfalls) below.
+    MATLAB is commercial software. License tokens are shared and limited, so
+    during peak hours your job may wait to acquire one or fail with a license
+    checkout error. See [Common pitfalls](#common-pitfalls) below for strategies.
+
+!!! tip "Prefer interactive work? Use Open OnDemand"
+    MATLAB is available as a graphical Batch Connect app on
+    [Open OnDemand]({{ cluster.ondemand_url }}). This is the easiest way to use
+    MATLAB interactively on {{ cluster.name }}. See the
+    [Open OnDemand recipes](../open-ondemand/getting-started.md) for details.
 
 Running MATLAB interactively is fine for development, but production analyses should
 run as **batch jobs**: unattended, on a compute node, with resources controlled by
@@ -24,235 +30,254 @@ Slurm. This recipe covers everything from the basics to parallel and GPU workflo
 
 ## Loading MATLAB
 
-MATLAB is available as an environment module. Check what versions are installed:
+MATLAB is available as an environment module. Search for available versions with
+`module spider`, which searches the full module hierarchy (including modules hidden
+behind intermediate dependencies):
 
 ```bash
-module avail matlab
+module spider matlab
 ```
 
-Then load the default (or a specific version):
+Then load the version you need. On {{ cluster.name }}, you **must** include the version
+number; `module load matlab` without a version will not work:
 
 ```bash
-module load matlab
-# or
-module load matlab/R2024a
+module load matlab/r2026a
 ```
 
-## Running a MATLAB Script in Batch
+## Running a MATLAB script in batch
 
 On a cluster there is no display server, so MATLAB must be told to run headlessly.
 Two flags handle this:
 
 | Flag | Effect |
 |------|--------|
-| `-nodisplay` | Suppress the Java desktop — required without a display |
+| `-nodisplay` | Suppress the Java desktop (required without a display) |
 | `-nosplash` | Skip the splash screen |
 | `-nodesktop` | Disable the MATLAB desktop UI |
 
 ### Two equivalent invocation styles
 
-**Classic (`-r`)** — works in all MATLAB versions:
+**Classic (`-r`)**, works in all MATLAB versions:
 
 ```bash
 matlab -nodisplay -nosplash -nodesktop -r "run('myscript.m'); exit"
 ```
 
-**Modern (`-batch`)** — recommended, requires MATLAB R2019a or newer:
+**Modern (`-batch`)**, recommended, requires MATLAB R2019a or newer:
 
 ```bash
 matlab -batch "run('myscript.m')"
 ```
 
-Prefer `-batch`. It automatically calls `exit` when the script finishes and — critically
-for job monitoring — exits with a **non-zero return code if MATLAB throws an error**.
+Prefer `-batch`. It automatically calls `exit` when the script finishes and, critically
+for job monitoring, exits with a **non-zero return code if MATLAB throws an error**.
 With `-r`, a runtime error prints a message but MATLAB exits with code 0, so Slurm
 reports the job as successful even when it failed. With `-batch`, Slurm marks the job
 as failed and you can catch it with `--mail-type=FAIL` or `sacct`.
 
-## A Minimal Batch Job
+## A minimal batch job
 
-```bash
-#!/bin/bash
-#SBATCH --job-name=matlab-job
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=8G
-#SBATCH --time=02:00:00
-#SBATCH --output=logs/matlab_%j.out
-#SBATCH --error=logs/matlab_%j.err
+Start with a simple MATLAB script to confirm everything works. Save this as
+`smoke_test.m`:
 
-module load matlab
-
-matlab -batch "run('myscript.m')"
+```matlab
+fprintf('MATLAB %s on %s\n', version, computer);
+A = rand(500);
+B = A * A';
+fprintf('Multiplied a 500x500 matrix. trace(B) = %.4f\n', trace(B));
+fprintf('Done.\n');
 ```
 
-MATLAB writes all console output (`disp`, `fprintf`, warnings, errors) to stdout, which
-Slurm captures in the `--output` file. Check that file first when debugging a failed job.
+Then submit it with a job script:
+
+{{ sbatch_template(
+    job_name="matlab-smoke",
+    time="00:10:00",
+    cpus=1,
+    mem="4G",
+    modules=["matlab/r2026a"],
+    commands="matlab -batch \"run('smoke_test.m')\""
+) }}
+
+Check the output file after the job finishes. You should see the MATLAB version,
+the matrix trace result, and "Done." MATLAB writes all console output (`disp`,
+`fprintf`, warnings, errors) to stdout, which Slurm captures in the output file.
+Check that file first when debugging a failed job.
 
 ## Parallel Computing Toolbox
 
-If your code can be parallelized, MATLAB's Parallel Computing Toolbox lets you use
-multiple cores within a single node via `parpool` and `parfor`.
+If your code has loops where each iteration is independent, MATLAB's Parallel
+Computing Toolbox lets you spread them across multiple CPU cores on a single node.
+The key tools are `parpool` (create a pool of workers) and `parfor` (run loop
+iterations in parallel across that pool).
 
-### Requesting cores in Slurm
+### A complete parallel example
 
-```bash
-#SBATCH --cpus-per-task=8
-```
-
-### Creating a `parpool` with the right worker count
-
-!!! danger "Always specify worker count explicitly"
-    Calling `parpool('local')` without a size argument makes MATLAB query the machine's
-    total CPU count — which on a shared compute node may be 64 or more. You will consume
-    resources you did not request, slow down other users' jobs, and may violate cluster
-    policy. Always read `SLURM_CPUS_PER_TASK` and pass it explicitly.
+Save this as `parallel_monte_carlo.m`. It estimates π using a Monte Carlo method,
+splitting the work across all available workers:
 
 ```matlab
-% Read the allocation from the environment
-workers = str2num(getenv('SLURM_CPUS_PER_TASK'));
-pool = parpool('local', workers);
+% parallel_monte_carlo.m — Estimate pi with parfor
+% Throws random darts at a unit square and counts how many land inside
+% the inscribed quarter-circle. The total sample count is fixed, so
+% adding more workers divides the same work into smaller chunks.
 
-% Now use parfor — iterations run in parallel across workers
-results = zeros(1, 100);
-parfor i = 1:100
-    results(i) = heavy_computation(i);
+total_samples = 8e7;   % 80 million total (fixed regardless of worker count)
+num_chunks = 80;        % split into this many independent chunks
+
+num_workers = str2num(getenv('SLURM_CPUS_PER_TASK'));
+pool = parpool('local', num_workers);
+fprintf('Started pool with %d workers\n', pool.NumWorkers);
+
+samples_per_chunk = total_samples / num_chunks;
+hits = zeros(1, num_chunks);
+
+tic;
+parfor i = 1:num_chunks
+    x = rand(samples_per_chunk, 1);
+    y = rand(samples_per_chunk, 1);
+    hits(i) = sum(x.^2 + y.^2 <= 1);
 end
+elapsed = toc;
+
+pi_estimate = 4 * sum(hits) / total_samples;
+
+fprintf('Workers:    %d\n', num_workers);
+fprintf('Samples:    %.0e\n', total_samples);
+fprintf('Pi approx:  %.8f\n', pi_estimate);
+fprintf('Error:      %.2e\n', abs(pi - pi_estimate));
+fprintf('Wall time:  %.2f seconds\n', elapsed);
 
 delete(pool);
 ```
 
-### Parallel job script
+!!! danger "Always specify worker count explicitly"
+    Calling `parpool('local')` without a size argument makes MATLAB query the
+    machine's total CPU count, which on a shared compute node may be 64 or more.
+    You will consume resources you did not request, slow down other users' jobs,
+    and may violate cluster policy. Always read `SLURM_CPUS_PER_TASK` and pass it
+    to `parpool`.
 
-```bash
-#!/bin/bash
-#SBATCH --job-name=matlab-parallel
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=32G
-#SBATCH --time=04:00:00
-#SBATCH --output=logs/matlab_par_%j.out
-#SBATCH --error=logs/matlab_par_%j.err
+### Submit the parallel job
 
-module load matlab
+{{ sbatch_template(
+    job_name="matlab-parallel",
+    time="00:15:00",
+    cpus=8,
+    mem="16G",
+    modules=["matlab/r2026a"],
+    commands="matlab -batch \"run('parallel_monte_carlo.m')\""
+) }}
 
-matlab -batch "run('parallel_script.m')"
+After the job completes, check the output file. You should see something like:
+
 ```
+Started pool with 8 workers
+Workers:    8
+Samples:    8e+07
+Pi approx:  3.14162340
+Error:      3.07e-05
+Wall time:  2.41 seconds
+```
+
+The total work (80 million samples) is the same regardless of worker count, so you
+can change `--cpus-per-task` to 1, 2, 4, and 8 to see how wall time scales. With
+1 worker you should see roughly 8× the wall time compared to 8 workers. The speedup
+won't be perfectly linear because `parpool` has startup overhead, but the trend
+should be clear.
 
 `parfor` scales well when loop iterations are independent and each takes more than a
 few milliseconds. For very fast iterations the overhead of inter-process communication
-dominates — prefer vectorized operations in that case.
+dominates; prefer vectorized operations in that case.
 
-## GPU Computing
+## GPU computing
 
-MATLAB supports GPU acceleration through the Parallel Computing Toolbox. Request a
-GPU partition in your job script, then use `gpuArray` to move data onto the device.
+MATLAB can offload matrix operations to a GPU through the Parallel Computing Toolbox.
+The workflow: move data to the GPU with `gpuArray`, run computations (which execute on
+the GPU automatically), then pull results back with `gather`.
 
-### GPU job script
+!!! info "GPU partitions on {{ cluster.name }}"
+    {{ cluster.name }} has several GPU partitions with different time limits:
 
-```bash
-#!/bin/bash
-#SBATCH --job-name=matlab-gpu
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=16G
-#SBATCH --gres=gpu:1
-#SBATCH --partition=gpu
-#SBATCH --time=02:00:00
-#SBATCH --output=logs/matlab_gpu_%j.out
+    - **`gpu-preempt`**: jobs up to 2 hours (may be preempted by priority jobs)
+    - **`gpu`**: jobs up to 48 hours (not preempted)
+    - For jobs longer than 48 hours, add `--qos=long`
 
-module load matlab
+    Use `--constraint` to request a specific GPU type (e.g., `--constraint=a100`)
+    or a minimum VRAM level (e.g., `--constraint=vram40`). See
+    [GPU Computing](../../fundamentals/gpu-computing.md) for available GPU types.
 
-matlab -batch "run('gpu_script.m')"
-```
+### A complete GPU example
 
-### GPU MATLAB code
+Save this as `gpu_matmul.m`. It compares the time for a large matrix multiplication
+on the CPU versus the GPU:
 
 ```matlab
-% Confirm a GPU is visible
+% gpu_matmul.m — Compare CPU vs GPU matrix multiplication speed
+
+N = 4096;
+fprintf('Matrix size: %d x %d\n', N, N);
+
+% --- CPU version ---
+A_cpu = rand(N);
+tic;
+B_cpu = A_cpu * A_cpu';
+cpu_time = toc;
+fprintf('CPU time:  %.3f seconds\n', cpu_time);
+
+% --- GPU version ---
 info = gpuDevice();
-fprintf('Using GPU: %s\n', info.Name);
+fprintf('GPU:       %s (%d MB VRAM)\n', info.Name, info.TotalMemory / 1e6);
 
-% Move data to GPU
-A = rand(4096, 4096);       % host array
-A_gpu = gpuArray(A);        % copy to GPU memory
-
-% Computations on gpuArray objects run on the GPU automatically
+A_gpu = gpuArray(rand(N));    % create random matrix directly on GPU
+tic;
 B_gpu = A_gpu * A_gpu';
+wait(info);                   % ensure GPU computation finishes before timing
+gpu_time = toc;
+fprintf('GPU time:  %.3f seconds\n', gpu_time);
 
-% Bring results back to host
+% Pull result back to CPU memory
 B = gather(B_gpu);
+fprintf('Speedup:   %.1fx\n', cpu_time / gpu_time);
+fprintf('trace(B):  %.4f\n', trace(B));
 ```
 
-`gpuArray` works with most standard MATLAB operations (matrix math, FFT, element-wise
-functions). Check `gpuArray` supported functions in the MATLAB documentation for a full
-list. GPU support requires the Parallel Computing Toolbox.
+### Submit the GPU job
 
-## MATLAB Compiler: Running Without a License
+{{ sbatch_template(
+    job_name="matlab-gpu",
+    partition="gpu",
+    time="00:10:00",
+    cpus=4,
+    mem="16G",
+    gpus=1,
+    modules=["matlab/r2026a"],
+    commands="matlab -batch \"run('gpu_matmul.m')\""
+) }}
 
-If you need to run MATLAB code across a **large job array** — hundreds or thousands of
-tasks — license contention becomes a real bottleneck. The MATLAB Compiler (`mcc`)
-solves this by producing a **standalone executable** that runs against the free MATLAB
-Runtime (MCR) instead of a full license:
+After the job completes, the output file should look something like:
 
-```bash
-# Compile on the login node (requires a Compiler license)
-mcc -m myscript.m -o myscript_exe
-
-# The resulting binary can run on any node without a MATLAB license
-./myscript_exe
+```
+Matrix size: 4096 x 4096
+CPU time:  3.412 seconds
+GPU:       NVIDIA A100-SXM4-80GB (85899 MB VRAM)
+GPU time:  0.089 seconds
+Speedup:   38.3x
+trace(B):  4198043.7621
 ```
 
-The MCR is available as a module (`module avail matlab-runtime`) and must match the
-MATLAB version used to compile. This approach is ideal for embarrassingly parallel
-workloads. See the
-[MATLAB Compiler documentation](https://www.mathworks.com/help/compiler/) for details.
+The exact numbers depend on which GPU you get. `gpuArray` works with most standard
+MATLAB operations (matrix math, FFT, element-wise functions). Check the
+[gpuArray supported functions](https://www.mathworks.com/help/parallel-computing/run-matlab-functions-on-a-gpu.html)
+in the MATLAB documentation for a full list.
 
-## Managing Output Files
 
-### Console logging with `diary`
-
-Capture all MATLAB console output to a text file in addition to Slurm's log:
-
-```matlab
-diary('matlab_run.log');
-% ... your code ...
-diary off;
-```
-
-### Saving large results to scratch
-
-Do not save large matrices to your home directory — use scratch storage instead:
-
-```matlab
-scratch = getenv('SCRATCH');   % set this in your job script, or hardcode the path
-outfile = fullfile(scratch, 'results.mat');
-save(outfile, 'results', '-v7.3');   % -v7.3 supports files > 2 GB
-```
-
-`.mat` files (especially `-v7.3` / HDF5 format) are the right format for large
-numerical arrays. CSV and text files are orders of magnitude slower to write and
-read for matrix data.
-
-### Setting the scratch path in your job script
-
-```bash
-export SCRATCH={{ storage.scratch_path }}/$USER
-mkdir -p $SCRATCH
-matlab -batch "run('myscript.m')"
-```
-
-## Common Pitfalls
-
-!!! warning "License server contention"
-    MATLAB license tokens are shared across all cluster users. During peak hours
-    (weekday mornings and afternoons) jobs may queue waiting for a token, or fail
-    with a license checkout error. Strategies: schedule jobs off-peak with
-    `--begin=22:00`, retry failed jobs, or use compiled executables (see above).
+## Common pitfalls
 
 !!! danger "Letting MATLAB autodetect worker count"
     Never call `parpool('local')` without specifying a size. MATLAB will detect all
-    CPUs on the physical node — potentially 64+ — and spawn that many workers,
+    CPUs on the physical node (potentially 64+) and spawn that many workers,
     consuming resources you didn't request and impacting other users. Always use
     `parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')))`.
 
@@ -263,13 +288,13 @@ matlab -batch "run('myscript.m')"
     of displaying them. The `-nodisplay` flag suppresses the desktop but does not
     prevent GUI function calls from blocking.
 
-!!! tip "MATLAB temp files filling home directory"
-    MATLAB writes preferences, crash dumps, and temporary files to `~/.matlab` and
-    `$TMPDIR`. On a cluster, `$TMPDIR` may default to `/tmp` (local, fast) or to
-    your home directory. Redirect these if you hit quota limits:
+!!! note "MATLAB startup is slow on cluster nodes"
+    MATLAB takes 2-5 minutes to start on a compute node. It needs to initialize
+    the JVM and check out a license token. This is normal. Don't assume your job
+    is hanging just because the output file is empty for the first few minutes.
 
-    ```bash
-    export MATLAB_PREFDIR={{ storage.scratch_path }}/$USER/matlab-prefs
-    export TMPDIR={{ storage.scratch_path }}/$USER/tmp
-    mkdir -p $MATLAB_PREFDIR $TMPDIR
-    ```
+!!! note "Harmless warning about `$documents/MATLAB`"
+    You may see `Unable to locate a personal folder for $documents/MATLAB` in
+    your output file. This is a cosmetic warning about the default MATLAB userpath.
+    You can silence it by running `mkdir -p $HOME/Documents/MATLAB` once on a
+    login node (or in your job script). It does not affect computation.

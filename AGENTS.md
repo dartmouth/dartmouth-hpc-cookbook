@@ -30,6 +30,7 @@ This file provides guidance to agents when working with code in this repository.
 
 ## Important distinction
 - This cookbook is a learning resource, not a technical documentation. Introduced concepts should be explained. The *why* is just as important as the *how*. Total coverage of a topic is less important than good scaffolding. Be opinionated and selective in recommendations if it fosters understanding.
+- **Tutorial-style examples:** Recipe code examples must be fully guided walkthroughs, not brief references. Always provide a complete, runnable script the reader can save and submit. Show the expected output or what to check for. Avoid placeholder function names like `heavy_computation(i)` — use a real (if simple) computation so the reader can run the example end-to-end and see it work. Think "smoke test they can copy-paste" rather than "API sketch they must fill in."
 - Discoverability is very important. We have to assume that a user might land on any page as their starting page. We need to make sure that other related resources can be discovered from there, not just when traveling through the materials from the top down.
 - **Index Pages:** The `index.md` files in each category (e.g., `recipes/index.md`, `articles/index.md`) act as directories and landing pages. When adding new recipes or articles, you *must* also update the corresponding `index.md` to link to the new content so it is discoverable.
 
