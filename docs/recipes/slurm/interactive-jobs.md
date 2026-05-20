@@ -38,7 +38,7 @@ What each flag does:
 | `--time=02:00:00` | Time limit of 2 hours |
 | `--pty bash` | Open a pseudo-terminal running bash |
 
-After a moment in the queue, your prompt changes to show the name of the compute node you've been assigned — something like `[userid@cpu042 ~]$`. You're now running on a compute node. Run your commands, inspect your data, test your code. When you're done, type `exit` to release the allocation and return to the login node.
+After a moment in the queue, your prompt changes to show the name of the compute node you've been assigned (something like `[userid@cpu042 ~]$`). You're now running on a compute node. Run your commands, inspect your data, test your code. When you're done, type `exit` to release the allocation and return to the login node.
 
 !!! tip "Set a realistic time limit"
     Your interactive session ends when the time limit expires, even if that is mid-command. Set enough time for your work, but don't request days. Shorter requested times generally get higher queue priority, so you'll wait less to get started. Two to four hours is a common range for exploratory sessions.
@@ -109,7 +109,7 @@ srun --ntasks=4 ./another_mpi_program
 exit
 ```
 
-This is particularly useful for MPI development: you reserve four tasks once, then iterate quickly — edit code, recompile, re-run — without re-queuing for every test.
+This is particularly useful for MPI development: you reserve four tasks once, then iterate quickly (edit code, recompile, re-run) without re-queuing for every test.
 
 !!! tip "Check your allocation with `squeue`"
     While `salloc` is active, `squeue --me` will show your reservation. The job state will be `R` (running) even though you haven't dispatched any work yet, because the resources are being held for you.
@@ -122,11 +122,11 @@ A few practical ways interactive jobs fit into a real research workflow:
 
 **Debugging a failing batch job.** When a batch job fails, request an interactive node with the same resource spec as the failing job, then reproduce the steps manually. You can inspect environment variables, check file permissions, and run the failing command directly.
 
-**Exploratory data analysis.** Get a node with substantial RAM — `--mem=64G` or more — to load large datasets into Python or R interactively. This is far more practical than submitting and waiting for a batch job every time you want to try something.
+**Exploratory data analysis.** Get a node with substantial RAM (`--mem=64G` or more) to load large datasets into Python or R interactively. This is far more practical than submitting and waiting for a batch job every time you want to try something.
 
 ## Limitations
 
-Interactive jobs are powerful for development and debugging, but they're not suited for production runs:
+Interactive jobs are well-suited for development and debugging, but not for production runs:
 
 - **Disconnection ends the job.** If you close your laptop, lose network connectivity, or your SSH session times out, the interactive job may be terminated. All progress in that session is lost.
 - **You must be present.** You have to stay connected for the duration, which is impractical for long analyses.

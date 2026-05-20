@@ -28,7 +28,7 @@ the job runs.
 ## Step 1: Pull an image
 
 Apptainer can pull images directly from Docker Hub or any Docker-compatible
-registry. Pulled images are converted to Apptainer's native `.sif` format —
+registry. Pulled images are converted to Apptainer's native `.sif` format,
 a single portable file.
 
 ```bash
@@ -54,7 +54,7 @@ Each command produces a `.sif` file in the current directory (e.g.,
     apptainer pull docker://nvcr.io/nvidia/pytorch:24.01-py3
     ```
 
-Pulling a large image takes time and network I/O — do it once on a login node
+Pulling a large image takes time and network I/O, so do it once on a login node
 and reuse the `.sif` file in subsequent jobs.
 
 ## Step 2: Run Commands in the Container
@@ -164,14 +164,14 @@ print(torch.cuda.get_device_name(0))
 "
 ```
 
-The `--nv` flag injects the host driver into the container at runtime —
-the container image itself does not need to include the CUDA driver, only the
+The `--nv` flag injects the host driver into the container at runtime.
+The container image itself does not need to include the CUDA driver, only the
 CUDA toolkit libraries that match the host driver version.
 
 !!! warning "CUDA version compatibility"
     The CUDA toolkit version inside the container must be compatible with the
     CUDA driver installed on the compute node. Driver version sets the
-    *maximum* CUDA toolkit version it can support — a container built for
+    *maximum* CUDA toolkit version it can support. A container built for
     CUDA 12.4 will not run on a node whose driver only supports CUDA 11.x.
 
     NVIDIA's [NGC images](https://catalog.ngc.nvidia.com/) (e.g.,
@@ -180,7 +180,7 @@ CUDA toolkit libraries that match the host driver version.
     Check the image's page on NGC for the exact driver compatibility table.
 
 You must request GPU resources from Slurm to actually have a GPU available
-when the job runs — see the batch job example below.
+when the job runs (see the batch job example below).
 
 ## Step 5: Building Custom Images
 
@@ -297,6 +297,6 @@ Key points for container jobs:
     apptainer exec --writable-tmpfs myimage.sif my_tool
     ```
 
-    `--writable-tmpfs` creates an in-memory writable layer — useful for tools
+    `--writable-tmpfs` creates an in-memory writable layer, useful for tools
     that need to write to arbitrary paths but where you don't care about
     keeping the output.

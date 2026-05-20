@@ -42,7 +42,7 @@ Choosing between OOD and the command line isn't an either/or decision. The table
 | Transferring large datasets (>1 GB) | ❌ Slow | ✅ rsync / Globus |
 | Working offline / scripting | ❌ Browser required | ✅ Works anywhere |
 
-OOD and SSH complement each other. Many researchers use OOD for exploration and prototyping, then switch to job scripts for production runs. They share the same cluster, the same storage, and the same files; switching between them is seamless.
+OOD and SSH complement each other. Many researchers use OOD for exploration and prototyping, then switch to job scripts for production runs. They share the same cluster, the same storage, and the same files; switching between them is straightforward.
 
 ## Accessing Open OnDemand
 

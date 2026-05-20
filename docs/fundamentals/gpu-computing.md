@@ -9,13 +9,13 @@ tags:
 
 # GPU Computing
 
-GPUs have gone from graphics cards to the engines powering modern AI research. But they aren't magic accelerators that make every program faster — they're specialized hardware with a specific strength: doing the same operation on enormous amounts of data at the same time. Understanding what GPUs are good at (and what they're not) will help you use them effectively on {{ cluster.name }}.
+GPUs have gone from graphics cards to the engines powering modern AI research. But they aren't magic accelerators that make every program faster. They're specialized hardware with a specific strength: doing the same operation on enormous amounts of data at the same time. Understanding what GPUs are good at (and what they're not) will help you use them effectively on {{ cluster.name }}.
 
 ## What is a GPU?
 
-A CPU (central processing unit) is designed for sequential work. It has a small number of large, powerful cores — typically 8 to 128 on a modern server — each with fast clock speeds, large caches, and sophisticated branch prediction logic. A CPU is optimized for running one complex task as quickly as possible.
+A CPU (central processing unit) is designed for sequential work. It has a small number of large, powerful cores (typically 8 to 128 on a modern server), each with fast clock speeds, large caches, and sophisticated branch prediction logic. A CPU is optimized for running one complex task as quickly as possible.
 
-A GPU (graphics processing unit) was originally built to push millions of pixels to a screen simultaneously. Every pixel update is a simple calculation — transform a coordinate, apply a color value — but there are millions of them per frame, and they all need to happen at once. That design principle: *thousands of simple operations running in parallel*, turned out to be exactly what deep learning, scientific simulation, and signal processing need.
+A GPU (graphics processing unit) was originally built to push millions of pixels to a screen simultaneously. Every pixel update is a simple calculation (transform a coordinate, apply a color value), but there are millions of them per frame, and they all need to happen at once. That design principle, *thousands of simple operations running in parallel*, turned out to be exactly what deep learning, scientific simulation, and signal processing need.
 
 A modern GPU has thousands of smaller, simpler cores compared to a CPU's dozens of large, complex ones. The tradeoff is intentional: each GPU core is much slower than a CPU core when running a single task, but the GPU wins decisively when the same operation must be applied across massive datasets.
 
@@ -45,7 +45,7 @@ graph TD
     end
 ```
 
-The analogy: a CPU is a handful of expert surgeons, each capable of extremely complex work. A GPU is a stadium full of assembly-line workers, each performing a simple step — but all at the same time.
+The analogy: a CPU is a handful of expert surgeons, each capable of extremely complex work. A GPU is a stadium full of assembly-line workers, each performing a simple step, but all at the same time.
 
 ## When GPUs Help (and When They Don't)
 
@@ -67,24 +67,24 @@ Not every workload benefits from a GPU. Understanding the distinction will save 
 - **Irregular, graph-like problems** — traversing a tree or following linked pointers is fundamentally sequential.
 
 !!! tip "A practical rule of thumb"
-    If your code uses NumPy, SciPy, or similar array operations extensively, it can probably benefit from a GPU. If it uses many `if/else` statements and loops over individual items — where each iteration depends on the last — it probably won't.
+    If your code uses NumPy, SciPy, or similar array operations extensively, it can probably benefit from a GPU. If it uses many `if/else` statements and loops over individual items, where each iteration depends on the last, it probably won't.
 
 ## GPU Memory
 
 GPUs have their own dedicated memory, called VRAM (video RAM), that is physically separate from the system RAM your CPU uses. This separation matters: to use a GPU, your data must first be copied from system RAM into VRAM. Most GPU-accelerated libraries handle this transparently, but the VRAM capacity sets a hard ceiling on how much data you can process at once.
 
-A typical GPU on {{ cluster.name }} has between 16 GB and 80 GB of VRAM depending on the model. When your job fails with an "out of memory" error on the GPU, it means you've exceeded *VRAM* — not system RAM. The most common cause is a batch size that's too large. Reducing `batch_size` in your training loop is usually the first fix to try.
+A typical GPU on {{ cluster.name }} has between 16 GB and 80 GB of VRAM depending on the model. When your job fails with an "out of memory" error on the GPU, it means you've exceeded *VRAM*, not system RAM. The most common cause is a batch size that's too large. Reducing `batch_size` in your training loop is usually the first fix to try.
 
 !!! tip "Monitoring VRAM in real time"
     Run `nvidia-smi` from an interactive session on the GPU node to see which GPUs are present, their current utilization percentage, and how much VRAM each process is consuming.
 
 ## CUDA — The Bridge to the GPU
 
-CUDA (Compute Unified Device Architecture) is NVIDIA's programming toolkit that lets your code communicate with the GPU. It provides the low-level interface between software and GPU hardware. Most GPU-accelerated Python libraries — PyTorch, TensorFlow, JAX, CuPy — use CUDA under the hood.
+CUDA (Compute Unified Device Architecture) is NVIDIA's programming toolkit that lets your code communicate with the GPU. It provides the low-level interface between software and GPU hardware. Most GPU-accelerated Python libraries (PyTorch, TensorFlow, JAX, CuPy) use CUDA under the hood.
 
-You generally don't write CUDA directly. Your library handles that layer. But you do need the right *version* of CUDA installed — one that is compatible with both your specific GPU hardware and the version of the library you're using. Version mismatches are one of the most common sources of frustrating GPU setup failures.
+You generally don't write CUDA directly. Your library handles that layer. But you do need the right *version* of CUDA installed, one that is compatible with both your specific GPU hardware and the version of the library you're using. Version mismatches are one of the most common sources of frustrating GPU setup failures.
 
-This is why the [PyTorch recipe](../recipes/python/pytorch.md) has you verify the CUDA version before installing: installing PyTorch built against CUDA 11.8 on a node that only has CUDA 12.x drivers (or vice versa) will silently fall back to CPU-only execution — or fail outright.
+This is why the [PyTorch recipe](../recipes/python/pytorch.md) has you verify the CUDA version before installing: installing PyTorch built against CUDA 11.8 on a node that only has CUDA 12.x drivers (or vice versa) will silently fall back to CPU-only execution, or fail outright.
 
 !!! info "CUDA vs. ROCm"
     CUDA is NVIDIA-specific. AMD GPUs use a different toolkit called ROCm. {{ cluster.name }} uses NVIDIA GPUs, so CUDA is what you need here.
@@ -174,7 +174,7 @@ A one-time snapshot is useful for a quick check. For live monitoring during a ru
 watch -n 1 nvidia-smi
 ```
 
-Run this from an interactive session on the same node where your job is executing. If GPU utilization is consistently sitting below 50%, your job is likely bottlenecked somewhere else — most commonly in data loading. The GPU is waiting for the CPU to prepare the next batch. Solutions include increasing `--cpus-per-task`, using a more efficient data loader, or prefetching data into memory before training starts.
+Run this from an interactive session on the same node where your job is executing. If GPU utilization is consistently sitting below 50%, your job is likely bottlenecked somewhere else, most commonly in data loading. The GPU is waiting for the CPU to prepare the next batch. Solutions include increasing `--cpus-per-task`, using a more efficient data loader, or prefetching data into memory before training starts.
 
 !!! tip "PyTorch-specific profiling"
     For PyTorch jobs, `torch.cuda.utilization()` and `torch.cuda.memory_summary()` give you GPU stats from within Python, which can be more convenient than shelling out to `nvidia-smi` during development.

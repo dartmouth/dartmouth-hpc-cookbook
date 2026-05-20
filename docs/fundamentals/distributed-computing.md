@@ -1,6 +1,6 @@
 ---
 title: Distributed Computing
-description: "Understanding distributed computing — scaling computation across multiple machines connected by a network"
+description: "Understanding distributed computing: scaling computation across multiple machines connected by a network"
 tags:
   - fundamentals
   - concepts
@@ -9,7 +9,7 @@ tags:
 
 # Distributed Computing
 
-Parallel computing harnesses multiple cores within a single machine. But a single machine has limits — a typical CPU has 4 to 128 cores, and the machine has a fixed amount of memory. What if your problem needs more?
+Parallel computing harnesses multiple cores within a single machine. But a single machine has limits: a typical CPU has 4 to 128 cores, and the machine has a fixed amount of memory. What if your problem needs more?
 
 Distributed computing breaks through these limits by spreading work across **multiple machines** connected by a network. {{ cluster.name }} has over 6,000 CPU cores across hundreds of nodes. Distributed computing is how you tap into that collective power.
 
@@ -20,13 +20,13 @@ Distributed computing breaks through these limits by spreading work across **mul
 
 Your supermarket is overwhelmed. Even with every checkout lane open, the lines stretch to the back of the store. The solution? **Direct the overflow to other stores in the chain.** Each store operates independently with its own cashiers and lanes, and you can keep adding stores as demand grows.
 
-This is distributed computing: scaling out across multiple independent systems, each with its own resources. The throughput can grow almost without limit — but now you need logistics to coordinate between stores (which store handles which customers, how do you collect the total sales at the end of the day?).
+This is distributed computing: scaling out across multiple independent systems, each with its own resources. The throughput can grow almost without limit, but now you need logistics to coordinate between stores (which store handles which customers, how do you collect the total sales at the end of the day?).
 
 ## The Distributed Where's Waldo?
 
 Sixty-four people sit in 64 separate rooms, each with their own laptop. You **mail each person a section** of the image. Each person searches their section independently and sends back their result. If Waldo is in section 37, person 37 reports "Found him!" and you're done.
 
-The search itself is fast — 64 people working simultaneously. But notice the overhead that didn't exist in the parallel version:
+The search itself is fast: 64 people working simultaneously. But notice the overhead that didn't exist in the parallel version:
 
 - **Distributing the data**: You had to *send* each section to each room (network transfer)
 - **Collecting results**: You had to *receive* answers back from all 64 people
@@ -36,7 +36,7 @@ That communication overhead is the fundamental cost of going distributed.
 
 ## The Message-Passing Model
 
-In distributed computing, each process runs on a potentially different machine and has its **own private memory**. There's no shared memory to read from — if Process A has data that Process B needs, Process A must explicitly **send a message** containing that data, and Process B must explicitly **receive** it.
+In distributed computing, each process runs on a potentially different machine and has its **own private memory**. There's no shared memory to read from. If Process A has data that Process B needs, Process A must explicitly **send a message** containing that data, and Process B must explicitly **receive** it.
 
 This is the **message-passing model**, and it's the dominant paradigm for distributed HPC. The most widely used standard for message passing is MPI (Message Passing Interface).
 
@@ -76,7 +76,7 @@ Communication is the price of distribution. Every message between processes cost
 
 - **Network latency**: Even on a high-speed cluster interconnect, sending a message takes time (microseconds to milliseconds depending on message size and network)
 - **Serialization**: Data must be packed into a format suitable for transmission and unpacked at the other end
-- **Synchronization**: If Process B can't continue until it receives data from Process A, it sits idle waiting — that's wasted compute time
+- **Synchronization**: If Process B can't continue until it receives data from Process A, it sits idle waiting. That's wasted compute time.
 
 The practical impact: **more processes means more communication, which means diminishing returns.**
 
@@ -141,14 +141,14 @@ Don't default to distributed computing just because you're on a cluster. If your
 
 Real-world HPC applications often combine paradigms for maximum performance:
 
-- **Distributed + Parallel**: Use MPI to spread work across nodes, and within each node use multiple threads or processes to leverage all available cores. This is the classic **hybrid MPI + OpenMP** pattern.
+- **Distributed + Parallel**: Use MPI to spread work across nodes, and within each node use multiple threads or processes to use all available cores. This is the classic **hybrid MPI + OpenMP** pattern.
 - **Distributed + Concurrent**: An orchestrator process might use async I/O to manage communication with many workers without blocking.
 
-These hybrid approaches extract the most performance from cluster hardware, but they also combine the complexity of multiple paradigms. Start simple — go hybrid only when profiling shows you need it.
+These hybrid approaches extract the most performance from cluster hardware, but they also combine the complexity of multiple paradigms. Start simple; go hybrid only when profiling shows you need it.
 
 ## Limitations
 
-**Communication overhead.** The more processes communicate, the more time is spent on messaging instead of computing. Fine-grained tasks that require frequent data exchange between processes may see little or no speedup — or even slowdowns.
+**Communication overhead.** The more processes communicate, the more time is spent on messaging instead of computing. Fine-grained tasks that require frequent data exchange between processes may see little or no speedup, or even slowdowns.
 
 **Debugging difficulty.** When something goes wrong in a distributed program, the bug might involve timing-dependent interactions between processes running on different machines. Reproducing and diagnosing such bugs is significantly harder than debugging sequential or even parallel code.
 

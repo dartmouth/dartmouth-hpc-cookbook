@@ -56,7 +56,7 @@ shard of the batch. After the backward pass, gradients are averaged across all
 GPUs (via NCCL all-reduce) before the optimizer step.
 
 - Best for: models that fit on one GPU but training is slow.
-- Scaling efficiency is high — communication is a single gradient sync per step.
+- Scaling efficiency is high: communication is a single gradient sync per step.
 - PyTorch's `DistributedDataParallel` is the standard implementation.
 
 ### Model Parallelism (Tensor / Pipeline)
@@ -66,14 +66,14 @@ parameters.
 
 - Required when: model weights alone exceed one GPU's VRAM.
 - More complex to implement; pipeline bubbles and load imbalance are real costs.
-- FSDP and DeepSpeed ZeRO automate this — see
+- FSDP and DeepSpeed ZeRO automate this; see
   [FSDP and DeepSpeed](#fsdp-and-deepspeed-when-you-need-them) below.
 
 !!! note "What about `device_map=\"auto\"`?"
     `device_map="auto"` from the HuggingFace `transformers` library is
     automatic model parallelism for **inference**. It's covered in the
     [Transformers recipe](transformers.md). It does not support training
-    gradients — for training you need DDP, FSDP, or DeepSpeed.
+    gradients. For training you need DDP, FSDP, or DeepSpeed.
 
 ---
 
@@ -262,7 +262,7 @@ plus additional optimizations like CPU offloading and mixed precision. ZeRO-3
 approaches FSDP in capability; DeepSpeed also provides kernel fusions that
 can improve throughput.
 
-Both are supported as Accelerate backends — you configure them via an
+Both are supported as Accelerate backends. You configure them via an
 `accelerate config` YAML rather than changing training code:
 
 ```yaml
@@ -299,7 +299,7 @@ sacct -j <JOBID> --format=JobID,Elapsed,NCPUS,NNodes,MaxRSS
 ```
 
 The most common silent failure in DDP is that **only GPU 0 is doing any
-work** — `nvidia-smi` shows GPU 0 at ~100% utilization and all others at ~0%.
+work**: `nvidia-smi` shows GPU 0 at ~100% utilization and all others at ~0%.
 This means `dist.init_process_group()` was never called, or your model/data
 aren't being moved to the correct `local_rank` device.
 
@@ -331,7 +331,7 @@ torchrun ... train.py
     NCCL errors (`Unhandled system error`, `Connection timed out`) are usually
     network or firewall issues between nodes, not bugs in your code. Run with
     `NCCL_DEBUG=INFO` to see which collective is failing. On {{ cluster.name }},
-    use the `gpu` partition for multi-node GPU jobs — nodes in this partition
+    use the `gpu` partition for multi-node GPU jobs. Nodes in this partition
     are on the high-speed interconnect. Contact
     [{{ institution.support_team }}](mailto:{{ institution.support_email }})
     if errors persist across multiple attempts.

@@ -11,7 +11,7 @@ The material is organized into two tracks that you can work through independentl
 
 ## :material-console: Navigating the Cluster
 
-Everything you need to operate day-to-day on a Linux-based HPC system — from basic shell commands to moving data in and out of the cluster.
+Everything you need to operate day-to-day on a Linux-based HPC system, from basic shell commands to moving data in and out of the cluster.
 
 | Page | What you'll learn |
 |---|---|
@@ -26,7 +26,7 @@ Everything you need to operate day-to-day on a Linux-based HPC system — from b
 
 ## :material-sitemap: Parallel Programming
 
-Understanding how work gets divided across processors and machines — the conceptual backbone of HPC.
+Understanding how work gets divided across processors and machines: the conceptual backbone of HPC.
 
 | Page | What you'll learn |
 |---|---|
@@ -36,4 +36,4 @@ Understanding how work gets divided across processors and machines — the conce
 | [Distributed Computing](distributed-computing.md) | Scaling computation across multiple machines connected by a network |
 
 !!! tip "Not sure where to start?"
-    If you're new to Linux, begin with [Linux Basics](linux-basics.md) and work through the **Navigating the Cluster** track in order — each page builds on the previous one. The **Parallel Programming** track is more conceptual and can be read in any order, though starting with the [overview](parallel-programming.md) will give you a helpful mental map.
+    If you're new to Linux, begin with [Linux Basics](linux-basics.md) and work through the **Navigating the Cluster** track in order; each page builds on the previous one. The **Parallel Programming** track is more conceptual and can be read in any order, though starting with the [overview](parallel-programming.md) will give you a helpful mental map.

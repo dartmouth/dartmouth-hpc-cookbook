@@ -1,6 +1,6 @@
 ---
 title: Concurrent Programming
-description: "Understanding concurrency — interleaving tasks to make the most of idle time in I/O-bound workloads"
+description: "Understanding concurrency: interleaving tasks to make the most of idle time in I/O-bound workloads"
 tags:
   - fundamentals
   - concepts
@@ -9,7 +9,7 @@ tags:
 
 # Concurrent Programming
 
-Imagine your program needs to complete two tasks. Task 1 makes a request to a remote database and waits for the response. Task 2 is independent of Task 1 and has no external dependencies. In a sequential program, Task 2 just... waits. It can't start until Task 1 is completely done — including all the time Task 1 spent doing nothing but waiting for a response.
+Imagine your program needs to complete two tasks. Task 1 makes a request to a remote database and waits for the response. Task 2 is independent of Task 1 and has no external dependencies. In a sequential program, Task 2 just... waits. It can't start until Task 1 is completely done, including all the time Task 1 spent doing nothing but waiting for a response.
 
 That's wasteful. Concurrent programming fixes it by letting Task 2 run during Task 1's idle time.
 
@@ -18,7 +18,7 @@ That's wasteful. Concurrent programming fixes it by letting Task 2 run during Ta
 
 ## The Concurrent Supermarket Checkout
 
-Picture a single cashier working two checkout queues. When a customer in Queue A steps aside to dig through their wallet for a credit card, the cashier doesn't just stand there waiting — they switch to Queue B and start scanning the next customer's items. When the Queue A customer is ready to pay, the cashier switches back.
+Picture a single cashier working two checkout queues. When a customer in Queue A steps aside to dig through their wallet for a credit card, the cashier doesn't just stand there waiting. They switch to Queue B and start scanning the next customer's items. When the Queue A customer is ready to pay, the cashier switches back.
 
 The cashier never works on two customers *at the same time*. There's still just one pair of hands. But by filling what would otherwise be dead time, the cashier processes more customers per hour than if they had waited idly for each one to finish.
 
@@ -28,7 +28,7 @@ The key insight is what triggers the switching: the cashier switches when they w
 
 ## The Concurrent Where's Waldo?
 
-Now consider the Where's Waldo? problem. You're staring at the image, scanning every square inch for that red-and-white striped character. There's no waiting — your eyes and brain are working continuously. There are no idle moments to fill with other work.
+Now consider the Where's Waldo? problem. You're staring at the image, scanning every square inch for that red-and-white striped character. There's no waiting; your eyes and brain are working continuously. There are no idle moments to fill with other work.
 
 **Concurrency doesn't help here.** There's no I/O to wait for, no idle time to exploit. The bottleneck is pure computation (visual processing), not waiting. This is a CPU-bound problem, and concurrency is designed for I/O-bound problems.
 
@@ -41,13 +41,13 @@ This distinction is fundamental and worth burning into memory:
 
 ## How It Works: The Event Loop
 
-Under the hood, concurrent programs use an **event loop** — a central coordinator that manages multiple tasks.
+Under the hood, concurrent programs use an **event loop**, a central coordinator that manages multiple tasks.
 
 Here's the mental model:
 
 1. The event loop starts Task 1.
-2. Task 1 reaches a point where it needs to wait (e.g., sends a network request). Instead of blocking, it **yields control** back to the event loop: *"I'm waiting — go do something else."*
-3. The event loop picks up the next ready task — Task 2 — and starts running it.
+2. Task 1 reaches a point where it needs to wait (e.g., sends a network request). Instead of blocking, it **yields control** back to the event loop: *"I'm waiting, go do something else."*
+3. The event loop picks up the next ready task (Task 2) and starts running it.
 4. When Task 1's response arrives, the event loop puts it back on the ready queue.
 5. The event loop continues switching between tasks whenever one yields.
 
@@ -72,7 +72,7 @@ sequenceDiagram
     EL->>T3: Resume & finish
 ```
 
-This is **cooperative multitasking**: tasks voluntarily yield control when they start waiting. It all happens on a single thread — no multiple processors required.
+This is **cooperative multitasking**: tasks voluntarily yield control when they start waiting. It all happens on a single thread, no multiple processors required.
 
 The ideal speedup from concurrency is:
 
@@ -87,16 +87,16 @@ Consider a program that makes three HTTP requests, each taking 1 second to get a
 - **Sequential**: 3 requests × 1 second each = **3 seconds** total
 - **Concurrent**: All 3 requests fire, then wait together. Total ≈ **1 second** (the slowest request)
 
-That's a 3× speedup — not from doing things faster, but from doing things *smarter*. The CPU wasn't doing anything useful during those waits anyway.
+That's a 3× speedup, not from doing things faster, but from doing things *smarter*. The CPU wasn't doing anything useful during those waits anyway.
 
 ## When to Use Concurrent Programming
 
 Concurrent programming is the right tool when:
 
-- [x] Your program spends significant time **waiting for external I/O** — network requests, database queries, file downloads, API calls
+- [x] Your program spends significant time **waiting for external I/O**: network requests, database queries, file downloads, API calls
 - [x] The tasks are **independent** or only loosely coupled (Task 2 doesn't need Task 1's result to start)
-- [x] You want to improve throughput **without additional hardware** — concurrency works on a single core
-- [x] You're working with **many similar I/O operations** — downloading 500 files, querying 100 API endpoints, reading from multiple sensors
+- [x] You want to improve throughput **without additional hardware**: concurrency works on a single core
+- [x] You're working with **many similar I/O operations**: downloading 500 files, querying 100 API endpoints, reading from multiple sensors
 
 ### Real-world HPC examples
 
@@ -115,7 +115,7 @@ Concurrency is not a universal performance tool. Keep these limitations in mind:
 
 **Event loop overhead.** The event loop itself takes some CPU time to manage task switching. For tasks with very short wait times, this overhead can eat into your gains.
 
-**Not all libraries support it.** For concurrent I/O to work, the I/O library itself must be "async-aware" — it must know how to yield control back to the event loop instead of blocking. A regular synchronous HTTP library, for example, will block the entire event loop while waiting, defeating the purpose. You need async-compatible libraries.
+**Not all libraries support it.** For concurrent I/O to work, the I/O library itself must be "async-aware": it must know how to yield control back to the event loop instead of blocking. A regular synchronous HTTP library, for example, will block the entire event loop while waiting, defeating the purpose. You need async-compatible libraries.
 
 ## Key Concepts
 

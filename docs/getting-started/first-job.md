@@ -12,7 +12,7 @@ You have an [account](account.md). You're [connected to {{ cluster.name }}](conn
 By the end of this page you'll have submitted a job, watched it move through the queue, and read its output. It's time to do the full cycle described in [What is HPC?](what-is-hpc.md) for real!
 
 !!! tip "New to the command line?"
-    This guide assumes you can navigate directories and edit files in a terminal. If that's unfamiliar, work through [Linux Basics](../fundamentals/linux-basics.md) first — it won't take long.
+    This guide assumes you can navigate directories and edit files in a terminal. If that's unfamiliar, work through [Linux Basics](../fundamentals/linux-basics.md) first; it won't take long.
 
 ## Write a Job Script
 
@@ -41,7 +41,7 @@ date
 
 Save and exit (`Ctrl+O`, `Enter`, `Ctrl+X` in nano).
 
-Let's break that down:
+Here's what each part does:
 
 - `#!/bin/bash` tells Linux to run the script with Bash.
 - Lines starting with `#SBATCH` are **directives** — instructions to the scheduler, not regular comments. Each one requests a specific resource or sets an option.
@@ -71,7 +71,7 @@ Check the queue:
 squeue --me
 ```
 
-You'll see your job listed with its state — `PD` (pending) while it waits for resources, `R` (running) once it starts. For a job this small, it may finish before you even check. If `squeue --me` shows nothing, your job is already done.
+You'll see your job listed with its state: `PD` (pending) while it waits for resources, `R` (running) once it starts. For a job this small, it may finish before you even check. If `squeue --me` shows nothing, your job is already done.
 
 ## Read the Output
 
@@ -100,7 +100,7 @@ If your output file doesn't appear, or it's empty, a few things to check:
 
 - **Still in the queue?** Run `squeue --me` to see if the job is still pending or running.
 - **Job failed?** Run `sacct -j <job-id> --format=JobID,State,ExitCode` to see whether it completed or hit an error. A non-zero exit code means something went wrong.
-- **Typo in the script?** Run `bash first-job.sh` directly on the login node as a quick syntax check. (This is fine for a trivial script like this one — don't do it with real workloads.)
+- **Typo in the script?** Run `bash first-job.sh` directly on the login node as a quick syntax check. (This is fine for a trivial script like this one, but don't do it with real workloads.)
 
 Don't worry about memorizing `sacct` flags right now. We'll cover job monitoring properly later.
 
@@ -109,6 +109,6 @@ Don't worry about memorizing `sacct` flags right now. We'll cover job monitoring
 You just completed the full HPC workflow. Now it's time to build the skills that let you do real work on the cluster:
 
 - [**Linux Basics**](../fundamentals/linux-basics.md): Navigate the filesystem and manage files from the command line
-- [**Storage on {{ cluster.name }}**](../fundamentals/storage.md): Understand where to put your data and why it matters
+- [**Storage on {{ cluster.name }}**](../fundamentals/storage.md): Understand where to put your data and which storage tier to use
 - [**Modules**](../fundamentals/modules.md): Load the software you need for your research
 - [**Job Scheduling**](../fundamentals/scheduling.md): Request the right resources, run parallel work, and use job arrays

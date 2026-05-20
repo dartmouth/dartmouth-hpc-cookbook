@@ -24,7 +24,7 @@ There are two key architectural models to understand:
 
 !!! note
 
-    We can still leverage shared memory within an individual node in the cluster to allow all of that node's CPUs to work together. Only once we want to scale out across multiple nodes is when we are required to use a distributed memory programming model. To learn more about these paradigms, see [Parallel Programming](../fundamentals/parallel-programming.md).
+    We can still use shared memory within an individual node in the cluster to allow all of that node's CPUs to work together. Only once we want to scale out across multiple nodes is when we are required to use a distributed memory programming model. To learn more about these paradigms, see [Parallel Programming](../fundamentals/parallel-programming.md).
 
 
 
@@ -101,7 +101,7 @@ flowchart LR
 ```
 
 !!! warning "The login node is shared"
-    When you connect to {{ cluster.name }}, you land on the **login node** — a shared gateway used by all users. It's appropriate for lightweight tasks like editing files, submitting or monitoring jobs. **Do not run computationally intensive work on the login node.** Doing so can degrade performance for everyone. Use the scheduler to submit real work to the compute nodes.
+    When you connect to {{ cluster.name }}, you land on the **login node** (a shared gateway used by all users). It's appropriate for lightweight tasks like editing files, submitting or monitoring jobs. **Do not run computationally intensive work on the login node.** Doing so can degrade performance for everyone. Use the scheduler to submit real work to the compute nodes.
 
 ## Key Terminology
 

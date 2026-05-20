@@ -65,7 +65,7 @@ module load gcc/12.2.0 openmpi/4.1.4
 module list
 ```
 
-This shows every module currently active in your session. If something isn't behaving as expected, this is the first thing to check — the software you need might not be loaded.
+This shows every module currently active in your session. If something isn't behaving as expected, this is the first thing to check; the software you need might not be loaded.
 
 ### Unload a module
 
@@ -89,7 +89,7 @@ This unloads **everything**. It's useful when you've accumulated modules over a 
 module show gcc/12.2.0
 ```
 
-This reveals exactly what a module does — which directories it adds to `$PATH`, what environment variables it sets, and whether it loads any other modules as dependencies. This is invaluable for debugging:
+This reveals exactly what a module does: which directories it adds to `$PATH`, what environment variables it sets, and whether it loads any other modules as dependencies. This is invaluable for debugging:
 
 ```
 prepend-path    PATH            /opt/software/gcc/12.2.0/bin
@@ -113,14 +113,14 @@ uv/0.1.24
 
 The name identifies the software, and the version after the slash identifies the specific release. Some key things to know:
 
-- **Default versions**: If you run `module load gcc` without specifying a version, the system loads a default (usually marked with `(D)` in `module avail` output). It's better to always specify the version explicitly — the default may change when the system is updated, which could break your workflow.
+- **Default versions**: If you run `module load gcc` without specifying a version, the system loads a default (usually marked with `(D)` in `module avail` output). It's better to always specify the version explicitly. The default may change when the system is updated, which could break your workflow.
 
 - **Partial matching**: You can often use partial version numbers. `module load gcc/12` may resolve to `gcc/12.2.0` if that's the only 12.x installed.
 
 - **Hierarchical modules**: Some modules only appear after you've loaded a prerequisite. For example, MPI libraries compiled with a specific compiler may only show up in `module avail` after you load that compiler. If you can't find a module you expect to exist, check whether it depends on another module being loaded first.
 
 !!! info "Finding the right module"
-    If `module avail` doesn't turn up what you need, try `module keyword <term>` or `module spider <term>` — these search module descriptions, not just names, and can find software that isn't visible until its dependencies are loaded.
+    If `module avail` doesn't turn up what you need, try `module keyword <term>` or `module spider <term>`. These search module descriptions, not just names, and can find software that isn't visible until its dependencies are loaded.
 
 ## Loading Modules in Job Scripts
 
@@ -141,7 +141,7 @@ module load uv                # load what you need
 uv run python my_analysis.py
 ```
 
-The `module purge` at the top ensures you're starting from a known state, regardless of what might be loaded by default. Then you explicitly load exactly what your job requires. This makes your job script **self-contained and reproducible** — anyone can read it and know exactly what software environment it expects.
+The `module purge` at the top ensures you're starting from a known state, regardless of what might be loaded by default. Then you explicitly load exactly what your job requires. This makes your job script **self-contained and reproducible**: anyone can read it and know exactly what software environment it expects.
 
 For more on job script structure, see [Submit Your First Job](../getting-started/first-job.md).
 
@@ -175,7 +175,7 @@ Modules are **not** the right tool for managing Python packages, R libraries, or
 
 - **R packages**: Install them into a user library with `install.packages()` inside an R session.
 
-The distinction is about **scope**. Modules manage software that's shared across the cluster. Virtual environments and user libraries manage dependencies that are specific to your project. Mixing these up — trying to use modules for everything or ignoring modules entirely — leads to environments that are brittle and hard to reproduce.
+The distinction is about **scope**. Modules manage software that's shared across the cluster. Virtual environments and user libraries manage dependencies that are specific to your project. Mixing these up (trying to use modules for everything or ignoring modules entirely) leads to environments that are brittle and hard to reproduce.
 
 ## Quick Reference
 

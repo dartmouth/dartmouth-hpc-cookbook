@@ -11,12 +11,12 @@ tags:
 
 When you work on your laptop, you have one hard drive that holds everything: your operating system, your documents, your datasets, and your results. HPC clusters are different. They typically offer **multiple storage tiers**, each designed for a different purpose. Using the right tier at the right time can dramatically improve your job performance and help you avoid common pitfalls like running out of space mid-job or bottlenecking on slow I/O.
 
-## Why Storage Tiers Matter
+## What storage tiers are for
 
 HPC workloads generate and consume data at scales that a single file system can't efficiently handle. A genomics pipeline might need to read terabytes of sequencing data, write hundreds of intermediate files during processing, and then store a few gigabytes of final results. Each of those stages has different requirements:
 
 - **Reading input data** needs reliable, always-available storage.
-- **Writing intermediate files** during a job needs speed — the faster your storage, the less time your CPUs spend waiting on disk.
+- **Writing intermediate files** during a job needs speed. The faster your storage, the less time your CPUs spend waiting on disk.
 - **Keeping final results** needs persistence and enough capacity that you're not constantly deleting old work.
 
 That's why clusters separate storage into tiers.
@@ -25,7 +25,7 @@ That's why clusters separate storage into tiers.
 
 **Scratch storage** is designed for speed. It sits on fast disks (often SSDs or parallel file systems like Lustre) and is optimized for the heavy read/write patterns that jobs produce. This is where your jobs should write temporary and intermediate files.
 
-The tradeoff is that scratch storage is **not permanent**. Files on scratch are typically subject to automatic purge policies — if a file hasn't been accessed in a certain number of days, it may be deleted to free space for other users. Scratch is working space, not archival space.
+The tradeoff is that scratch storage is **not permanent**. Files on scratch are typically subject to automatic purge policies: if a file hasn't been accessed in a certain number of days, it may be deleted to free space for other users. Scratch is working space, not archival space.
 
 !!! tip "When to use scratch"
     Use scratch for anything your job produces *during* execution: intermediate files, checkpoint files, temporary outputs. Once your job finishes, copy the results you need to longer-term storage.
@@ -42,7 +42,7 @@ This is the right place for:
 - Anything you can't afford to lose
 
 !!! tip "When to use long-term storage"
-    Keep your important data — input datasets, final results, and anything you'd be upset to lose — on long-term storage. Copy what you need to scratch at the start of a job, and copy results back when the job finishes.
+    Keep your important data (input datasets, final results, and anything you'd be upset to lose) on long-term storage. Copy what you need to scratch at the start of a job, and copy results back when the job finishes.
 
 ## A Typical Storage Workflow
 
@@ -66,7 +66,7 @@ This approach gives you the best of both worlds: fast I/O where it matters and s
 
 ## Home Directories
 
-Most clusters also give each user a **home directory**. Your home directory is persistent and backed up, but it usually has a small quota (often just a few gigabytes). It's meant for configuration files, scripts, and small personal files — not for large datasets or job I/O.
+Most clusters also give each user a **home directory**. Your home directory is persistent and backed up, but it usually has a small quota (often just a few gigabytes). It's meant for configuration files, scripts, and small personal files, not for large datasets or job I/O.
 
 !!! warning "Don't run jobs from your home directory"
     Home directories are typically on slower storage with tight quotas. Running jobs that do heavy I/O in your home directory can be slow for you and disruptive for other users sharing the same file system.

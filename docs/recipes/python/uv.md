@@ -15,7 +15,7 @@ tags:
 
 ## Why Use `uv` on the Cluster?
 
-The system Python on {{ cluster.name }} is shared and locked down — you can't
+The system Python on {{ cluster.name }} is shared and locked down; you can't
 `pip install` into it. To install your own packages you need an **isolated
 environment**: a private copy of Python plus any libraries your project
 requires, walled off from the rest of the system.
@@ -195,7 +195,7 @@ uv run python analysis.py
 ## Keeping Storage Tidy
 
 `uv` caches downloaded packages and Python builds so that repeated installs
-are fast. By default this cache lives in `~/.cache/uv` — inside your home
+are fast. By default this cache lives in `~/.cache/uv`, inside your home
 directory, which has a storage quota on {{ cluster.name }}.
 
 The cache is purely a speed optimization. It's safe to delete at any time because
@@ -243,7 +243,7 @@ anywhere.
     `uv` uses the version specified in `.python-version`. If you need a
     different version, either edit that file or create a new project with
     `uv init --python 3.xx myproject`. The `.venv/` is tied to the Python
-    version that created it — after changing versions, delete `.venv/` and
+    version that created it. After changing versions, delete `.venv/` and
     run `uv sync` to rebuild.
 
 ## Register Your Environment as a Jupyter Kernel
