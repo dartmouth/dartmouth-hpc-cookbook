@@ -275,25 +275,25 @@ in the MATLAB documentation for a full list.
 
 ## Common pitfalls
 
-!!! danger "Letting MATLAB autodetect worker count"
+??? failure "Letting MATLAB autodetect worker count"
     Never call `parpool('local')` without specifying a size. MATLAB will detect all
     CPUs on the physical node (potentially 64+) and spawn that many workers,
     consuming resources you didn't request and impacting other users. Always use
     `parpool('local', str2num(getenv('SLURM_CPUS_PER_TASK')))`.
 
-!!! warning "Interactive GUI calls in batch scripts"
+??? failure "Interactive GUI calls in batch scripts"
     Any MATLAB call that opens a window will **hang indefinitely** in a batch job:
     `figure`, `uigetfile`, `uiputfile`, `inputdlg`, `msgbox`, etc. Even `imshow`
     is a problem. Use `saveas` or `exportgraphics` to save figures to files instead
     of displaying them. The `-nodisplay` flag suppresses the desktop but does not
     prevent GUI function calls from blocking.
 
-!!! note "MATLAB startup is slow on cluster nodes"
+??? failure "MATLAB startup is slow on cluster nodes"
     MATLAB takes 2-5 minutes to start on a compute node. It needs to initialize
     the JVM and check out a license token. This is normal. Don't assume your job
     is hanging just because the output file is empty for the first few minutes.
 
-!!! note "Harmless warning about `$documents/MATLAB`"
+??? failure "Harmless warning about `$documents/MATLAB`"
     You may see `Unable to locate a personal folder for $documents/MATLAB` in
     your output file. This is a cosmetic warning about the default MATLAB userpath.
     You can silence it by running `mkdir -p $HOME/Documents/MATLAB` once on a

@@ -162,17 +162,17 @@ You can also specify ranges with gaps: `--array=5-10,15,20-25`.
 
 ## Common pitfalls
 
-!!! warning "Output file collisions"
+??? failure "Output file collisions"
     Forgetting `%a` in `--output` means all tasks write to the same log file. The result is interleaved, unreadable output, and potentially data loss if your script appends results to a file. Always use `%a` in both `--output` and `--error` for array jobs.
 
-!!! warning "Shared result files cause race conditions"
+??? failure "Shared result files cause race conditions"
     If multiple tasks try to append results to the same CSV or text file simultaneously, they will corrupt each other's writes. Write task results to separate files (e.g., `results/task_${SLURM_ARRAY_TASK_ID}.csv`) and merge them after all tasks complete.
 
-!!! warning "GPU array tasks need a GPU partition and `--gpus`"
+??? failure "GPU array tasks need a GPU partition and `--gpus`"
     If you request `--gpus=1` but don't specify `--partition=gpu` (or `gpu-preempt`), your tasks will sit in the queue indefinitely with reason `Resources`. Use `--constraint` to target a specific GPU type (e.g., `--constraint=a100`) so every array task gets comparable hardware. See [Intermediate Patterns: Targeting specific hardware](intermediate-patterns.md#targeting-specific-hardware-with---constraint) for the full list of constraint options.
 
-!!! tip "Preempt partitions are great for short array tasks"
+??? failure "Preempt partitions are great for short array tasks"
     If each array task runs for under 2 hours, `--partition=gpu-preempt` (or `cpu-preempt`) gives you access to a much larger pool of hardware. The 2-hour preemption window is not a concern when individual tasks are short.
 
-!!! warning "Too many tiny output files"
+??? failure "Too many tiny output files"
     Creating thousands of small files (one per task) can create significant filesystem overhead. If each task produces small results (a few KB), consider aggregating them within the task (process multiple inputs per task) rather than one-file-per-task at large scale.

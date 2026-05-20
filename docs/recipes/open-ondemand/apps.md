@@ -139,22 +139,20 @@ You get a full desktop running on a compute node. Applications launched from wit
 
 ## Common pitfalls
 
-Knowing these in advance will save you frustration.
+??? failure "Session timeout: save your work"
+    OOD sessions end when the Slurm time limit expires, without warning. You can't extend a running session; you'll need to launch a new one. Get into the habit of saving notebooks and scripts frequently, especially as your time limit approaches. The maximum interactive session duration is **8 hours**.
 
-**Session timeout: save your work**
-: OOD sessions end when the Slurm time limit expires, without warning. You can't extend a running session; you'll need to launch a new one. Get into the habit of saving notebooks and scripts frequently, especially as your time limit approaches. The maximum interactive session duration is **8 hours**.
+??? failure "Resource requests that are too small"
+    If your Jupyter kernel dies unexpectedly or RStudio crashes, the most likely cause is insufficient memory. Cancel the session and launch a new one with more RAM. For memory-intensive work, monitor usage with `htop` in the OOD shell before committing to a long session.
 
-**Resource requests that are too small**
-: If your Jupyter kernel dies unexpectedly or RStudio crashes, the most likely cause is insufficient memory. Cancel the session and launch a new one with more RAM. For memory-intensive work, monitor usage with `htop` in the OOD shell before committing to a long session.
+??? failure "Home directory quota"
+    Large notebook checkpoint files (`.ipynb_checkpoints/`) and data cached in your home directory can quietly fill your quota. Keep large input and output data on scratch or work storage, not your home directory. See [Storage Fundamentals](../../fundamentals/storage.md) for how storage is organized on {{ cluster.name }}.
 
-**Home directory quota**
-: Large notebook checkpoint files (`.ipynb_checkpoints/`) and data cached in your home directory can quietly fill your quota. Keep large input and output data on scratch or work storage, not your home directory. See [Storage Fundamentals](../../fundamentals/storage.md) for how storage is organized on {{ cluster.name }}.
+??? failure "Idle sessions waste cluster resources"
+    An OOD session holds a Slurm allocation for its entire duration, whether you're actively using it or not. Close sessions you're done with so those resources are available to other users. There's no penalty for ending a session early.
 
-**Idle sessions waste cluster resources**
-: An OOD session holds a Slurm allocation for its entire duration, whether you're actively using it or not. Close sessions you're done with so those resources are available to other users. There's no penalty for ending a session early.
-
-**Short QOS for faster scheduling**
-: If your interactive session is under 4 hours, check the **Short QOS** box when launching. This gives your job higher scheduling priority so it starts faster. It works on any partition.
+??? failure "Short QOS for faster scheduling"
+    If your interactive session is under 4 hours, check the **Short QOS** box when launching. This gives your job higher scheduling priority so it starts faster. It works on any partition.
 
 ## What's next
 

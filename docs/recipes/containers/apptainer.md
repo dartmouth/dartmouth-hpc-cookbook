@@ -262,19 +262,19 @@ Key points for container jobs:
 
 ## Common Pitfalls
 
-!!! warning "`.sif` files in home will fill your quota"
+??? failure "`.sif` files in home will fill your quota"
     GPU-capable container images routinely exceed 5–10 GB. A few pulls into
     your home directory will exhaust your {{ storage.home_quota }} quota and
     cause jobs and logins to fail. Always pull images to a scratch workspace
     or `{{ storage.work_path }}`, and keep a note of where they live.
 
-!!! warning "CUDA driver vs. toolkit version mismatch"
+??? failure "CUDA driver vs. toolkit version mismatch"
     If your container was built against CUDA 12.4 but the node's driver only
     supports CUDA 11.x, your code will fail at runtime with a cryptic error
     like `CUDA driver version is insufficient`. Always check the NGC image tag
     and verify driver compatibility with `nvidia-smi` on the compute node.
 
-!!! warning "File not found inside the container"
+??? failure "File not found inside the container"
     If your script exits with `FileNotFoundError` or `No such file or directory`
     for a path you know exists, you've forgotten a bind mount. The container
     cannot see host paths unless they are mounted. Use `--bind` or set
@@ -284,7 +284,7 @@ Key points for container jobs:
     apptainer exec --bind /my/path:/mnt myimage.sif ls /mnt
     ```
 
-!!! warning "Container filesystem is read-only"
+??? failure "Container filesystem is read-only"
     The container image itself cannot be written to. If your code tries to
     write output files *inside* the container's own filesystem (e.g., to a
     path that isn't bind-mounted from the host), it will fail with a
