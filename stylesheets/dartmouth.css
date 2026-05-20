@@ -359,3 +359,192 @@ figure.system-stats figcaption {
   margin-top: 0.25em;
   padding-top: 0;
 }
+
+/* ==========================================================================
+   Load-balance bar chart (distributed-computing.md)
+   ========================================================================== */
+
+.load-balance-chart {
+  max-width: 100%;
+  margin: 1rem 0;
+}
+
+.load-balance-chart .lb-heading {
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin: 1rem 0 0.35rem;
+  color: var(--md-default-fg-color);
+}
+
+.load-balance-chart .lb-heading:first-child {
+  margin-top: 0;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  margin: 0.3rem 0;
+  height: 1.6rem;
+}
+
+.lb-label {
+  width: 5.5rem;
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--md-default-fg-color--light);
+}
+
+.lb-track {
+  flex: 1;
+  display: flex;
+  height: 100%;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.lb-bar {
+  background: var(--md-primary-fg-color, #00693e);
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.lb-idle {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--md-default-bg-color--lightest, #e2e2e2),
+    var(--md-default-bg-color--lightest, #e2e2e2) 4px,
+    var(--md-default-bg-color--lighter, #f7f7f7) 4px,
+    var(--md-default-bg-color--lighter, #f7f7f7) 8px
+  );
+  height: 100%;
+  opacity: 0.55;
+}
+
+/* Dark-mode adjustments */
+[data-md-color-scheme="dartmouth-dark"] .lb-idle {
+  opacity: 0.3;
+}
+
+/* ==========================================================================
+   Schedule timeline chart (scheduling.md — backfill example)
+   ========================================================================== */
+
+.sched-chart {
+  max-width: 100%;
+  margin: 1rem 0;
+  font-size: 0.78rem;
+}
+
+.sched-chart .sched-heading {
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin: 0.75rem 0 0.25rem;
+  color: var(--md-default-fg-color);
+}
+
+.sched-chart .sched-heading:first-child {
+  margin-top: 0;
+}
+
+/* Time axis row */
+.sched-axis {
+  display: flex;
+  margin-left: 5.5rem; /* align with track */
+  position: relative;
+  height: 1.2rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  margin-bottom: 0.15rem;
+}
+
+.sched-axis span {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: var(--md-default-fg-color--light);
+  bottom: 0.1rem;
+}
+
+/* Timeline row (reuses .lb-label width) */
+.sched-row {
+  display: flex;
+  align-items: center;
+  margin: 0.25rem 0;
+  height: 1.6rem;
+}
+
+.sched-label {
+  width: 5.5rem;
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--md-default-fg-color--light);
+}
+
+.sched-track {
+  flex: 1;
+  display: flex;
+  height: 100%;
+  position: relative;
+}
+
+/* Segment base */
+.sched-seg {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 0.3rem;
+}
+
+/* Running / active job */
+.sched-seg--active {
+  background: var(--md-primary-fg-color, #00693e);
+  border-radius: 3px 0 0 3px;
+}
+
+/* Backfilled job */
+.sched-seg--backfill {
+  background: #267aba; /* River Blue */
+  border-radius: 3px;
+}
+
+/* Waiting / queued large job */
+.sched-seg--waiting {
+  background: #9d162e; /* Bonfire Red */
+  border-radius: 0 3px 3px 0;
+}
+
+/* Empty gap */
+.sched-seg--gap {
+  background: transparent;
+}
+
+/* Legend row */
+.sched-legend {
+  display: flex;
+  gap: 1rem;
+  margin: 0.5rem 0 0 5.5rem;
+  font-size: 0.72rem;
+  color: var(--md-default-fg-color--light);
+  flex-wrap: wrap;
+}
+
+.sched-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.sched-legend-swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
