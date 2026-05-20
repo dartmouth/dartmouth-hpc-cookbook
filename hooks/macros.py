@@ -550,6 +550,7 @@ def define_env(env):
         time: str = "01:00:00",
         cpus: "int | str" = 1,
         mem: str = "4G",
+        mem_per_cpu: str = "",
         gpus: "int | str" = 0,
         gres: str = "",
         ntasks_per_node: "int | str" = 0,
@@ -583,6 +584,10 @@ def define_env(env):
         annotation markers, e.g. ``nodes="1  # (1)!"``.
 
         Parameters:
+            mem_per_cpu: Per-CPU memory (e.g. ``"2G"``).  When set,
+                  emits ``--mem-per-cpu`` instead of ``--mem``.
+                  Preferred for MPI jobs where memory scales with
+                  the number of tasks.
             gres: Raw ``--gres`` value (e.g. ``"gpu:1  # (1)!"``).
                   Overrides ``gpus`` when set.
             annotations: Ordered list of annotation texts matching the
@@ -629,7 +634,10 @@ def define_env(env):
         else:
             script += f"\n#SBATCH --cpus-per-task={cpus_str}"
 
-        script += f"\n#SBATCH --mem={mem}"
+        if mem_per_cpu:
+            script += f"\n#SBATCH --mem-per-cpu={mem_per_cpu}"
+        else:
+            script += f"\n#SBATCH --mem={mem}"
         script += "\n#SBATCH --output=%x_%j.out"
         script += "\n#SBATCH --error=%x_%j.err"
 

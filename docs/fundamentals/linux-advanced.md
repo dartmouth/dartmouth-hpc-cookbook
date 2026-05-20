@@ -133,7 +133,7 @@ source ~/.bashrc
 Now that you know about `$PATH`, here's the practical payoff: {{ cluster.name }} uses an **environment modules** system so you don't have to edit `$PATH` by hand. When you load a module, the system updates your environment variables automatically:
 
 ```bash
-module load openmpi/5.0    # makes Open MPI available in version 5.0
+module load openmpi/5.0.3  # makes Open MPI available in version 5.0.3
 module list                # see what's currently loaded
 ```
 
