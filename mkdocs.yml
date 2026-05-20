@@ -17,6 +17,8 @@ extra_javascript:
   - javascripts/linux-terminal-tour.js
   - javascripts/ssh-simulator.js
   - javascripts/username-personalize.js
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
 # Institution-specific variables (cluster name, institution name, etc.)
 # are loaded from site.yml by the macros plugin — see hooks/macros.py.
