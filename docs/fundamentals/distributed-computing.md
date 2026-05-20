@@ -99,24 +99,19 @@ Amdahl's Law still applies here, but with a twist: the "serial fraction" now inc
 
 How you split the work matters enormously. An uneven split means some workers finish early and sit idle while others are still computing. This **load imbalance** wastes the resources you're paying for.
 
-```mermaid
-gantt
-    title Load Balance: Even vs. Uneven
-    dateFormat X
-    axisFormat %s
+<div class="load-balance-chart" markdown>
+<div class="lb-heading">Even Split — all workers finish together</div>
+<div class="lb-row"><span class="lb-label">Worker 0</span><div class="lb-track"><div class="lb-bar" style="width:100%"></div></div></div>
+<div class="lb-row"><span class="lb-label">Worker 1</span><div class="lb-track"><div class="lb-bar" style="width:100%"></div></div></div>
+<div class="lb-row"><span class="lb-label">Worker 2</span><div class="lb-track"><div class="lb-bar" style="width:100%"></div></div></div>
+<div class="lb-row"><span class="lb-label">Worker 3</span><div class="lb-track"><div class="lb-bar" style="width:100%"></div></div></div>
 
-    section Even Split
-    Worker 0    :a, 0, 10
-    Worker 1    :b, 0, 10
-    Worker 2    :c, 0, 10
-    Worker 3    :d, 0, 10
-
-    section Uneven Split
-    Worker 0    :e, 0, 16
-    Worker 1    :f, 0, 6
-    Worker 2    :g, 0, 4
-    Worker 3    :h, 0, 4
-```
+<div class="lb-heading">Uneven Split — workers 1–3 idle while worker 0 finishes</div>
+<div class="lb-row"><span class="lb-label">Worker 0</span><div class="lb-track"><div class="lb-bar" style="width:100%"></div></div></div>
+<div class="lb-row"><span class="lb-label">Worker 1</span><div class="lb-track"><div class="lb-bar" style="width:37.5%"></div><div class="lb-idle" style="width:62.5%"></div></div></div>
+<div class="lb-row"><span class="lb-label">Worker 2</span><div class="lb-track"><div class="lb-bar" style="width:25%"></div><div class="lb-idle" style="width:75%"></div></div></div>
+<div class="lb-row"><span class="lb-label">Worker 3</span><div class="lb-track"><div class="lb-bar" style="width:25%"></div><div class="lb-idle" style="width:75%"></div></div></div>
+</div>
 
 In the uneven case, Workers 1–3 finish and idle while Worker 0 grinds through its oversized chunk. The total wall-clock time is determined by the *slowest* worker.
 

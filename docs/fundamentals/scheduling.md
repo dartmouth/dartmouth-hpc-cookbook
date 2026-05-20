@@ -165,21 +165,45 @@ When you submit a job with `sbatch`, it doesn't run immediately. It enters a **q
 
 {{ cluster.scheduler }} doesn't just run jobs in strict priority order. It uses a strategy called **backfill**: while waiting for enough resources to free up for a high-priority large job, it looks for smaller, shorter jobs that can *fit in the gap* without delaying the large job.
 
-```mermaid
-gantt
-    title Backfill Scheduling Example
-    dateFormat HH:mm
-    axisFormat %H:%M
+<div class="sched-chart" markdown>
 
-    section Node 1
-    Running Job A             :active, a1, 00:00, 02:00
-    Large Job (waiting)       :crit,   a2, 02:00, 06:00
+<div class="sched-axis">
+  <span style="left:0%">0:00</span>
+  <span style="left:16.67%">1:00</span>
+  <span style="left:33.33%">2:00</span>
+  <span style="left:50%">3:00</span>
+  <span style="left:66.67%">4:00</span>
+  <span style="left:83.33%">5:00</span>
+  <span style="left:100%">6:00</span>
+</div>
 
-    section Node 2
-    Running Job B             :active, b1, 00:00, 01:00
-    ✅ Small Job (backfilled) :done,   b2, 01:00, 01:30
-    Large Job (waiting)       :crit,   b3, 02:00, 06:00
-```
+<div class="sched-heading">Node 1</div>
+<div class="sched-row">
+  <span class="sched-label">Jobs</span>
+  <div class="sched-track">
+    <div class="sched-seg sched-seg--active" style="width:33.33%">Running Job A</div>
+    <div class="sched-seg sched-seg--waiting" style="width:66.67%">Large Job (waiting)</div>
+  </div>
+</div>
+
+<div class="sched-heading">Node 2</div>
+<div class="sched-row">
+  <span class="sched-label">Jobs</span>
+  <div class="sched-track">
+    <div class="sched-seg sched-seg--active" style="width:16.67%">Running Job B</div>
+    <div class="sched-seg sched-seg--backfill" style="width:8.33%">✅ Backfilled</div>
+    <div class="sched-seg sched-seg--gap" style="width:8.33%"></div>
+    <div class="sched-seg sched-seg--waiting" style="width:66.67%">Large Job (waiting)</div>
+  </div>
+</div>
+
+<div class="sched-legend">
+  <span class="sched-legend-item"><span class="sched-legend-swatch" style="background:#00693e"></span> Running</span>
+  <span class="sched-legend-item"><span class="sched-legend-swatch" style="background:#267aba"></span> Backfilled</span>
+  <span class="sched-legend-item"><span class="sched-legend-swatch" style="background:#9d162e"></span> Waiting</span>
+</div>
+
+</div>
 
 In this example, the small job starts before the large high-priority job because it fits in the gap and finishes before the large job needs those resources. This is why **requesting less time directly translates to shorter wait times**: {{ cluster.scheduler }} can backfill your job into gaps that a longer request wouldn't fit.
 
