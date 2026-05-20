@@ -10,13 +10,13 @@ tags:
 # Job Arrays
 
 !!! abstract "What we're cooking"
-    How to use Slurm job arrays to run the same analysis on many inputs simultaneously — the most efficient pattern for embarrassingly parallel workloads.
+    How to use Slurm job arrays to run the same analysis on many inputs simultaneously, which is the most efficient pattern for embarrassingly parallel workloads.
 
 ## The embarrassingly parallel problem
 
 Many research workflows share the same shape: "Run this analysis on 1,000 input files." Or: "Train this model with 50 different hyperparameter combinations." Or: "Bootstrap this statistic 500 times with different random seeds."
 
-Each run is completely independent — no communication between them, no shared state, no coordination required. This class of problem is called **embarrassingly parallel**: the work fans out trivially into independent units. If you have the resources to run them simultaneously, you can compress days of serial computation into hours.
+Each run is completely independent: There is no communication between them, no shared state, and no coordination required. This class of problem is called **embarrassingly parallel**: the work fans out trivially into independent units. If you have the resources to run them simultaneously, you can compress days of serial computation into hours.
 
 *[embarrassingly parallel]: A class of problem that can be divided into independent subtasks with no need for communication between them. Sometimes called "pleasingly parallel."
 
@@ -168,8 +168,11 @@ You can also specify ranges with gaps: `--array=5-10,15,20-25`.
 !!! warning "Shared result files cause race conditions"
     If multiple tasks try to append results to the same CSV or text file simultaneously, they will corrupt each other's writes. Write task results to separate files (e.g., `results/task_${SLURM_ARRAY_TASK_ID}.csv`) and merge them after all tasks complete.
 
-!!! warning "GPU tasks in a CPU partition never start"
-    If you request `--gres=gpu:1` but don't specify `--partition=gpu` (or whatever GPU partition name {{ cluster.name }} uses), your tasks will sit in the queue indefinitely with reason `Resources`. Check partition names with `sinfo`.
+!!! warning "GPU array tasks need a GPU partition and `--gpus`"
+    If you request `--gpus=1` but don't specify `--partition=gpu` (or `gpu-preempt`), your tasks will sit in the queue indefinitely with reason `Resources`. Use `--constraint` to target a specific GPU type (e.g., `--constraint=a100`) so every array task gets comparable hardware. See [Intermediate Patterns: Targeting specific hardware](intermediate-patterns.md#targeting-specific-hardware-with---constraint) for the full list of constraint options.
+
+!!! tip "Preempt partitions are great for short array tasks"
+    If each array task runs for under 2 hours, `--partition=gpu-preempt` (or `cpu-preempt`) gives you access to a much larger pool of hardware. The 2-hour preemption window is not a concern when individual tasks are short.
 
 !!! warning "Too many tiny output files"
-    Creating thousands of small files — one per task — can create significant filesystem overhead. If each task produces small results (a few KB), consider aggregating them within the task (process multiple inputs per task) rather than one-file-per-task at large scale.
+    Creating thousands of small files (one per task) can create significant filesystem overhead. If each task produces small results (a few KB), consider aggregating them within the task (process multiple inputs per task) rather than one-file-per-task at large scale.

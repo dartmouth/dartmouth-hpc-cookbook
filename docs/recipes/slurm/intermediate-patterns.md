@@ -15,28 +15,61 @@ tags:
 
 Slurm gives you two ways to request memory, and choosing the wrong one leads to either wasted resources (longer queue waits) or job failures.
 
-**`--mem=16G`** requests a fixed total amount of memory for the entire job, regardless of how many CPUs you've requested. Use this for single-process jobs — Python scripts, R scripts, serial analyses — where memory usage is determined by your data and code, not by core count.
+**`--mem=16G`** requests a fixed total amount of memory for the entire job, regardless of how many CPUs you've requested. Use this for single-process jobs: Single-threaded Python or R scripts, serial analyses, anything where memory usage is determined by your data and code, not by core count.
 
-**`--mem-per-cpu=4G`** requests that much memory *per CPU core*. Use this for MPI jobs where memory requirements scale naturally with the number of tasks. If you request `--ntasks=8 --mem-per-cpu=4G`, you get 32 GB total, and if you later increase to 16 tasks, the memory scales automatically.
+**`--mem-per-cpu=4G`** requests that much memory *per CPU core*. Use this for MPI jobs or multi-threaded scripts where memory requirements scale naturally with the number of tasks. If you request `--ntasks=8 --mem-per-cpu=4G`, you get 32 GB total, and if you later increase to 16 tasks, the memory scales automatically.
 
 !!! warning "Underestimating memory gets your job killed"
     If your job exceeds its memory allocation, Slurm kills it with an out-of-memory (OOM) error. The job exits with state `OUT_OF_MEMORY` and exit code `137`. Use `seff JOBID` on completed jobs (see [below](#diagnosing-completed-jobs-with-sacct-and-seff)) to see actual memory usage, then request 20–30% more than the observed peak on your next run.
 
 Getting memory right matters for two reasons: too little and your job dies; too much and you wait longer in the queue. Cluster schedulers give priority to jobs that request fewer resources, so over-requesting "just in case" actively hurts your throughput.
 
-## Time limits and partitions
+## Partitions and QOS on {{ cluster.name }}
 
-Every partition on {{ cluster.name }} has a maximum wall-clock time. You must request a time limit at or below that ceiling. Use `sinfo -o "%P %l %a"` to see available partitions, their time limits, and availability:
+{{ cluster.name }} organizes compute nodes into **partitions** grouped by hardware type and access policy. Every partition has a maximum wall-clock time. You must request a time limit at or below that ceiling.
+
+### General-access partitions
+
+These are available to all users:
+
+| Partition | Hardware | Max time | Notes |
+|---|---|---|---|
+| `cpu` | General CPU nodes | 48 hours | Default partition if you don't specify one |
+| `gpu` | GPU nodes (mixed types) | 48 hours | Must also request `--gpus=N` |
+| `cpu-preempt` | Borrowed CPU hardware | 48 hours | Jobs can be killed after 2 hours by priority users |
+| `gpu-preempt` | Borrowed GPU hardware | 48 hours | Jobs can be killed after 2 hours by priority users |
+
+The **preempt** partitions give you access to a much larger pool of hardware (nodes purchased by specific research groups). The tradeoff: if the group that owns the hardware needs it, Slurm can preempt (kill and requeue) your job after a 2-hour grace period. Preempt partitions are excellent for short or checkpoint-able work.
+
+!!! tip "Combine partitions for faster scheduling"
+    You can list multiple partitions and Slurm will schedule your job on whichever has resources first: `--partition=gpu,gpu-preempt`. Slurm prefers the non-preempt partition when both have availability.
+
+### QOS: `short` and `long`
+
+Beyond partitions, {{ cluster.name }} uses **Quality of Service** (QOS) levels that modify scheduling behavior:
+
+**`--qos=short`** (`-q short`): Gives a priority boost to jobs under 4 hours. You can only have one `short` QOS job running at a time. Great for interactive sessions and quick tests.
 
 ```bash
-sinfo -o "%20P %10l %5a %10D"
+#SBATCH --qos=short
+#SBATCH --time=02:00:00
 ```
 
-A few practical rules:
+**`--qos=long`** (`-q long`): Required for jobs that need more than 48 hours. Use sparingly; long jobs are harder for the scheduler to place and reduce cluster throughput for everyone.
+
+```bash
+#SBATCH --qos=long
+#SBATCH --time=5-00:00:00   # 5 days
+```
+
+!!! warning "Avoid `-q long` if you can"
+    Jobs requesting multiple days block large chunks of resources from the scheduler. If your workflow can checkpoint and restart, break it into 24–48 hour segments with [job dependencies](#job-dependencies--chaining-jobs-into-pipelines) instead.
+
+### Practical rules for partitions and time
 
 - **Shorter requests get higher priority.** Slurm's backfill scheduler can slot short jobs into gaps. A 1-hour job that fits in a gap will often start much sooner than a 24-hour job waiting for a large window.
-- **Use the right partition for your job length.** Many clusters have a short/standard/long partition structure. Running a 2-hour job in the long partition wastes your queue priority.
-- **Add a buffer, but not too much.** Estimate your runtime, then request 25–50% more. Don't request the partition maximum "just in case" — your job gets killed at the time limit regardless, so requesting 7 days for a job that takes 6 hours only hurts you.
+- **Add a buffer, but not too much.** Estimate your runtime, then request 25–50% more. Don't request the partition maximum "just in case"; your job gets killed at the time limit regardless, so requesting 48 hours for a job that takes 6 hours only hurts you.
+- **Check available partitions** with `sinfo -o "%20P %10l %5a %10D"` to see partition names, time limits, availability, and node counts.
 
 !!! tip "Benchmark with a small input first"
     Run your analysis on a small representative subset of your data to get a reliable runtime estimate before submitting the full job. An interactive session ([Interactive Jobs](interactive-jobs.md)) is ideal for this.
@@ -80,7 +113,72 @@ If the node your job is running on crashes or is taken down for maintenance, Slu
 #SBATCH --export=NONE   # Start with a clean environment (recommended for reproducibility)
 ```
 
-`--export=NONE` is the more reproducible choice for production jobs — it ensures your job doesn't accidentally depend on something you happened to have loaded in your interactive session. Always pair it with explicit `module load` calls in your script.
+`--export=NONE` is the more reproducible choice for production jobs. It ensures your job doesn't accidentally depend on something you happened to have loaded in your interactive session. Always pair it with explicit `module load` calls in your script.
+
+## Targeting specific hardware with `--constraint`
+
+{{ cluster.name }} has diverse hardware: different CPU architectures, GPU models, and network fabrics. The `--constraint` flag lets you request nodes with specific features.
+
+### GPU model and capability
+
+Target a specific GPU by model name:
+
+```bash
+#SBATCH --constraint=a100       # NVIDIA A100 (40 or 80 GB VRAM)
+#SBATCH --constraint=l40s       # NVIDIA L40S (48 GB VRAM)
+#SBATCH --constraint=h100       # NVIDIA H100 (80 GB VRAM)
+```
+
+Or target by CUDA compute capability level with `sm_XX`:
+
+```bash
+#SBATCH --constraint=sm_80      # Ampere (8.0) or newer — A100, A30, etc.
+#SBATCH --constraint=sm_75      # Turing (7.5) or newer
+```
+
+Or by minimum VRAM per GPU:
+
+```bash
+#SBATCH --constraint=vram40     # At least 40 GB VRAM per GPU
+#SBATCH --constraint=vram80     # At least 80 GB VRAM per GPU
+```
+
+Combine constraints with `&`:
+
+```bash
+#SBATCH --constraint="sm_80&vram80"   # Ampere+ with 80 GB VRAM
+```
+
+### Network and CPU constraints
+
+For tightly coupled MPI jobs that benefit from low-latency networking:
+
+```bash
+#SBATCH --constraint=ib         # InfiniBand interconnect
+```
+
+When requesting multiple tasks without specifying `--nodes`, add `--constraint=mpi` to ensure all tasks land on nodes with the same CPU architecture (important for consistent performance):
+
+```bash
+#SBATCH --ntasks=64
+#SBATCH --constraint=mpi
+```
+
+!!! tip "Discover available constraints"
+    Run `unity-slurm-list-constraints` on {{ cluster.name }} to see all available feature tags, or use `sinfo -p gpu -o "%20N %30f %40G"` to see GPU types and constraints per node.
+
+## PI group accounts with `--account`
+
+Every user on {{ cluster.name }} belongs to at least one PI group, named `pi_<username>`. If you belong to **multiple** PI groups, Slurm uses your default (primary) group unless you specify otherwise:
+
+```bash
+#SBATCH --account=pi_jsmith_dartmouth_edu
+```
+
+This matters for fairshare accounting: the job's resource usage counts against the specified group's allocation, which affects that group's scheduling priority. Run `sacctmgr show associations user=$USER` to see your groups.
+
+!!! note "When `--account` is required"
+    If you belong to exactly one PI group, you never need `--account`. It's only necessary when you have multiple group memberships and want to charge a specific one.
 
 ## Job dependencies — chaining jobs into pipelines
 
@@ -107,13 +205,13 @@ sbatch --dependency=afterok:$JOB2 postprocess.sh
 |---|---|
 | `afterok:JOBID` | Start after JOBID exits successfully (exit code 0) |
 | `afterany:JOBID` | Start after JOBID completes, regardless of exit status |
-| `afternotok:JOBID` | Start only if JOBID fails — useful for cleanup/notification jobs |
+| `afternotok:JOBID` | Start only if JOBID fails, useful for cleanup/notification jobs |
 | `after:JOBID` | Start after JOBID begins running (rarely needed) |
 
 You can chain dependencies on multiple jobs: `--dependency=afterok:123:456:789` waits for all three.
 
 !!! tip "Check dependency status"
-    A job waiting on a dependency shows as `PD` (pending) in `squeue` with reason `Dependency`. Once its upstream job completes successfully, it transitions to eligible. If the upstream job fails and you used `afterok`, the dependent job will never start — it stays pending with reason `DependencyNeverSatisfied` until you cancel it.
+    A job waiting on a dependency shows as `PD` (pending) in `squeue` with reason `Dependency`. Once its upstream job completes successfully, it transitions to eligible. If the upstream job fails and you used `afterok`, the dependent job will never start. It stays pending with reason `DependencyNeverSatisfied` until you cancel it.
 
 !!! warning "Failed upstream jobs block the whole pipeline"
     If you use `afterok` throughout a pipeline and an early stage fails, all downstream jobs become permanently blocked. Build in a manual check between stages for critical pipelines, or use `afterany` for cleanup/notification steps that should always run.
@@ -132,8 +230,8 @@ Key fields:
 
 - **`State`** — `COMPLETED`, `FAILED`, `CANCELLED`, `TIMEOUT`, `OUT_OF_MEMORY`
 - **`ExitCode`** — Exit code in `CODE:SIGNAL` format. `0:0` is clean exit; `1:0` is a script error; `0:9` is a signal 9 (kill)
-- **`MaxRSS`** — Peak resident memory used across all tasks — compare this to what you requested
-- **`Elapsed`** — Actual wall-clock runtime — compare to your `--time` request
+- **`MaxRSS`** — Peak resident memory used across all tasks; compare this to what you requested.
+- **`Elapsed`** — Actual wall-clock runtime; compare to your `--time` request
 
 **`seff` — human-readable efficiency report:**
 
@@ -154,14 +252,14 @@ Memory Efficiency: 88.94% of 16.00 GB
 ```
 
 !!! tip "Use efficiency data to tune future requests"
-    If memory efficiency is 20%, you requested far more than you needed — halve it next time. CPU efficiency below 50% often means the job is I/O bound (waiting on disk reads/writes) rather than compute bound. If that's unexpected, profile your code or consider using faster scratch storage.
+    If memory efficiency is 20%, you requested far more than you needed, so halve it next time. CPU efficiency below 50% often means the job is I/O bound (waiting on disk reads/writes) rather than compute bound. If that's unexpected, profile your code or consider using faster scratch storage.
 
 !!! warning "Low CPU efficiency isn't always a problem"
-    Some workflows are inherently I/O bound — loading large model checkpoints, reading genomics files, streaming data from storage. Low CPU efficiency for these jobs is expected. But if you *expect* CPU-intensive work and see low efficiency, it's worth investigating.
+    Some workflows are inherently I/O bound: loading large model checkpoints, reading genomics files, streaming data from storage. Low CPU efficiency for these jobs is expected. But if you *expect* CPU-intensive work and see low efficiency, it's worth investigating.
 
 ## Environment in batch jobs
 
-Batch jobs start with a **minimal environment** — not the rich, configured environment you have after logging in interactively. Modules you loaded in your terminal session, aliases you've set, and `PATH` modifications from your `.bashrc` may not be present.
+Batch jobs start with a **minimal environment** instead of the rich, configured environment you have after logging in interactively. Modules you loaded in your terminal session, aliases you've set, and `PATH` modifications from your `.bashrc` may not be present.
 
 Best practices for reliable batch scripts:
 

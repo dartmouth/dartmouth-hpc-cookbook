@@ -91,25 +91,25 @@ This is why the [PyTorch recipe](../recipes/python/pytorch.md) has you verify th
 
 ## Available GPUs on {{ cluster.name }}
 
-{{ cluster.name }} has multiple GPU types spread across different partitions. GPU hardware is upgraded over time, so the specific models available change. To see what GPU types are in each partition right now, run:
+{{ cluster.name }} has multiple GPU types spread across different partitions, including A100s (40 and 80 GB VRAM), L40S cards (48 GB), H100s (80 GB), and older models like RTX 2080 Ti. GPU hardware is upgraded over time, so the specific models available change. To see what GPU types are in each partition right now, run:
 
 ```bash
-sinfo -o "%P %G"
+sinfo -p gpu -o "%20N %30f %40G"
 ```
 
-This prints each partition name alongside the generic resources (GRES) it offers, including GPU types. GPU partitions are separate from CPU-only partitions — you must explicitly target a GPU partition in your job script, and you must explicitly request a GPU with `--gres`. Jobs submitted to a CPU partition will not have access to any GPU, even if the node happens to have one.
+This prints each node name, its feature tags (constraints), and its GPU resources. GPU partitions are separate from CPU-only partitions. You must explicitly target a GPU partition in your job script *and* explicitly request a GPU with `--gpus`. Jobs submitted to a CPU partition will not have access to any GPU, even if the node happens to have one.
 
 !!! note "Checking GPU availability"
-    To see how many GPUs are currently free vs. in use across all GPU partitions, run `sinfo -p gpu --Format=nodes,cpus,gres,gresused`.
+    To see how many GPUs are currently free vs. in use across all GPU partitions, run `sinfo -p gpu --Format=nodes,cpus,gres,gresused`. On {{ cluster.name }}, you can also use the helper script `unity-slurm-find-nodes` for a visual overview.
 
 ## Requesting GPUs in Slurm
 
-To run a GPU job, your `sbatch` script needs two key directives beyond the usual resource requests: `--partition` pointing at a GPU partition, and `--gres` to actually allocate one or more GPUs.
+To run a GPU job, your `sbatch` script needs two key directives beyond the usual resource requests: `--partition` pointing at a GPU partition, and `--gpus` to actually allocate one or more GPUs.
 
 ```bash
 #!/bin/bash
-#SBATCH --partition=gpu          # GPU partition (check available partitions with sinfo)
-#SBATCH --gres=gpu:1             # Request 1 GPU
+#SBATCH --partition=gpu          # GPU partition
+#SBATCH --gpus=1                 # Request 1 GPU
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4        # CPUs to feed data to the GPU
 #SBATCH --mem=16G                # System RAM (separate from GPU VRAM)
@@ -119,16 +119,46 @@ To run a GPU job, your `sbatch` script needs two key directives beyond the usual
 python train.py
 ```
 
-`--gres=gpu:N` requests *N* GPUs. Most single-model training jobs only need one. If you need a specific GPU type — for example, because your model requires 80 GB of VRAM only available on an A100 — you can request it explicitly:
+`--gpus=N` requests *N* GPUs. (The older syntax `--gres=gpu:N` also works.) Most single-model training jobs only need one.
+
+### Targeting a specific GPU type with `--constraint`
+
+If your workload needs a specific GPU (for example, because your model requires 80 GB of VRAM only available on an A100), use `--constraint`:
 
 ```bash
-#SBATCH --gres=gpu:a100:1        # Request specifically an A100
+#SBATCH --constraint=a100        # Request specifically an A100
 ```
+
+{{ cluster.name }} supports several constraint types for GPUs:
+
+| Constraint | Meaning | Example |
+|---|---|---|
+| GPU model name | Specific GPU hardware | `--constraint=a100`, `--constraint=l40s`, `--constraint=h100` |
+| `sm_XX` | Minimum CUDA compute capability | `--constraint=sm_80` (Ampere+), `--constraint=sm_75` (Turing+) |
+| `vramYY` | Minimum VRAM per GPU (GB) | `--constraint=vram40`, `--constraint=vram80` |
+
+Combine constraints with `&`: `--constraint="sm_80&vram80"` requests an Ampere-or-newer GPU with at least 80 GB VRAM.
+
+!!! tip "When to use constraints"
+    If your code works on any GPU, skip `--constraint` for faster scheduling. Use it when you have a specific VRAM requirement (large models), need a particular compute capability (certain CUDA features), or want consistent hardware across array tasks.
+
+### Multiple GPUs require `--nodes`
+
+If you request more than one GPU, you must also specify `--nodes=1` (or `--constraint=mpi`). Without it, {{ cluster.name }} rejects the job. This prevents Slurm from scattering GPUs across separate nodes when your code (PyTorch DDP, for example) expects them on the same machine.
+
+```bash
+#SBATCH --partition=gpu
+#SBATCH --nodes=1                # Required when requesting >1 GPU
+#SBATCH --gpus=2                 # Two GPUs on the same node
+#SBATCH --constraint=a100        # Both should be A100s
+```
+
+For multi-*node* GPU jobs (distributed training across machines), set `--nodes` to the number of machines you need. See [Multi-GPU Training](../recipes/python/multi-gpu.md) for the full pattern.
 
 The `--cpus-per-task` value matters here. GPUs are fast enough that the bottleneck often shifts to the CPU-side data loading pipeline. A common starting point is 4 CPU cores per GPU to keep the data preprocessor from becoming the bottleneck.
 
 !!! warning "Don't request GPUs you won't use"
-    GPUs are a scarce shared resource. Submitting CPU-only jobs to GPU partitions — or requesting multiple GPUs when your code only uses one — wastes resources that other researchers need and pushes your own future jobs further back in the queue. Slurm will not automatically reclaim unused GPUs mid-job.
+    GPUs are a scarce shared resource. Submitting CPU-only jobs to GPU partitions, or requesting multiple GPUs when your code only uses one, wastes resources that other researchers need and pushes your own future jobs further back in the queue. Slurm will not automatically reclaim unused GPUs mid-job.
 
 ## Checking GPU Utilization
 

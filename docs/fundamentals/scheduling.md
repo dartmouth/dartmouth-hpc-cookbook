@@ -117,9 +117,18 @@ Requesting the right amount of time is a balancing act. Too little and your job 
 
 ### Partitions
 
-A **partition** is a logical grouping of nodes, typically organized by hardware type or intended use. {{ cluster.name }} has multiple partitions — some for general CPU work, some for GPU jobs, some for short jobs, some for long-running analyses.
+A **partition** is a logical grouping of nodes, typically organized by hardware type or intended use. {{ cluster.name }} has multiple partitions. The four general-access partitions available to all users are:
 
-Each partition has its own rules: maximum time limit, maximum number of CPUs per job, which users can access it, and what hardware is available. You can see all available partitions and their limits with:
+| Partition | Type | Max time | Notes |
+|---|---|---|---|
+| `cpu` | CPU | 48 hours | Default partition |
+| `gpu` | GPU | 48 hours | Must request `--gpus=N` |
+| `cpu-preempt` | CPU | 48 hours | Borrowed hardware; jobs can be preempted after 2 hours |
+| `gpu-preempt` | GPU | 48 hours | Borrowed hardware; jobs can be preempted after 2 hours |
+
+The **preempt** partitions give you access to nodes purchased by specific research groups. If the owning group needs their hardware, Slurm can kill your job after a 2-hour grace period. This makes preempt partitions ideal for short or checkpoint-able work where the larger hardware pool outweighs the preemption risk.
+
+You can see all partitions and their limits with:
 
 ```bash
 sinfo -o "%20P %10l %5a %10D %20G"
@@ -127,7 +136,16 @@ sinfo -o "%20P %10l %5a %10D %20G"
 
 This shows each partition's name, time limit, availability, node count, and available GPUs (if any).
 
-If you don't specify a partition, your job goes to the default partition (`{{ cluster.default_partition }}` on {{ cluster.name }}). For GPU work, you must explicitly target a GPU partition — see [GPU Computing](gpu-computing.md) for details.
+If you don't specify a partition, your job goes to the default partition (`{{ cluster.default_partition }}` on {{ cluster.name }}). For GPU work, you must explicitly target a GPU partition. See [GPU Computing](gpu-computing.md) for details.
+
+#### QOS: extending or boosting your jobs
+
+{{ cluster.name }} also provides **Quality of Service** (QOS) levels that modify scheduling behavior:
+
+- **`--qos=short`** (`-q short`): Priority boost for jobs under 4 hours. Limited to one running job at a time. Excellent for interactive sessions and quick tests.
+- **`--qos=long`** (`-q long`): Required for jobs exceeding 48 hours. Use sparingly; very long jobs are harder for the scheduler to place.
+
+QOS is not a partition. You combine it *with* a partition: `--partition=gpu --qos=short`.
 
 ## How {{ cluster.scheduler }} Decides What Runs
 
@@ -201,9 +219,11 @@ When `squeue --me` shows your job as `PD`, the `REASON` column tells you why:
 
 | Reason | What it means | What to do |
 |---|---|---|
-| `Priority` | Other jobs have higher priority | Wait — your job will start as resources free up |
-| `Resources` | Not enough free nodes/cores right now | Wait — or reduce your resource request |
+| `Priority` | Other jobs have higher priority | Wait; your job will start as resources free up |
+| `Resources` | Not enough free nodes/cores right now | Wait, or reduce your resource request |
 | `QOSMaxJobsPerUserLimit` | You've hit the max concurrent jobs for your QOS | Wait for running jobs to finish, or cancel ones you don't need |
+| `AssocGrpCpuLimit` | Your PI group has hit its CPU core limit (1,000 simultaneous cores on general partitions) | Wait for running jobs to finish, or use preempt partitions (which have separate limits) |
+| `AssocGrpGRES` | Your PI group has hit its GPU limit (64 simultaneous GPUs on general partitions) | Wait for running jobs to finish, or use `gpu-preempt` |
 | `Dependency` | Waiting for another job to complete first | Check the upstream job's status |
 | `ReqNodeNotAvail` | Requested nodes are down or reserved | Check `sinfo` for node availability |
 

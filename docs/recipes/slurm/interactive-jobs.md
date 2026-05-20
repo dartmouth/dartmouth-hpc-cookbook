@@ -10,15 +10,15 @@ tags:
 # Interactive Jobs
 
 !!! abstract "What we're cooking"
-    How to request an interactive shell on a compute node — so you can run commands, test code, and debug without submitting a batch script, and without hogging the login node.
+    How to request an interactive shell on a compute node so you can run commands, test code, and debug without submitting a batch script, and without hogging the login node.
 
 ## Why not just run on the login node?
 
-When you SSH into {{ cluster.name }}, you land on a **login node** — a shared gateway used by everyone on the cluster simultaneously. It's meant for light tasks: editing files, writing job scripts, submitting jobs, checking queue status.
+When you SSH into {{ cluster.name }}, you land on a **login node**: a shared gateway used by everyone on the cluster simultaneously. It's meant for light tasks: editing files, writing job scripts, submitting jobs, checking queue status.
 
 The login node is *not* meant for computation. Running a heavy analysis there slows it down for every other user logged in at the same time, and cluster admins actively kill resource-heavy processes on the login node. Even a moderately expensive Python script loading a large dataset can degrade the experience for dozens of colleagues.
 
-The rule of thumb: if a command takes more than a few seconds or uses more than a small amount of RAM, run it on a compute node. Interactive jobs give you a shell on a compute node — you type commands just like normal, but the resources belong to you.
+The rule of thumb: if a command takes more than a few seconds or uses more than a small amount of RAM, run it on a compute node. Interactive jobs give you a shell on a compute node. You type commands there just like normal, but the resources belong to you exclusively.
 
 ## `srun --pty bash` — Getting an interactive shell
 
@@ -38,18 +38,29 @@ What each flag does:
 | `--time=02:00:00` | Time limit of 2 hours |
 | `--pty bash` | Open a pseudo-terminal running bash |
 
-After a moment in the queue, your prompt changes to show the name of the compute node you've been assigned — something like `[netid@c01 ~]$`. You're now running on a compute node. Run your commands, inspect your data, test your code. When you're done, type `exit` to release the allocation and return to the login node.
+After a moment in the queue, your prompt changes to show the name of the compute node you've been assigned — something like `[userid@cpu042 ~]$`. You're now running on a compute node. Run your commands, inspect your data, test your code. When you're done, type `exit` to release the allocation and return to the login node.
 
 !!! tip "Set a realistic time limit"
-    Your interactive session ends when the time limit expires — even mid-command. Set enough time for your work, but don't request days. Shorter requested times generally get higher queue priority, so you'll wait less to get started. Two to four hours is a common range for exploratory sessions.
+    Your interactive session ends when the time limit expires, even if that is mid-command. Set enough time for your work, but don't request days. Shorter requested times generally get higher queue priority, so you'll wait less to get started. Two to four hours is a common range for exploratory sessions.
+
+!!! tip "Boost priority with `--qos=short`"
+    For interactive sessions under 4 hours, add `--qos=short` (or `-q short`) to get a priority bump in the queue. You can only have one `short` QOS job at a time, but it often means starting sooner. Example: `srun --ntasks=1 --cpus-per-task=4 --mem=8G --time=02:00:00 -q short --pty bash`.
 
 ## Requesting a GPU interactively
 
-If you need a GPU — to test a model, check CUDA availability, or profile GPU code — add `--gres` and specify the GPU partition:
+If you need a GPU (to test a model, check CUDA availability, or profile GPU code), add `--gpus` and specify the GPU partition:
 
 ```bash
-srun --ntasks=1 --cpus-per-task=4 --mem=16G --gres=gpu:1 --partition=gpu --time=01:00:00 --pty bash
+srun --ntasks=1 --cpus-per-task=4 --mem=16G --gpus=1 --partition=gpu --time=01:00:00 --pty bash
 ```
+
+For short GPU sessions (under 2 hours), the `gpu-preempt` partition often has more available hardware and shorter queue times:
+
+```bash
+srun --ntasks=1 --cpus-per-task=4 --mem=16G --gpus=1 --partition=gpu-preempt -q short --time=01:00:00 --pty bash
+```
+
+The tradeoff: jobs on preempt partitions can be killed after 2 hours by a priority user whose hardware you're borrowing. For quick testing and debugging, that's usually fine.
 
 Once you're connected, verify that the GPU is visible:
 
@@ -59,15 +70,32 @@ nvidia-smi
 
 You should see the GPU model, memory usage, and driver version. If `nvidia-smi` returns nothing, confirm you're on a node with GPUs using `echo $SLURMD_NODENAME` and cross-check with `sinfo`.
 
+If you need a *specific* GPU type, use `--constraint`:
+
+```bash
+srun --ntasks=1 --cpus-per-task=4 --mem=16G --gpus=1 --constraint=a100 --partition=gpu --time=01:00:00 --pty bash
+```
+
+Common constraint values include GPU model names (`a100`, `l40s`, `h100`), compute capability levels (`sm_75`, `sm_80`), and minimum VRAM (`vram40`, `vram80`). Combine them with `&`: `--constraint="a100&vram80"`.
+
+!!! warning "Multiple GPUs require `--nodes`"
+    If you request more than one GPU, you must also specify `--nodes=1` (or `--constraint=mpi`). Without it, {{ cluster.name }} will reject the job. This keeps Slurm from scattering your GPUs across nodes when your code expects them on the same machine.
+
 !!! info "GPU partitions and types"
-    {{ cluster.name }} has multiple GPU partitions with different hardware. See [GPU Computing](../../fundamentals/gpu-computing.md) for available GPU types and how to request a specific one with `--gres=gpu:a100:1` or similar.
+    {{ cluster.name }} has multiple GPU partitions with different hardware. See [GPU Computing](../../fundamentals/gpu-computing.md) for available GPU types and how to discover what's available with `sinfo`.
 
 ## `salloc` — Reserving resources for multiple commands
 
-`srun --pty bash` gives you a single interactive shell tied to one allocation. When you `exit`, the allocation is gone. If you need to run *multiple* commands against the same set of reserved resources — common in MPI development — use `salloc` instead:
+`srun --pty bash` gives you a single interactive shell tied to one allocation. When you `exit`, the allocation is gone. If you need to run *multiple* commands against the same set of reserved resources (common in MPI development), use `salloc` instead:
 
 ```bash
 salloc --ntasks=4 --mem=32G --time=04:00:00
+```
+
+For GPU work, `salloc` is also a natural fit:
+
+```bash
+salloc --gpus=1 --partition=gpu-preempt -q short --mem=16G --time=02:00:00
 ```
 
 `salloc` reserves the resources and returns you to a shell on the **login node**, but with the allocation active. You then use `srun` to dispatch work to the reserved compute node(s):
@@ -84,7 +112,7 @@ exit
 This is particularly useful for MPI development: you reserve four tasks once, then iterate quickly — edit code, recompile, re-run — without re-queuing for every test.
 
 !!! tip "Check your allocation with `squeue`"
-    While `salloc` is active, `squeue --me` will show your reservation. The job state will be `R` (running) even though you haven't dispatched any work yet — the resources are being held for you.
+    While `salloc` is active, `squeue --me` will show your reservation. The job state will be `R` (running) even though you haven't dispatched any work yet, because the resources are being held for you.
 
 ## Common patterns
 
@@ -105,3 +133,6 @@ Interactive jobs are powerful for development and debugging, but they're not sui
 - **Time limits are enforced.** Slurm will kill your session when the time limit is reached, whether or not you're in the middle of something.
 
 For anything that runs longer than a few hours or that you don't need to supervise, use a batch script. See [Submit Your First Job](../../getting-started/first-job.md) for the full batch workflow.
+
+!!! note "Multiple PI groups"
+    If you belong to more than one PI group, add `--account=pi_...` to specify which group's allocation to charge. Without it, Slurm uses your default (primary) group. Run `sacctmgr show associations user=$USER` to see your groups.
