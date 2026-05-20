@@ -42,7 +42,7 @@ The permission string has 10 characters:
 
 Each group of three characters is `rwx`: **r**ead, **w**rite, e**x**ecute.
 
-### Why this matters on HPC
+### How this applies on HPC
 
 On a shared cluster, files in your home directory are typically readable only by you. Files in a shared lab volume may be readable by your whole group. Scripts you want to run must be executable:
 
@@ -56,7 +56,7 @@ chmod 750 my_project/      # owner: rwx, group: r-x, others: ---
 
 ## Pipes and Redirection
 
-One of Linux's most powerful ideas: the output of one command can become the input of another.
+One of Linux's most useful ideas: the output of one command can become the input of another.
 
 ### The pipe `|`
 
@@ -88,7 +88,7 @@ some_noisy_command > /dev/null 2>&1   # throw away stdout and stderr
 
 ### Environment variables
 
-Your shell has **environment variables** — named values that affect how programs run. The most important one is `$PATH`:
+Your shell has **environment variables**, named values that affect how programs run. The most important one is `$PATH`:
 
 ```bash
 echo $PATH
@@ -114,7 +114,7 @@ echo $USER    # your username
 
 ### Dotfiles
 
-Files starting with `.` are hidden from plain `ls`. Your home directory contains several of these **dotfiles** — configuration files that are loaded every time you open a shell:
+Files starting with `.` are hidden from plain `ls`. Your home directory contains several of these **dotfiles**, configuration files that are loaded every time you open a shell:
 
 | File | Purpose |
 |------|---------|

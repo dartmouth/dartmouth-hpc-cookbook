@@ -1,6 +1,6 @@
 ---
 title: Editing Files in the Terminal
-description: "A practical guide to nano and vi — the two editors you'll find on every Linux server, including {{ cluster.name }}"
+description: "A practical guide to nano and vi, the two editors you'll find on every Linux server, including {{ cluster.name }}"
 tags:
   - fundamentals
   - linux
@@ -84,7 +84,7 @@ vi has multiple modes, but two cover nearly everything you need:
 | **Normal mode** | Navigate, delete, copy, paste | Press ++esc++ |
 | **Insert mode** | Type text | Press ++i++ |
 
-When you first open vi, you're in **normal mode**. Typing letters won't insert text — they're commands. You must press ++i++ before you can type.
+When you first open vi, you're in **normal mode**. Typing letters won't insert text; they're commands. You must press ++i++ before you can type.
 
 This is the source of most vi confusion: people open vi, try to type, and end up executing a cascade of commands instead. When in doubt, press ++esc++ to get back to normal mode.
 

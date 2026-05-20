@@ -35,11 +35,11 @@ This file provides guidance to agents when working with code in this repository.
 - **Index Pages:** The `index.md` files in each category (e.g., `recipes/index.md`, `articles/index.md`) act as directories and landing pages. When adding new recipes or articles, you *must* also update the corresponding `index.md` to link to the new content so it is discoverable.
 
 ## Writing Style and Tone
-- **Address the reader as "you"** in second person. Use "we" sparingly, only for shared reasoning ("we can still leverage shared memory..."). Avoid third-person passive ("the user should...").
-- **Tone is friendly, direct, and lightly opinionated** — warm without being chatty, technical without being cold. Occasional personality words ("footgun", "sluggish", "disorienting") are welcome when they sharpen a point. Avoid corporate hedging.
+- **Address the reader as "you"** in second person. Use "we" sparingly, only for shared reasoning ("we can still use shared memory..."). Avoid third-person passive ("the user should...").
+- **Tone is friendly, direct, and lightly opinionated.** Warm without being chatty, technical without being cold. Occasional personality words ("footgun", "sluggish", "disorienting") are welcome when they sharpen a point. Avoid corporate hedging.
 - **Lead with the *why*, then the *how*.** State the motivation, constraint, or failure mode before the command or procedure. A reader who understands *why* a rule exists can generalize; one who only sees the *how* is stuck the moment the situation shifts.
 - **Short sentences and short paragraphs.** One- or two-sentence paragraphs are normal. Break long explanations with headings, lists, tables, or admonitions rather than letting prose run.
-- **Use analogies to bridge to familiar experience** when introducing a new abstraction (SSH as a phone call with caller ID, scratch as a workbench, etc.). Don't force them — only when they genuinely shorten the path to understanding.
+- **Use analogies to bridge to familiar experience** when introducing a new abstraction (SSH as a phone call with caller ID, scratch as a workbench, etc.). Don't force them; only use them when they genuinely shorten the path to understanding.
 - **Surround code with intent, not narration.** Frame what the reader is trying to do, show the command, then note what changed or what to watch for. Don't restate what the code visibly does.
 - **Use admonitions deliberately:**
     - `!!! tip` — actionable advice that improves outcomes
@@ -49,8 +49,23 @@ This file provides guidance to agents when working with code in this repository.
     - `!!! info` / `!!! abstract` — neutral context, recipe summaries
 
     Don't stack admonitions or use them for ordinary prose.
-- **Headings use sentence case.** Question-style headings ("Why this matters on HPC", "Where am I? — `pwd`") are encouraged where they match the reader's likely mental question.
+- **Headings use sentence case.** Question-style headings ("Where am I?", "What's here?") are encouraged where they match the reader's likely mental question. Avoid "Why X matters" as a heading pattern (see AI-isms list below).
 - **Explain jargon inline on first use**, then rely on the glossary (`includes/glossary.yml`) for tooltip reinforcement. Don't assume HPC vocabulary; don't over-explain it twice.
 - **Acknowledge friction honestly.** If a workflow is awkward, slow, or has a sharp edge, say so and explain the tradeoff rather than papering over it.
 - **Be opinionated and selective.** Recommend a path. Mention alternatives only when the reader genuinely needs to choose between them.
-- **Do not use em-dashes (—) in your responses.** Instead, restructure sentences using commas, parentheses, colons, semicolons, or periods. If you find yourself reaching for an em-dash to insert an aside, set it off with commas or parentheses; if you're using one to introduce a conclusion or elaboration, use a colon or start a new sentence. This applies to all output, including code comments, headings, and quoted material you paraphrase.
+- **Do not use em-dashes (—) in running prose.** Instead, restructure sentences using commas, parentheses, colons, semicolons, or periods. If you find yourself reaching for an em-dash to insert an aside, set it off with commas or parentheses; if you're using one to introduce a conclusion or elaboration, use a colon or start a new sentence.
+    - **Allowed:** Em-dashes as separators in **heading subtitles** (`### Where am I? — \`pwd\``), **bulleted definition items** (`- **\`-a\`** — Archive mode`), and **glossary tooltip text** (where brevity is critical). In these structural roles, the em-dash functions as a lightweight colon and is visually clearer than alternatives.
+    - **Not allowed:** Em-dashes in body paragraphs, admonitions, or any running sentence.
+- **Avoid common AI-generated writing patterns.** These phrases are telltale signs of LLM output and erode the cookbook's voice. Do not use:
+    - **"Why X matters"** as a heading or phrase. Rephrase to describe what something does or when to use it (e.g., "What storage tiers are for", "How this applies on HPC").
+    - **"It's not X, it's Y"** as a rhetorical pivot. Just state what something is.
+    - **Triplet lists for emphasis** ("No typing. No errors. No mistakes." or "Simple. Fast. Reliable."). Use a normal sentence instead.
+    - **"Let's [verb]"** to introduce a section ("Let's dive in", "Let's break that down", "Let's explore"). Just start the section.
+    - **"leverage"** when you mean "use".
+    - **"ensure"** when you mean "make sure" or "check that" (technical uses like "ensure the lock is held" are fine).
+    - **"seamless"**, **"robust"**, **"powerful"** as filler adjectives. Be specific about what makes something good, or drop the adjective.
+    - **"unlock"**, **"game-changer"**, **"journey"** in any context.
+    - **"key takeaway"**, **"in summary"**, **"to summarize"**, **"in conclusion"** to wrap up a section. The section's content should speak for itself; if you need a summary, use an admonition.
+    - **"It's worth noting"**, **"It's important to note/understand"**. Just state the thing.
+
+    When in doubt, read the sentence aloud. If it sounds like a LinkedIn post or a ChatGPT response, rewrite it.

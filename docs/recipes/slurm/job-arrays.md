@@ -20,7 +20,7 @@ Each run is completely independent: There is no communication between them, no s
 
 *[embarrassingly parallel]: A class of problem that can be divided into independent subtasks with no need for communication between them. Sometimes called "pleasingly parallel."
 
-Job arrays are Slurm's purpose-built tool for this pattern. Instead of manually submitting hundreds of individual jobs — or writing a shell loop that hammers the scheduler — you submit one job array and Slurm fans it out into N tasks, each with its own task ID.
+Job arrays are Slurm's purpose-built tool for this pattern. Instead of manually submitting hundreds of individual jobs (or writing a shell loop that hammers the scheduler), you submit one job array and Slurm fans it out into N tasks, each with its own task ID.
 
 ## Your first job array
 
@@ -48,7 +48,7 @@ mkdir -p logs
 sbatch array_job.sh
 ```
 
-The key concept: **`$SLURM_ARRAY_TASK_ID`** is an environment variable that Slurm sets differently for each task. Task 1 gets `SLURM_ARRAY_TASK_ID=1`, task 2 gets `SLURM_ARRAY_TASK_ID=2`, and so on up to 10. You use that variable inside your script to select different inputs, parameters, or configurations — the script logic is the same, only the input changes.
+The key concept: **`$SLURM_ARRAY_TASK_ID`** is an environment variable that Slurm sets differently for each task. Task 1 gets `SLURM_ARRAY_TASK_ID=1`, task 2 gets `SLURM_ARRAY_TASK_ID=2`, and so on up to 10. You use that variable inside your script to select different inputs, parameters, or configurations. The script logic is the same; only the input changes.
 
 The `%a` placeholder in `--output` and `--error` expands to the task ID, so each task writes to its own log file. Without this, all tasks would try to write to the same file simultaneously, producing garbled output.
 
@@ -151,7 +151,7 @@ sacct -j JOBID --format=JobID,State,ExitCode,Elapsed,MaxRSS
 
 Each task appears as `JOBID_TASKID` (e.g., `12345_7`). Tasks that failed with a non-zero exit code will show `FAILED` or `CANCELLED`.
 
-**Re-running only failed tasks** is straightforward — just pass the specific task IDs:
+**Re-running only failed tasks** is straightforward. Just pass the specific task IDs:
 
 ```bash
 # Re-run tasks 5, 12, and 47 from a previous array
@@ -163,7 +163,7 @@ You can also specify ranges with gaps: `--array=5-10,15,20-25`.
 ## Common pitfalls
 
 !!! warning "Output file collisions"
-    Forgetting `%a` in `--output` means all tasks write to the same log file. The result is interleaved, unreadable output — and potentially data loss if your script appends results to a file. Always use `%a` in both `--output` and `--error` for array jobs.
+    Forgetting `%a` in `--output` means all tasks write to the same log file. The result is interleaved, unreadable output, and potentially data loss if your script appends results to a file. Always use `%a` in both `--output` and `--error` for array jobs.
 
 !!! warning "Shared result files cause race conditions"
     If multiple tasks try to append results to the same CSV or text file simultaneously, they will corrupt each other's writes. Write task results to separate files (e.g., `results/task_${SLURM_ARRAY_TASK_ID}.csv`) and merge them after all tasks complete.

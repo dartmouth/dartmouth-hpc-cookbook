@@ -7,6 +7,6 @@ tags:
 
 # Glossary
 
-This page defines the terms and abbreviations used throughout the cookbook. All entries are highlighted with tooltips wherever they appear — hover over a term on any page to see its definition.
+This page defines the terms and abbreviations used throughout the cookbook. All entries are highlighted with tooltips wherever they appear. Hover over a term on any page to see its definition.
 
 {{ glossary() }}

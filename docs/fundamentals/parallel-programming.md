@@ -9,9 +9,9 @@ tags:
 
 # Parallel Programming
 
-Modern computers — from laptops to HPC nodes — contain multiple processors. A typical {{ cluster.name }} compute node has dozens of CPU cores, and the cluster as a whole has thousands. Yet the "default" way most people write code is *sequential*: one instruction after another, on a single core. That leaves an enormous amount of computing power sitting idle.
+Modern computers, from laptops to HPC nodes, contain multiple processors. A typical {{ cluster.name }} compute node has dozens of CPU cores, and the cluster as a whole has thousands. Yet the "default" way most people write code is *sequential*: one instruction after another, on a single core. That leaves an enormous amount of computing power sitting idle.
 
-Parallel programming is the practice of structuring your code so that multiple things happen at the same time (or at least appear to). Done well, it can turn a computation that takes days into one that takes hours — or minutes.
+Parallel programming is the practice of structuring your code so that multiple things happen at the same time (or at least appear to). Done well, it can turn a computation that takes days into one that takes hours, or minutes.
 
 But "parallel programming" is an umbrella term that covers several distinct paradigms, each suited to different kinds of problems. Choosing the wrong one is a common and costly mistake. This article introduces all three paradigms, compares them, and gives you a framework for choosing.
 
@@ -21,11 +21,11 @@ Throughout this section, we'll use two recurring analogies to build intuition. T
 
 ### The Supermarket Checkout Problem
 
-Imagine a busy supermarket. Customers are lining up, and your goal is **maximum throughput** — processing as many customers per minute as possible. How you organize cashiers, lanes, and queues determines your throughput.
+Imagine a busy supermarket. Customers are lining up, and your goal is **maximum throughput**: processing as many customers per minute as possible. How you organize cashiers, lanes, and queues determines your throughput.
 
 ### The Where's Waldo? Problem
 
-You have a large, detailed image and need to find Waldo. Your goal is **minimum time-to-answer** — the fastest possible "Time-to-Waldo." How you divide up the search determines how quickly you find him.
+You have a large, detailed image and need to find Waldo. Your goal is **minimum time-to-answer**: the fastest possible "Time-to-Waldo." How you divide up the search determines how quickly you find him.
 
 These two problems respond differently to each programming paradigm, which is exactly what makes them useful for building intuition.
 
@@ -69,7 +69,7 @@ flowchart TD
     - If you need more cores or memory than a single node provides, you need **distributed computing** across multiple nodes.
 
 3. **Are the tasks independent?**
-    - If your workload can be split into completely independent pieces (no communication needed between them), it's **embarrassingly parallel**. In that case, a Slurm job array — where you simply run your script many times on different inputs — is often the simplest and most effective solution. No special framework required.
+    - If your workload can be split into completely independent pieces (no communication needed between them), it's **embarrassingly parallel**. In that case, a Slurm job array (where you simply run your script many times on different inputs) is often the simplest and most effective solution. No special framework required.
 
 ## The No-Free-Lunch Tradeoff
 

@@ -11,15 +11,15 @@ tags:
 
 If you've [submitted your first job](../getting-started/first-job.md), you've already used the scheduler. You wrote a script, asked for some resources, and the cluster ran it somewhere. But what actually happened between `sbatch` and your output file appearing? Why did your job wait in the queue? And how do you know whether you asked for the right amount of resources?
 
-This page explains how {{ cluster.scheduler }} — the scheduler on {{ cluster.name }} — manages the cluster's resources, decides what runs when, and why the choices you make in your `#SBATCH` directives directly affect how long you wait and how well your job runs.
+This page explains how {{ cluster.scheduler }}, the scheduler on {{ cluster.name }}, manages the cluster's resources, decides what runs when, and why the choices you make in your `#SBATCH` directives directly affect how long you wait and how well your job runs.
 
 ## Why Schedulers Exist
 
 Imagine a shared kitchen with 50 cooks and one industrial oven. If everyone just walked up and used the oven whenever they wanted, chaos would follow: someone's soufflé gets interrupted mid-bake, two people try to set different temperatures, and the cook with the biggest dish monopolizes the oven all day while everyone else waits.
 
-An HPC cluster faces the same problem at a much larger scale. {{ cluster.name }} has thousands of CPU cores, terabytes of memory, and dozens of GPUs — but also hundreds of researchers who all need them. Without coordination, one user could accidentally (or intentionally) consume the entire machine, leaving everyone else staring at a login node.
+An HPC cluster faces the same problem at a much larger scale. {{ cluster.name }} has thousands of CPU cores, terabytes of memory, and dozens of GPUs, but also hundreds of researchers who all need them. Without coordination, one user could accidentally (or intentionally) consume the entire machine, leaving everyone else staring at a login node.
 
-The **scheduler** is the solution. It's a program that sits between users and compute resources, accepting job requests, deciding priority, and allocating resources fairly. No user talks to the hardware directly — everyone goes through the scheduler.
+The **scheduler** is the solution. It's a program that sits between users and compute resources, accepting job requests, deciding priority, and allocating resources fairly. No user talks to the hardware directly; everyone goes through the scheduler.
 
 ```mermaid
 flowchart LR
@@ -32,11 +32,11 @@ flowchart LR
     S --> N4["Node ..."]
 ```
 
-On your laptop, you run a program and it starts immediately using whatever resources it can grab. On a cluster, you *request* specific resources, and the scheduler decides when and where to grant them. This is the fundamental shift in thinking: **you don't run programs on {{ cluster.name }} — you ask {{ cluster.scheduler }} to run them for you.**
+On your laptop, you run a program and it starts immediately using whatever resources it can grab. On a cluster, you *request* specific resources, and the scheduler decides when and where to grant them. This is the fundamental shift in thinking: **you don't run programs on {{ cluster.name }}; you ask {{ cluster.scheduler }} to run them for you.**
 
 ## The Resource Model
 
-Every job you submit requests four things, whether you realize it or not: **CPUs**, **memory**, **time**, and a **partition**. Understanding what each means — and especially the difference between two ways of requesting CPUs — is the key to writing effective job scripts.
+Every job you submit requests four things, whether you realize it or not: **CPUs**, **memory**, **time**, and a **partition**. Understanding what each means, and especially the difference between two ways of requesting CPUs, is the key to writing effective job scripts.
 
 ### CPUs: tasks vs. cores per task
 
@@ -51,7 +51,7 @@ These aren't interchangeable. They map to fundamentally different parallelism st
 
 **`--ntasks=4 --cpus-per-task=1`** launches **4 separate processes**, each with 1 core. This is the model for MPI programs, where multiple independent processes communicate by passing messages. Each process has its own memory space and its own copy of your program.
 
-**`--ntasks=1 --cpus-per-task=4`** launches **1 process** that can use **4 cores internally**. This is the model for multithreaded programs — a single process that spawns threads to parallelize work. Python's `multiprocessing`, NumPy's internal threading, and OpenMP all work this way.
+**`--ntasks=1 --cpus-per-task=4`** launches **1 process** that can use **4 cores internally**. This is the model for multithreaded programs: a single process that spawns threads to parallelize work. Python's `multiprocessing`, NumPy's internal threading, and OpenMP all work this way.
 
 ```mermaid
 graph TB
@@ -72,7 +72,7 @@ graph TB
     end
 ```
 
-The total CPU count is the same in both cases (4 cores), but the *structure* is completely different — and using the wrong one means your job either can't parallelize at all, or creates processes that fight over a single core.
+The total CPU count is the same in both cases (4 cores), but the *structure* is completely different, and using the wrong one means your job either can't parallelize at all, or creates processes that fight over a single core.
 
 Here's a simple decision framework:
 
@@ -84,11 +84,11 @@ Here's a simple decision framework:
 | Hybrid (MPI + threads) | `--ntasks=N --cpus-per-task=M` | MPI program where each rank uses OpenMP threads |
 
 !!! tip "When in doubt, use `--ntasks=1 --cpus-per-task=N`"
-    Most research code — Python scripts, R analyses, MATLAB jobs — runs as a single process. If you're not using MPI, set `--ntasks=1` and adjust `--cpus-per-task` based on whether your code can use multiple cores. If you're not sure whether your code is multithreaded, start with `--cpus-per-task=1` and check CPU efficiency afterward with `seff`.
+    Most research code (Python scripts, R analyses, MATLAB jobs) runs as a single process. If you're not using MPI, set `--ntasks=1` and adjust `--cpus-per-task` based on whether your code can use multiple cores. If you're not sure whether your code is multithreaded, start with `--cpus-per-task=1` and check CPU efficiency afterward with `seff`.
 
 ### Memory
 
-Memory (`--mem`) sets the maximum RAM your job can use. If your job exceeds this, {{ cluster.scheduler }} kills it immediately — no warning, no graceful shutdown. The job exits with state `OUT_OF_MEMORY`.
+Memory (`--mem`) sets the maximum RAM your job can use. If your job exceeds this, {{ cluster.scheduler }} kills it immediately. No warning, no graceful shutdown. The job exits with state `OUT_OF_MEMORY`.
 
 ```bash
 #SBATCH --mem=16G         # 16 GB total for the entire job
@@ -104,7 +104,7 @@ The [Intermediate Slurm Patterns](../recipes/slurm/intermediate-patterns.md) rec
 
 ### Time
 
-The `--time` directive sets a **wall-clock time limit** — the maximum real-world time your job is allowed to run. When the clock runs out, {{ cluster.scheduler }} kills the job, regardless of whether it's 99% done.
+The `--time` directive sets a **wall-clock time limit**, the maximum real-world time your job is allowed to run. When the clock runs out, {{ cluster.scheduler }} kills the job, regardless of whether it's 99% done.
 
 ```bash
 #SBATCH --time=04:00:00   # 4 hours (HH:MM:SS)
@@ -113,7 +113,7 @@ The `--time` directive sets a **wall-clock time limit** — the maximum real-wor
 Requesting the right amount of time is a balancing act. Too little and your job gets killed before it finishes. Too much and you wait longer in the queue (we'll explain why in the next section). A good starting strategy is to estimate your runtime, then add 25–50% as a buffer.
 
 !!! tip "Benchmark first"
-    Run your analysis on a small subset of your data — either in an [interactive session](../recipes/slurm/interactive-jobs.md) or as a short batch job — to get a reliable runtime estimate before committing to a long run.
+    Run your analysis on a small subset of your data, either in an [interactive session](../recipes/slurm/interactive-jobs.md) or as a short batch job, to get a reliable runtime estimate before committing to a long run.
 
 ### Partitions
 
@@ -149,7 +149,7 @@ QOS is not a partition. You combine it *with* a partition: `--partition=gpu --qo
 
 ## How {{ cluster.scheduler }} Decides What Runs
 
-When you submit a job with `sbatch`, it doesn't run immediately. It enters a **queue** of pending jobs, and {{ cluster.scheduler }} decides the order based on several factors. Understanding these factors explains why some jobs start quickly and others wait — and gives you concrete levers to reduce your wait times.
+When you submit a job with `sbatch`, it doesn't run immediately. It enters a **queue** of pending jobs, and {{ cluster.scheduler }} decides the order based on several factors. Understanding these factors explains why some jobs start quickly and others wait, and gives you concrete levers to reduce your wait times.
 
 ### Priority factors
 
@@ -181,10 +181,10 @@ gantt
     Large Job (waiting)       :crit,   b3, 02:00, 06:00
 ```
 
-In this example, the small job starts before the large high-priority job because it fits in the gap and finishes before the large job needs those resources. This is why **requesting less time directly translates to shorter wait times** — {{ cluster.scheduler }} can backfill your job into gaps that a longer request wouldn't fit.
+In this example, the small job starts before the large high-priority job because it fits in the gap and finishes before the large job needs those resources. This is why **requesting less time directly translates to shorter wait times**: {{ cluster.scheduler }} can backfill your job into gaps that a longer request wouldn't fit.
 
 !!! tip "The single most effective way to reduce wait times"
-    Request only the time and resources you actually need. A 2-hour job with 4 cores has vastly more scheduling opportunities than a 24-hour job with 32 cores — even if they have the same priority score.
+    Request only the time and resources you actually need. A 2-hour job with 4 cores has vastly more scheduling opportunities than a 24-hour job with 32 cores, even if they have the same priority score.
 
 ## The Job Lifecycle
 
@@ -261,7 +261,7 @@ Adjust upward if you know your data is large (more memory) or your computation i
 
 ### 2. Run the job
 
-Submit it and let it finish — or fail. Both outcomes are informative.
+Submit it and let it finish, or fail. Both outcomes are informative.
 
 ### 3. Check actual usage
 
@@ -285,10 +285,10 @@ Memory Efficiency: 70.00% of 4.00 GB
 
 ### 4. Adjust for next time
 
-In this example, the job used 2.8 GB of the 4 GB requested and ran for 42 minutes of the 1-hour limit. Both are comfortably within bounds — good requests. If memory efficiency were 10%, you'd cut the request in half. If the job timed out, you'd increase `--time`.
+In this example, the job used 2.8 GB of the 4 GB requested and ran for 42 minutes of the 1-hour limit. Both are comfortably within bounds. Good requests. If memory efficiency were 10%, you'd cut the request in half. If the job timed out, you'd increase `--time`.
 
 !!! warning "Over-requesting hurts you"
-    It's tempting to request maximum resources "just in case." But {{ cluster.scheduler }} uses your request to schedule your job — not your actual usage. Requesting 128 GB of memory when you need 8 GB means your job can only run on nodes with 128 GB free, which are much scarcer. The result: longer queue waits for no benefit. Request what you need, plus a modest buffer.
+    It's tempting to request maximum resources "just in case." But {{ cluster.scheduler }} uses your request to schedule your job, not your actual usage. Requesting 128 GB of memory when you need 8 GB means your job can only run on nodes with 128 GB free, which are much scarcer. The result: longer queue waits for no benefit. Request what you need, plus a modest buffer.
 
 ## What's Next
 

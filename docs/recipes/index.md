@@ -5,7 +5,7 @@ description: "Task-oriented guides for running real workloads on {{ cluster.name
 
 # Recipes
 
-Recipes are self-contained, task-oriented guides. Each one walks you through a specific workflow on {{ cluster.name }} — from setting up a Python environment to running multi-node MPI jobs. Unlike the [Fundamentals](../fundamentals/index.md) section, which builds concepts from the ground up, recipes assume you already have the basics down and need to **get something done**.
+Recipes are self-contained, task-oriented guides. Each one walks you through a specific workflow on {{ cluster.name }}, from setting up a Python environment to running multi-node MPI jobs. Unlike the [Fundamentals](../fundamentals/index.md) section, which builds concepts from the ground up, recipes assume you already have the basics down and need to **get something done**.
 
 <div class="grid cards" markdown>
 
@@ -45,7 +45,7 @@ Recipes are self-contained, task-oriented guides. Each one walks you through a s
 
     ---
 
-    Access the cluster through a web browser — launch Jupyter notebooks, RStudio, and other interactive apps without SSH.
+    Access the cluster through a web browser: launch Jupyter notebooks, RStudio, and other interactive apps without SSH.
 
     [:octicons-arrow-right-24: Open OnDemand recipes](open-ondemand/getting-started.md)
 

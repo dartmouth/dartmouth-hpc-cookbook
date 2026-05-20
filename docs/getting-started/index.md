@@ -5,7 +5,7 @@ description: "Get up and running on {{ institution.short_name }}'s HPC cluster �
 
 # Getting Started
 
-This track takes you from zero to running your first job on {{ cluster.name }}. Work through the four pages in order — each one builds on the previous — and you'll have a working foundation in about 30 minutes.
+This track takes you from zero to running your first job on {{ cluster.name }}. Work through the four pages in order (each one builds on the previous) and you'll have a working foundation in about 30 minutes.
 
 <div class="grid cards" markdown>
 
@@ -29,7 +29,7 @@ This track takes you from zero to running your first job on {{ cluster.name }}. 
 
     ---
 
-    Use SSH to connect to {{ cluster.name }} from your laptop — with step-by-step instructions for macOS, Windows, and Linux.
+    Use SSH to connect to {{ cluster.name }} from your laptop, with step-by-step instructions for macOS, Windows, and Linux.
 
     [:octicons-arrow-right-24: Connect](connecting.md)
 
@@ -37,7 +37,7 @@ This track takes you from zero to running your first job on {{ cluster.name }}. 
 
     ---
 
-    Write a simple Slurm script, submit it, and inspect the results — the essential workflow you'll use every day.
+    Write a simple Slurm script, submit it, and inspect the results. This is the essential workflow you'll use every day.
 
     [:octicons-arrow-right-24: Run your first job](first-job.md)
 

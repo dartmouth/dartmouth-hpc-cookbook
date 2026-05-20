@@ -1,6 +1,6 @@
 ---
 title: "Containers on HPC: An Introduction"
-description: "What containers are, why they matter on {{ cluster.name }}, and when to use them instead of modules and virtual environments"
+description: "What containers are, what they solve on {{ cluster.name }}, and when to use them instead of modules and virtual environments"
 ---
 
 # Containers on HPC: An Introduction
@@ -29,8 +29,8 @@ their entire software environment, which is often an underdocumented and
 frustrating exercise.
 
 **Software containers** solve this the same way shipping containers did: bundle
-your application *together with everything it needs* — the runtime, libraries,
-configuration, and dependencies — into a single portable image. That image runs
+your application *together with everything it needs* (the runtime, libraries,
+configuration, and dependencies) into a single portable image. That image runs
 identically wherever a compatible container runtime exists.
 
 Concretely, a container image is a read-only, layered filesystem snapshot. When
@@ -38,7 +38,7 @@ you run a container, you get a lightweight, isolated process that sees that
 filesystem as its root. The host OS kernel is shared (unlike a full virtual
 machine), so containers are fast to start and have almost no overhead.
 
-## Why Containers Matter on HPC
+## What containers solve on HPC
 
 Clusters like {{ cluster.name }} are shared infrastructure. You cannot install
 software globally: You don't have root access, and even if you did, changes
@@ -88,7 +88,7 @@ to Apptainer's native `.sif` format automatically.
 !!! tip "Singularity → Apptainer"
     Apptainer is the new name for Singularity after the project moved to the
     Linux Foundation in 2021. The commands and concepts are identical.
-    You may see both names in documentation and forum posts — they refer to
+    You may see both names in documentation and forum posts; they refer to
     the same tool.
 
 ## When to Use Containers vs. Modules and Virtual Environments
@@ -131,7 +131,7 @@ knowing before diving into the hands-on material:
 **Container**
 :   A running instance of an image. One image can spawn many containers
     simultaneously. When the container exits, any changes to its filesystem
-    are discarded (unless you've set up a bind mount — see below).
+    are discarded (unless you've set up a bind mount; see below).
 
 **Layer**
 :   Images are built in layers. Each `RUN` command in a Dockerfile (or `%post`

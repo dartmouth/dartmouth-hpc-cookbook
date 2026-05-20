@@ -9,7 +9,7 @@ tags:
 
 # Transferring Data
 
-Before you can run any job on {{ cluster.name }}, your data needs to be there. Your laptop and the cluster are completely separate machines — files on one don't automatically appear on the other. This page covers the tools you'll use to move data between your local machine and the cluster, and when to reach for each one.
+Before you can run any job on {{ cluster.name }}, your data needs to be there. Your laptop and the cluster are completely separate machines; files on one don't automatically appear on the other. This page covers the tools you'll use to move data between your local machine and the cluster, and when to reach for each one.
 
 ## The Two Filesystems
 
@@ -18,11 +18,11 @@ Your laptop has one filesystem. {{ cluster.name }} has another. They have no aut
 This is important to internalize because it changes how you plan your work. Before a job starts, you need to make sure your input data is already on the cluster. After a job finishes, you need to actively retrieve results before scratch storage is purged.
 
 !!! info "Storage on the cluster"
-    The cluster has multiple storage tiers — home directories, scratch storage, and long-term shared storage. Understanding what each tier is for will help you decide where to put files after you transfer them. See [Storage Fundamentals](storage.md) for details.
+    The cluster has multiple storage tiers (home directories, scratch storage, and long-term shared storage). Understanding what each tier is for will help you decide where to put files after you transfer them. See [Storage Fundamentals](storage.md) for details.
 
 ## `scp` — Copying Individual Files
 
-`scp` (secure copy) is the simplest transfer tool. It works like `cp`, but one side of the copy can be a remote machine. You'll authenticate the same way you connect via SSH — with your SSH key.
+`scp` (secure copy) is the simplest transfer tool. It works like `cp`, but one side of the copy can be a remote machine. You'll authenticate the same way you connect via SSH, with your SSH key.
 
 Replace `username` in the examples below with your {{ cluster.name }} username.
 
@@ -51,7 +51,7 @@ scp -r mydir/ username@{{ cluster.login_node }}:~/
 The `-r` flag copies recursively, transferring `mydir/` and all its contents.
 
 !!! tip "When `scp` is the right choice"
-    `scp` is great for quick, one-off transfers of a single file or small directory. Its simplicity is its strength. However, `scp` has no concept of resuming — if a transfer is interrupted halfway through a large file, you have to start over from scratch. For anything larger or more complex, use `rsync` instead.
+    `scp` is great for quick, one-off transfers of a single file or small directory. Its simplicity is its strength. However, `scp` has no concept of resuming: if a transfer is interrupted halfway through a large file, you have to start over from scratch. For anything larger or more complex, use `rsync` instead.
 
 ## `rsync` — Efficient Incremental Transfers (Recommended)
 
@@ -91,7 +91,7 @@ rsync -avz username@{{ cluster.login_node }}:~/results/ ./results/
 
 For multi-gigabyte or multi-terabyte datasets, command-line tools like `scp` and `rsync` have limitations: they require your laptop to stay connected for the entire transfer, and a dropped network connection can interrupt or corrupt the transfer. Globus solves both problems.
 
-Globus is a managed file transfer service designed for research data. It runs as a background service — you initiate a transfer through a web interface, and Globus handles the rest. It automatically retries on failure, resumes after interruptions, and sends you an email when the transfer completes. You don't have to stay connected or babysit the process.
+Globus is a managed file transfer service designed for research data. It runs as a background service: you initiate a transfer through a web interface, and Globus handles the rest. It automatically retries on failure, resumes after interruptions, and sends you an email when the transfer completes. You don't have to stay connected or babysit the process.
 
 **Reach for Globus when:**
 
@@ -103,7 +103,7 @@ Globus is a managed file transfer service designed for research data. It runs as
 {{ institution.short_name }} maintains a Globus endpoint for {{ cluster.name }}. Setting it up requires installing the Globus Connect Personal client on your laptop. For setup instructions and the endpoint name, visit the [{{ institution.short_name }} Research Computing support site]({{ institution.support_url }}).
 
 !!! note "Globus for shared data"
-    Globus also makes it easy to share datasets with collaborators at other institutions — they don't need an account at {{ institution.short_name }}, just a Globus account (free). This is particularly useful for sharing large genomics datasets or simulation outputs.
+    Globus also makes it easy to share datasets with collaborators at other institutions. They don't need an account at {{ institution.short_name }}, just a Globus account (free). This is particularly useful for sharing large genomics datasets or simulation outputs.
 
 ## A Typical Job Data Workflow
 
@@ -137,7 +137,7 @@ flowchart LR
     If your dataset is over ~1 GB, or you want a transfer to run while you're offline, Globus is the right tool. It's reliable, resumable, and provides a progress dashboard.
 
 !!! tip "Verify critical transfers with checksums"
-    For data where integrity matters — sequencing data, archival datasets, anything you'd be upset to discover was corrupted — verify the transfer with `md5sum`:
+    For data where integrity matters (sequencing data, archival datasets, anything you'd be upset to discover was corrupted), verify the transfer with `md5sum`:
 
     ```bash
     # On the source (your laptop)
@@ -152,7 +152,7 @@ flowchart LR
 ### Avoid this
 
 !!! warning "Don't transfer thousands of tiny files"
-    Every file transfer has network overhead — connection setup, metadata exchange, acknowledgements. Transferring 50,000 small files takes much longer than transferring one archive of the same total size. If you have a directory full of tiny files (e.g., many small CSVs, or a large number of images), pack them into a single archive first:
+    Every file transfer has network overhead: connection setup, metadata exchange, acknowledgements. Transferring 50,000 small files takes much longer than transferring one archive of the same total size. If you have a directory full of tiny files (e.g., many small CSVs, or a large number of images), pack them into a single archive first:
 
     ```bash
     tar -czf mydata.tar.gz mydata/

@@ -7,7 +7,7 @@ description: "Solutions to common problems on {{ cluster.name }}"
 
 Something went wrong. This page collects solutions to the most common problems
 researchers run into on {{ cluster.name }}. Each entry explains *why* the problem
-happens — not just how to fix it — so you can recognize similar issues in the future.
+happens (not just how to fix it) so you can recognize similar issues in the future.
 
 If your problem isn't listed here, see [Getting More Help](#getting-more-help) at the bottom of the page.
 
@@ -35,7 +35,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     | `Maintenance` | The cluster is in a scheduled maintenance window; jobs will start when it ends. |
 
     If the reason is `ReqNodeNotAvail` and you're sure the cluster isn't in maintenance,
-    the most likely cause is an impossible resource combination — for example, requesting
+    the most likely cause is an impossible resource combination. For example, requesting
     512 GB of memory on a node type that only offers 256 GB. Review the partition limits
     with `sinfo -o "%P %l %m %c"` and adjust your request accordingly.
 
@@ -74,7 +74,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 ??? question "My job finished instantly with a non-zero exit code and produced no output"
 
     A near-instant failure with no output almost always means the job script itself
-    couldn't run to completion — the work never started. Check the `.err` file Slurm
+    couldn't run to completion; the work never started. Check the `.err` file Slurm
     wrote (named `slurm-JOBID.err` by default, or whatever you set with `--error=`).
     Common culprits:
 
@@ -127,7 +127,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 ??? question "My job ran successfully but produced wrong or unexpected results"
 
     Unexpected results are almost always an **environment or path problem**, not a
-    cluster problem — the scheduler ran your script exactly as written, but the
+    cluster problem. The scheduler ran your script exactly as written, but the
     script did something unintended. Start by adding these two lines near the top
     of your job script to capture diagnostic information in the output:
 
@@ -153,7 +153,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     !!! tip
         Add `set -euo pipefail` as the second line of every Bash job script (right
         after `#!/bin/bash`). This makes the script exit immediately on any unhandled
-        error, undefined variable, or failed pipe — catching problems early instead
+        error, undefined variable, or failed pipe, catching problems early instead
         of silently producing wrong results.
 
 ??? question "I submitted too many jobs — how do I cancel them all?"
@@ -186,7 +186,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     ```
 
     !!! warning
-        `scancel -u $USER` is immediate and irreversible — there is no undo.
+        `scancel -u $USER` is immediate and irreversible. There is no undo.
         If you want to pause jobs temporarily instead of deleting them, use
         `scontrol hold JOBID` / `scontrol release JOBID`.
 
@@ -199,7 +199,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 
 ??? question "ModuleNotFoundError on the cluster, but the package is installed on my laptop"
 
-    The package isn't missing from the cluster — it's just not in the Python environment
+    The package isn't missing from the cluster; it's just not in the Python environment
     your batch job uses. When you install packages interactively (e.g., `pip install
     numpy` in a terminal), they go into your active virtual environment. But a batch job
     starts a fresh shell with no virtual environment activated, so it falls back to the
@@ -227,7 +227,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     This error means PyTorch (or another CUDA library) was compiled for a different
     CUDA version than the one the GPU driver supports. A PyTorch build targeting
     CUDA 11.8, for example, will not run on a node whose driver only exposes CUDA 12.x
-    kernels — or vice versa.
+    kernels, or vice versa.
 
     **Diagnose:** check what CUDA version the GPU supports:
 
@@ -235,7 +235,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     srun --partition=gpu --gres=gpu:1 --pty nvidia-smi
     ```
 
-    Look for the "CUDA Version" in the top-right corner of the output — this is the
+    Look for the "CUDA Version" in the top-right corner of the output. This is the
     *maximum* CUDA version the driver supports.
 
     **Fix:** reinstall PyTorch with a CUDA index that matches. For example, if the
@@ -251,7 +251,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 ??? question "CUDA out of memory — my training job crashes partway through"
 
     Your model, activations, or batch data exceed the GPU's available VRAM. Unlike
-    system RAM, GPU memory is not virtual — there's no swap, so the process crashes
+    system RAM, GPU memory is not virtual. There's no swap, so the process crashes
     immediately when it runs out.
 
     **Diagnose:** see how much VRAM your job is actually using:
@@ -284,7 +284,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 
     The most common reason is that your batch job script doesn't set up the same
     environment your interactive shell has. Batch jobs start with a **minimal
-    environment** — no modules loaded, no virtual environments activated.
+    environment**, with no modules loaded and no virtual environments activated.
 
     Work through this checklist:
 
@@ -319,7 +319,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 ??? question "My code works on one GPU but crashes when I use multiple GPUs"
 
     Single-GPU code doesn't automatically scale. Multi-GPU training requires
-    explicit distributed training setup — if you just request multiple GPUs
+    explicit distributed training setup. If you just request multiple GPUs
     without initializing a process group, only the first GPU will be used (or
     the job will crash with a confusing error).
 
@@ -339,7 +339,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     - **Process group not destroyed.** Add `dist.destroy_process_group()` at the
       end of your training script to cleanly shut down distributed workers.
     - **Batch size too small.** With data-parallel training, the total batch is
-      split across GPUs — each GPU must receive at least one sample. If
+      split across GPUs, so each GPU must receive at least one sample. If
       `batch_size < num_gpus`, you'll get a zero-length tensor error.
 
 ---
@@ -358,7 +358,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     2. Then SSH to `{{ cluster.login_node }}`.
 
     If you're already on campus or VPN and still see this error, double-check the
-    hostname — a typo is a common cause. The correct login node is:
+    hostname (a typo is a common cause). The correct login node is:
 
     ```
     {{ cluster.login_node }}
@@ -370,7 +370,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 
 ??? question "Permission denied (publickey)"
 
-    This error means SSH authentication failed — the server rejected your key.
+    This error means SSH authentication failed: the server rejected your key.
     {{ cluster.name }} uses SSH key authentication, so this usually means your key
     isn't properly configured.
 
@@ -410,7 +410,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 
 ??? question "I'm getting \"No space left on device\" or \"Disk quota exceeded\""
 
-    Both errors mean you've run out of storage in a particular filesystem — either
+    Both errors mean you've run out of storage in a particular filesystem: either
     the total space is full, or your personal quota has been reached. They are
     treated differently, so diagnose first:
 
@@ -457,7 +457,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
         If files on scratch are gone, they are **not recoverable**. There is no
         recycle bin or backup for scratch.
 
-    Scratch is designed for *active, intermediate working data* — input files
+    Scratch is designed for *active, intermediate working data*: input files
     staged for a running job, temporary outputs being processed. It is not
     intended for long-term storage.
 
@@ -495,8 +495,8 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     !!! warning
         If the problem is persistent across multiple jobs and your quota is fine,
         contact {{ institution.support_team }} at
-        [{{ institution.support_email }}](mailto:{{ institution.support_email }})
-        — a stuck NFS mount requires admin intervention.
+        [{{ institution.support_email }}](mailto:{{ institution.support_email }}).
+        A stuck NFS mount requires admin intervention.
 
 ---
 
@@ -507,7 +507,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     Many R packages include C, C++, or Fortran code that must be compiled during
     installation. Errors like `unable to find -lgdal`, `zlib.h: No such file or
     directory`, or `cannot find -lproj` mean a required **system library** is
-    missing from the build environment — the R package itself is fine.
+    missing from the build environment. The R package itself is fine.
 
     **Fix:** load the relevant module *before* starting R or running `install.packages()`:
 
@@ -527,13 +527,13 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
         searching for the missing library manually.
 
     If you can't identify the required module, paste the full compilation error
-    into a message to {{ institution.support_team }} — the library name is usually
+    into a message to {{ institution.support_team }}. The library name is usually
     visible in the last few lines.
 
 ??? question "My R job uses only 1 core even though I requested multiple CPUs"
 
     Requesting `--cpus-per-task=8` in your job script tells {{ cluster.scheduler }}
-    to *reserve* 8 cores, but R is **single-threaded by default** — it will not
+    to *reserve* 8 cores, but R is **single-threaded by default** and will not
     automatically use those cores. You must write parallel code explicitly.
 
     Common options:
@@ -554,7 +554,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 
     !!! warning
         **Never use `detectCores()` without a limit.** On a compute node,
-        `detectCores()` returns the total number of physical cores on the machine —
+        `detectCores()` returns the total number of physical cores on the machine,
         far more than your allocation. Use
         `as.integer(Sys.getenv("SLURM_CPUS_PER_TASK"))` instead so your code
         respects the resources you actually requested.
@@ -569,7 +569,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 ??? question "MATLAB exits immediately with error code 1 (license error)"
 
     An immediate exit with error code 1 almost always means MATLAB cannot acquire
-    a license token — either the license server is unreachable, or all tokens for
+    a license token: either the license server is unreachable, or all tokens for
     your license type are currently checked out.
 
     **Diagnose:** run a minimal MATLAB command interactively on a compute node:
