@@ -150,10 +150,10 @@ For more on job script structure, see [Submit Your First Job](../getting-started
 
 ## Common Pitfalls
 
-!!! warning "Conflicting modules"
+??? failure "Conflicting modules"
     Loading two versions of the same software (e.g., `gcc/10.2.0` and `gcc/12.2.0`) leads to unpredictable behavior. The module system may warn you, or it may silently let both coexist with one shadowing the other. Always `module unload` or `module purge` before switching versions.
 
-!!! warning "Modules in `.bashrc` — handle with care"
+??? failure "Modules in `.bashrc` — handle with care"
     You might be tempted to add `module load` commands to your `~/.bashrc` so your favorite software is always available. This works but is fragile:
 
     - It makes your environment depend on the current state of the module system. If a module is updated or renamed, your shell may throw errors every time you log in.
@@ -162,7 +162,7 @@ For more on job script structure, see [Submit Your First Job](../getting-started
 
     If you do put module loads in `~/.bashrc`, keep them minimal and always use `module purge` at the top of your job scripts.
 
-!!! warning "Forgetting module dependencies"
+??? failure "Forgetting module dependencies"
     Some software requires multiple modules. An MPI program might need both a compiler module and an MPI module loaded. If you load only one, the program may fail with confusing linker errors. Check the software's documentation or use `module show` to see if it lists any prerequisites.
 
 ## When NOT to Use Modules

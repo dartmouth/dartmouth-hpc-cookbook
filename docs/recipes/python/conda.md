@@ -339,12 +339,12 @@ jupyter kernelspec uninstall myenv
 
 ## Common pitfalls
 
-!!! danger "Installing Anaconda in your home directory"
+??? failure "Installing Anaconda in your home directory"
     Don't do it. The full Anaconda distribution is 5+ GB before you install
     anything. Use `module load conda/latest` to access a shared installation
     that doesn't count against your quota.
 
-!!! warning "Mixing pip and conda in the same environment"
+??? failure "Mixing pip and conda in the same environment"
     It's sometimes necessary (if a package isn't on any Conda channel), but
     it's risky. Conda doesn't know about packages installed by pip, so it may
     overwrite them or create conflicts when you install or update other packages.

@@ -314,7 +314,7 @@ torchrun ... train.py
 
 ## Common Pitfalls
 
-!!! warning "Forgetting `DistributedSampler`"
+??? failure "Forgetting `DistributedSampler`"
     Without `DistributedSampler`, every GPU iterates over the **entire**
     dataset. Your model will still train (gradients are averaged after
     identical forward passes), but you get no data-parallel speedup and your
@@ -322,12 +322,12 @@ torchrun ... train.py
     dataset with `DistributedSampler` when using DDP directly, or let
     Accelerate's `prepare()` do it for you.
 
-!!! warning "Port conflicts on shared nodes"
+??? failure "Port conflicts on shared nodes"
     `--master_port=29500` is a fixed default that multiple jobs on the same
     node will fight over. If a job fails immediately with a binding error,
     try a random high port: `--master_port=$((29500 + RANDOM % 1000))`.
 
-!!! warning "NCCL errors and timeouts"
+??? failure "NCCL errors and timeouts"
     NCCL errors (`Unhandled system error`, `Connection timed out`) are usually
     network or firewall issues between nodes, not bugs in your code. Run with
     `NCCL_DEBUG=INFO` to see which collective is failing. On {{ cluster.name }},
@@ -336,7 +336,7 @@ torchrun ... train.py
     [{{ institution.support_team }}](mailto:{{ institution.support_email }})
     if errors persist across multiple attempts.
 
-!!! warning "More GPUs than your batch can use"
+??? failure "More GPUs than your batch can use"
     If your global batch size divided by world size is less than 1, some
     workers get empty batches and crash. More subtly: if your per-GPU batch
     size drops to 1 or 2, batch normalization statistics become noisy and
