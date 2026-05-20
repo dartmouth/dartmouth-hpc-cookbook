@@ -25,4 +25,12 @@ This section is for quick lookups when you encounter unfamiliar terminology or w
 
     [:octicons-arrow-right-24: Browse by tag](tags.md)
 
+-   :material-file-document-multiple:{ .lg .middle } **{{ cluster.name }} Documentation**
+
+    ---
+
+    The official {{ cluster.name }} documentation covers partitions, hardware specs, software, and cluster policies.
+
+    [:octicons-arrow-right-24: Visit {{ cluster.name }} docs]({{ cluster.docs_url }}){ target="_blank" }
+
 </div>

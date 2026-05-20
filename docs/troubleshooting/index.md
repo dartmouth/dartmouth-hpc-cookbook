@@ -416,7 +416,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 
     ```bash
     df -h $HOME          # how much of your home quota is used
-    df -h {{ storage.scratch_path }}/$USER   # scratch usage (if applicable)
+    ws_list              # list your scratch workspaces and expiration dates
     ```
 
     **Common culprits hiding in home:**
@@ -431,14 +431,14 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
 
     **Solutions:**
 
-    - **Move caches to scratch.** Set environment variables before installing:
+    - **Move caches to scratch.** Set environment variables before installing (replace `/path/to/your/scratch` with your actual workspace path from `ws_allocate`; see [Storage Fundamentals](fundamentals/storage.md)):
         ```bash
-        export PIP_CACHE_DIR={{ storage.scratch_path }}/$USER/.cache/pip
-        export UV_CACHE_DIR={{ storage.scratch_path }}/$USER/.cache/uv
+        export PIP_CACHE_DIR=/path/to/your/scratch/.cache/pip
+        export UV_CACHE_DIR=/path/to/your/scratch/.cache/uv
         ```
     - **Create conda environments on scratch** using `--prefix`:
         ```bash
-        conda create --prefix {{ storage.scratch_path }}/$USER/envs/myenv python=3.11
+        conda create --prefix /path/to/your/scratch/envs/myenv python=3.11
         ```
     - **Purge old virtual environments** you no longer use (`rm -rf` the `.venv`
       directory).
@@ -467,7 +467,7 @@ If your problem isn't listed here, see [Getting More Help](#getting-more-help) a
     2. Run the job, writing outputs to scratch.
     3. Copy important results back to your work directory at the end of the job script:
         ```bash
-        cp -r {{ storage.scratch_path }}/$USER/results {{ storage.work_path }}/pi_<group>/results
+        cp -r /path/to/your/scratch/results {{ storage.work_path }}/pi_<group>/results
         ```
 
     If you need additional long-term storage, contact

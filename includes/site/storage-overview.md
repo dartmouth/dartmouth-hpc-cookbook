@@ -24,7 +24,47 @@ Your PI group's **work directory** is the primary location for research data and
 
 Scratch provides high-speed temporary storage for running jobs. Files on scratch are **not backed up** and are subject to cleanup policies. Use scratch for intermediate results and temporary files during computation, then copy important results back to your work directory.
 
-Scratch space is managed through the [HPC Workspace]({{ cluster.docs_url }}managing-files/hpc-workspace/) system.
+Scratch space is managed through the [HPC Workspace]({{ cluster.docs_url }}managing-files/hpc-workspace/) system. Here's the minimum you need to get started:
+
+```bash
+# Create a scratch workspace (max 30 days)
+ws_allocate myproject 30
+```
+
+This prints the path to your new workspace, something like:
+
+```
+/scratch/workspace/yourname-myproject
+```
+
+Use that path anywhere a recipe says `/path/to/your/scratch`.
+
+A few other commands you'll reach for:
+
+```bash
+# List your workspaces and their expiration dates
+ws_list
+
+# Extend a workspace before it expires
+ws_extend myproject 30
+
+# Release a workspace when you're done
+ws_release myproject
+```
+
+!!! tip "Save the path in a variable"
+    Many recipes need your scratch path repeatedly. A handy pattern:
+
+    ```bash
+    export SCRATCH=$(ws_list -s myproject)
+    ```
+
+    Then use `$SCRATCH` in your scripts. Add it to `~/.bashrc` if you use the same workspace across sessions.
+
+!!! warning "Scratch is temporary"
+    Workspaces expire and files are not backed up. Always copy important results back to your work directory (`{{ storage.work_path }}`) when a job finishes.
+
+For the full set of options (shared workspaces, email reminders, etc.), see the [HPC Workspace documentation]({{ cluster.docs_url }}managing-files/hpc-workspace/).
 
 ### Curated Datasets (`{{ storage.datasets_path }}`)
 

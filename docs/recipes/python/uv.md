@@ -281,7 +281,8 @@ project:
 module load uv
 
 # Move the cache off your home directory (only needed once — add to ~/.bashrc)
-export UV_CACHE_DIR={{ storage.scratch_path }}/$USER/.uv-cache
+# Replace /path/to/your/scratch with your workspace path from ws_allocate
+export UV_CACHE_DIR=/path/to/your/scratch/.uv-cache
 
 # Create a project and add packages
 uv init myproject
