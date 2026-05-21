@@ -10,7 +10,7 @@
 institution:
   name: Dartmouth College            # Full institution name
   short_name: Dartmouth              # Used inline where brevity matters
-  support_team: Research Computing   # Name of HPC support group
+  support_team: Research Computing and Data  # Name of HPC support group
   support_email: research.computing@dartmouth.edu
   support_url: https://rc.dartmouth.edu
   github_url: https://github.com/dartmouth
