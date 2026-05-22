@@ -1,19 +1,27 @@
 # Customizing This Cookbook for Your Institution
 
-This HPC Cookbook is designed to be forked and adapted by any HPC center.
-The generic content (HPC concepts, Linux fundamentals, Python recipes, etc.)
-lives in `docs/` and works out of the box.  Institution-specific details are
-isolated in a small number of files so you can swap them out without touching
-the core articles.
+This cookbook is written for the **Unity HPC cluster**.  The core content
+(HPC concepts, Linux fundamentals, recipes, tutorials) is shared across all
+Unity member institutions.  Each institution forks this repo and customizes
+a small set of files to add their own branding, account onboarding flow,
+and local system details.
+
+> [!NOTE] "Non-Unity clusters"
+> The variable-driven architecture (`site.yml` + Jinja2 templates) could
+> be adapted for a completely different cluster.  You would need to change
+> the cluster variables, rewrite the `includes/site/` content blocks, and
+> review recipes that reference Unity-specific features (scratch workspaces,
+> Conda presets, etc.).  The rest of this guide assumes you are a Unity
+> member institution.
 
 ## Quick start
 
 1. **Fork** (or clone) this repository.
-2. **Edit `site.yml`** — this is the single most important file.  It defines
-   your institution name, cluster name, scheduler, and other variables that
-   appear throughout the site.
-3. **Replace the files in `includes/site/`** with content describing *your*
-   systems.
+2. **Edit `site.yml`** — set your institution's name, support contacts,
+   portal URL, and username format.  The cluster-level variables (Unity's
+   login node, scheduler, storage paths) are already correct.
+3. **Replace the files in `includes/site/`** that describe your
+   institution's specific details (account flow, other local systems).
 4. **Swap the branding** (logo, fonts, CSS) in `docs/stylesheets/` and
    `docs/assets/`.
 5. Run `mkdocs serve` and verify everything looks right.
@@ -30,35 +38,43 @@ Markdown page via Jinja2 syntax (`{{ variable.name }}`).
 
 ### Institution variables
 
-| Variable | Example | Where it appears |
-|----------|---------|------------------|
+These are the fields you **must** change when forking for your institution:
+
+| Variable | Example (Dartmouth) | Where it appears |
+|----------|---------------------|------------------|
 | `institution.name` | Dartmouth College | Footer, about pages |
 | `institution.short_name` | Dartmouth | Headings, inline text, site title |
-| `institution.support_team` | Research Computing | Footer, troubleshooting |
+| `institution.support_team` | Research Computing and Data | Footer, troubleshooting |
 | `institution.support_email` | research.computing@dartmouth.edu | Contact links, troubleshooting |
 | `institution.support_url` | https://rc.dartmouth.edu | Footer link |
 | `institution.github_url` | https://github.com/dartmouth | Social links |
 | `institution.username_label` | NetID | Login instructions, prompts |
-| `institution.sso_dropdown_label` | Dartmouth College | Label users pick in the {{ cluster.name }} SSO dropdown |
-| `institution.username_suffix` | `_dartmouth_edu` | Appended to the username when SSHing into {{ cluster.name }} |
+| `institution.sso_dropdown_label` | Dartmouth College | Label users pick in the Unity SSO dropdown |
+| `institution.username_suffix` | `_dartmouth_edu` | Appended to the username when SSHing into Unity |
 
 ### Cluster variables
 
-| Variable | Example | Where it appears |
-|----------|---------|------------------|
-| `cluster.name` | Unity | Throughout all articles |
-| `cluster.scheduler` | Slurm | Job submission guides |
-| `cluster.module_system` | Lmod | Module system references |
-| `cluster.login_node` | login.unityhpc.org | SSH connection guides |
-| `cluster.login_node_count` | 4 | Number of named login nodes (login1..loginN) |
-| `cluster.default_partition` | cpu | Example job scripts |
-| `cluster.ondemand_url` | https://ood.unity.rc.umass.edu/ | Open OnDemand references |
-| `cluster.docs_url` | https://unityhpc.org/documentation/ | Links to official docs |
-| `cluster.portal_url` | https://unity.dartmouth.edu/ | Account registration |
-| `cluster.catchall_pi_group` | pi_general_dartmouth_edu | Optional general PI group for users without a specific lab |
-| `cluster.support_email` | hpc@umass.edu | Cluster-level support |
+These describe the Unity cluster itself.  Most are **shared across all member
+institutions** and typically don't need changing.  The ones marked ★ are
+institution-specific:
+
+| Variable | Example | Notes |
+|----------|---------|-------|
+| `cluster.name` | Unity | Shared — don't change |
+| `cluster.scheduler` | Slurm | Shared |
+| `cluster.module_system` | Lmod | Shared |
+| `cluster.login_node` | login.unityhpc.org | Shared |
+| `cluster.login_node_count` | 4 | Shared |
+| `cluster.default_partition` | cpu | Shared |
+| `cluster.ondemand_url` | https://ood.unity.rc.umass.edu/ | Shared |
+| `cluster.docs_url` | https://unityhpc.org/documentation/ | Shared |
+| `cluster.portal_url` | https://unity.dartmouth.edu/ | ★ Institution-specific portal URL |
+| `cluster.catchall_pi_group` | pi_general_dartmouth_edu | ★ Institution-specific fallback PI group |
+| `cluster.support_email` | hpc@umass.edu | Shared (Unity-wide support) |
 
 ### Storage variables
+
+These describe Unity's storage tiers and are **shared across all members**:
 
 | Variable | Example | Where it appears |
 |----------|---------|------------------|
@@ -77,50 +93,41 @@ Markdown page via Jinja2 syntax (`{{ variable.name }}`).
 |----------|---------|------------------|
 | `build.ssh_auth` | key | SSH macro authentication (`key` or `gssapi`) |
 
-To customize, open `site.yml` and replace the values.  For example, to
-adapt the cookbook for a fictional "Atlas" cluster at MIT:
+### Example: forking for Smith College
+
+To adapt the cookbook for Smith College (a Unity member), you would change
+only the institution-specific fields and the two starred cluster fields:
 
 ```yaml
 institution:
-  name: Massachusetts Institute of Technology
-  short_name: MIT
-  support_team: Research Computing Services
-  support_email: rcs@mit.edu
-  support_url: https://rc.mit.edu
-  github_url: https://github.com/mit
-  username_label: Kerberos ID
-  sso_dropdown_label: MIT
-  username_suffix: _mit_edu
+  name: Smith College
+  short_name: Smith
+  support_team: Scientific Computing
+  support_email: scicomp@smith.edu
+  support_url: https://www.smith.edu/its/scicomp
+  github_url: https://github.com/smith-college
+  username_label: Smith Username
+  sso_dropdown_label: Smith College
+  username_suffix: _smith_edu
 
 cluster:
-  name: Atlas
-  scheduler: Slurm
-  module_system: Lmod
-  login_node: atlas.mit.edu
-  login_node_count: 2
-  default_partition: general
-  ondemand_url: https://ood.atlas.mit.edu/
-  docs_url: https://atlas.mit.edu/docs/
-  portal_url: https://atlas.mit.edu/portal/
-  catchall_pi_group: pi_general_mit_edu
-  support_email: hpc@mit.edu
+  name: Unity                          # keep as-is
+  scheduler: Slurm                     # keep as-is
+  module_system: Lmod                  # keep as-is
+  login_node: login.unityhpc.org       # keep as-is
+  login_node_count: 4                  # keep as-is
+  default_partition: cpu               # keep as-is
+  ondemand_url: https://ood.unity.rc.umass.edu/  # keep as-is
+  docs_url: https://unityhpc.org/documentation/  # keep as-is
+  portal_url: https://unity.smith.edu/           # ★ your portal
+  catchall_pi_group: pi_general_smith_edu        # ★ your PI group
+  support_email: hpc@umass.edu         # keep as-is (Unity-wide)
 
-storage:
-  home_path: /home
-  home_quota: 50 GB
-  work_path: /work
-  work_quota: 2 TB
-  scratch_path: /scratch
-  scratch_quota: 10 TB
-  project_path: /project
-  datasets_path: /datasets
-
-build:
-  ssh_auth: gssapi
+# storage and build sections stay the same
 ```
 
 After this change, every page that references `{{ institution.short_name }}`
-will render "MIT", and `{{ cluster.name }}` will render "Atlas".
+will render "Smith", while `{{ cluster.name }}` still renders "Unity".
 
 ---
 
@@ -128,33 +135,28 @@ will render "MIT", and `{{ cluster.name }}` will render "Atlas".
 
 Some content is too large or too institution-specific to express as a simple
 variable.  These blocks live as Markdown files in `includes/site/` and are
-pulled into generic pages with `{% include "site/filename.md" %}`.
+pulled into pages with `{% include "site/filename.md" %}`.
+
+Most of these files describe Unity's shared infrastructure and **work as-is**
+for any member institution.  The ones you need to rewrite are marked below.
+
+| File | Purpose | Included by | Rewrite needed? |
+|------|---------|-------------|:---------------:|
+| `systems-overview.md` | Lists HPC systems your institution runs IN ADDITION to Unity | `docs/getting-started/what-is-hpc.md` | **Yes** — replace Dartmouth systems (Discovery, Andes, etc.) with yours, or empty the file if Unity is your only system |
+| `account-details.md` | Institution-specific account creation details (SSO portal URL, onboarding steps) | `docs/getting-started/account.md` | **Yes** — replace Dartmouth portal URL and onboarding steps |
+| `connecting-details.md` | How to connect (SSH hostname, OnDemand URL) | `docs/getting-started/connecting.md` | No — Unity-generic |
+| `storage-overview.md` | Maps Unity's storage tiers to the generic concepts | `docs/fundamentals/storage.md` | No — Unity-generic |
+| `conda-presets.md` | Conda environment presets and helper scripts | `docs/recipes/python/conda.md` | No — Unity-generic |
+| `footer.md` | "Maintained by …" footer line | `docs/home/index.md` | No — uses `site.yml` variables, adapts automatically |
+
+There is also a shared include that lives one level up:
 
 | File | Purpose | Included by |
 |------|---------|-------------|
-| `systems-overview.md` | Lists any institution-specific HPC systems available IN ADDITION to {{ cluster.name }} | `docs/getting-started/what-is-hpc.md` |
-| `account-details.md` | Account creation process, what users get (home dir, storage) | `docs/getting-started/account.md` |
-| `connecting-details.md` | How to connect (SSH hostname, OnDemand URL) | `docs/getting-started/connecting.md` |
-| `storage-overview.md` | Maps the cluster's storage tiers to the generic concepts | `docs/fundamentals/storage.md` |
-| `footer.md` | "Maintained by …" footer line | `docs/index.md` |
+| `includes/username-input.md` | "Personalize this page" input widget that fills the reader's username into code blocks | Any page that uses copy-pasteable SSH or Slurm commands |
 
-When forking, replace these files with your own content.  You can use any
-Jinja2 variables from `site.yml` inside them, plus the macros defined in
-`hooks/macros.py` (like `{{ system_stats([...]) }}` or
-`{{ cluster_stats("host", label="Name") }}`).
-
-### Forkability notes for Unity institutions
-
-If your institution is part of the Unity consortium, most of these files are
-largely reusable as-is — they describe Unity's shared infrastructure:
-
-- **`connecting-details.md`** — Unity-generic (same login node and OnDemand URL)
-- **`storage-overview.md`** — Unity-generic (same storage tiers)
-
-The files you'll need to fully rewrite for your institution:
-
-- **`systems-overview.md`** — Replace the Dartmouth-specific systems (Discovery, Andes, etc.) with your institution's landscape, or empty the file if {{ cluster.name }} is the only system to mention
-- **`account-details.md`** — Replace the Dartmouth SSO portal URL and onboarding steps with your institution's process
+The `username-input.md` widget uses `institution.username_label` from
+`site.yml`, so it adapts automatically when you change that variable.
 
 ---
 
@@ -192,7 +194,7 @@ where definitions reference institution-specific details.  For example:
 ```
 
 These placeholders are resolved at build time by `hooks/macros.py`.  If you
-change `cluster.name` in `site.yml`, the glossary updates automatically.
+change variables in `site.yml`, the glossary updates automatically.
 
 Review the glossary after forking to ensure the definitions make sense for
 your site.  You may want to add terms specific to your infrastructure or
@@ -200,10 +202,24 @@ remove ones that don't apply.
 
 ---
 
-## 5. Build-time live data (optional)
+## 5. Build-time macros
 
-The cookbook includes macros that SSH into cluster nodes at build time to
-fetch live statistics (`system_stats`, `cluster_stats`, `remote_cmd`).
+### `sbatch_template()` — job script generator
+
+The `sbatch_template()` macro in `hooks/macros.py` generates complete Slurm
+job scripts.  Recipe pages call it instead of writing raw sbatch blocks, so
+every generated script picks up the correct default partition from
+`cluster.default_partition` in `site.yml`.
+
+The macro accepts parameters for partition, time, CPUs, memory, GPUs, MPI
+settings, module loads, and the commands to run.  Since all Unity members
+share the same Slurm configuration, you typically don't need to change
+anything here.
+
+### SSH-based live data (optional)
+
+The cookbook also includes macros that SSH into cluster nodes at build time
+to fetch live statistics (`system_stats`, `cluster_stats`, `remote_cmd`).
 These require:
 
 1. SSH access from the build machine to the cluster nodes.
@@ -227,7 +243,8 @@ The cookbook includes JavaScript-powered interactive widgets:
 
 - **Terminal Tour** (`docs/javascripts/linux-terminal-tour.js`) — A guided CLI simulation. The `CONFIG` block at the top defines the cluster name, home path function, and default username. Update these for your environment.
 - **SSH Simulator** (`docs/javascripts/ssh-simulator.js`) — An SSH connection practice tool. The `CONFIG` block defines the cluster hostname and default username.
-- **Quiz System** (`docs/javascripts/quiz.js`) — Multi-slide quizzes. The HTML structure is in the Markdown files.
+- **Username Personalize** (`docs/javascripts/username-personalize.js`) — Lets readers enter their username once and have it substituted into every `<code>` block on the page. The placeholder token is derived from `institution.username_label` in `site.yml` (via `includes/username-input.md`), so it adapts automatically.
+- **Quiz System** (`docs/javascripts/quiz.js`) — Multi-slide quizzes. The HTML structure is in the Markdown files. No institution-specific configuration needed.
 
 ---
 
@@ -238,9 +255,11 @@ plugins) and shouldn't need changes.  The institution-specific parts to
 review are:
 
 - `extra_css` — path to your CSS file
+- `extra_javascript` — includes the interactive widgets and MathJax CDN
 - `extra.social` — GitHub/social links
 - `theme.logo` / `theme.favicon` — paths to your logo
 - `theme.palette` — color scheme names (must match your CSS)
+- `nav` — the navigation tree; add or remove sections to match the content you keep
 
 The `site_name` is set automatically from `site.yml` by the macros hook.
 If you want to override it, uncomment the `site_name` line in `mkdocs.yml`.
@@ -251,12 +270,14 @@ If you want to override it, uncomment the `site_name` line in `mkdocs.yml`.
 
 | Priority | File(s) | What to do |
 |:--------:|---------|------------|
-| **Must** | `site.yml` | Set your institution and cluster variables |
-| **Must** | `includes/site/*.md` | Write content describing your systems |
+| **Must** | `site.yml` | Set your institution variables and the two ★ cluster fields |
+| **Must** | `includes/site/systems-overview.md` | Replace Dartmouth-specific systems with yours (or empty the file) |
+| **Must** | `includes/site/account-details.md` | Rewrite with your institution's account flow |
 | Should | `docs/assets/` | Replace logo images |
 | Should | `docs/stylesheets/dartmouth.css` | Adjust colors and fonts |
 | Should | `docs/stylesheets/fonts/` | Replace custom fonts |
 | Should | `mkdocs.yml` | Update logo paths, CSS path, social links |
-| Should | `docs/javascripts/*.js` | Update CONFIG blocks in terminal tour and SSH simulator |
+| Should | `docs/javascripts/*.js` | Update CONFIG blocks in terminal tour, SSH simulator, and username personalize widget |
 | Optional | `includes/glossary.yml` | Add/remove terms for your site |
-| Optional | `hooks/macros.py` | Adjust SSH auth method if needed |
+| Optional | `includes/username-input.md` | Adapts automatically via `site.yml`; customize the widget HTML if needed |
+| Optional | `hooks/macros.py` | Adjust SSH auth method or `sbatch_template` defaults if needed |
