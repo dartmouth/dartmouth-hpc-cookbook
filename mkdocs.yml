@@ -18,7 +18,9 @@ extra_javascript:
   - javascripts/ssh-simulator.js
   - javascripts/username-personalize.js
   - javascripts/mathjax.js
+  - javascripts/feedback.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
 
 # Institution-specific variables (cluster name, institution name, etc.)
 # are loaded from site.yml by the macros plugin — see hooks/macros.py.
@@ -26,7 +28,23 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/dartmouth
-
+  analytics:
+    provider: google
+    property: G-XXXXXXXXXX
+    feedback:
+        title: Was this page helpful?
+        ratings:
+          - icon: material/emoticon-happy-outline
+            name: This page was helpful
+            data: 1
+            note: >-
+              Thanks for your feedback!
+          - icon: material/emoticon-sad-outline
+            name: This page could be improved
+            data: 0
+            note: >-
+              Thanks for your feedback! Help us improve this page by
+              using our <a href="https://docs.google.com/forms/d/e/1FAIpQLSdyIqwc3lgYGIKoisQiKTNIRC2WeX187v8prfmJ5jvvgA2QNQ/viewform" target="_blank" rel="noopener">feedback form</a>.
   tags:
     getting-started: getting-started
 
