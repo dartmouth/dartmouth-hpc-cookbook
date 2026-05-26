@@ -199,17 +199,89 @@ if __name__ == "__main__":
 3. `executor.submit()` schedules a single call and returns a `Future` object. You can attach metadata (here, the chunk range) to track which result is which.
 4. `as_completed()` yields futures as they finish, not in submission order. This is useful when tasks have very different durations and you want to process results immediately.
 
-### Which one should you use?
+## Joblib — one-liner parallelism
 
-| Feature | `multiprocessing.Pool` | `concurrent.futures` |
-|---|---|---|
-| API style | Lower-level, more control | Higher-level, cleaner |
-| Multiple arguments | `starmap()` | Direct function arguments |
-| Results as they finish | `imap_unordered()` | `as_completed()` |
-| Shared memory, Queues, Pipes | Yes | No (use `multiprocessing` directly) |
-| Exception handling | Manual | Exceptions propagate from `future.result()` |
+Joblib is a third-party library that wraps process-based parallelism in a single readable expression. If `concurrent.futures` feels like too much boilerplate for a simple parallel loop, Joblib's `Parallel` + `delayed` pattern is worth knowing.
 
-For most new code, **`concurrent.futures.ProcessPoolExecutor` is the better default**. It's more readable and handles exceptions more naturally. Reach for `multiprocessing` directly when you need lower-level primitives like shared memory, `Queue`, or `Pipe`.
+Unlike the previous two options, Joblib is not part of the standard library. Install it in your project:
+
+```bash
+uv add joblib
+```
+
+If you already have scikit-learn installed, Joblib comes bundled with it.
+
+Here's the same prime-counting example:
+
+```python
+"""Count primes in ranges using Joblib."""
+
+import math
+import os
+from joblib import Parallel, delayed  # (1)!
+
+
+def is_prime(n):
+    if n < 2:
+        return False
+    if n < 4:
+        return True
+    if n % 2 == 0 or n % 3 == 0:
+        return False
+    for i in range(5, int(math.sqrt(n)) + 1, 6):
+        if n % i == 0 or n % (i + 2) == 0:
+            return False
+    return True
+
+
+def count_primes_in_range(start, end):
+    return sum(1 for n in range(start, end) if is_prime(n))
+
+
+def main():
+    total = 2_000_000
+    num_chunks = 20
+    chunk_size = total // num_chunks
+    chunks = [(i * chunk_size, (i + 1) * chunk_size) for i in range(num_chunks)]
+
+    num_workers = int(os.environ.get("SLURM_CPUS_PER_TASK", os.cpu_count()))
+
+    results = Parallel(n_jobs=num_workers)(  # (2)!
+        delayed(count_primes_in_range)(start, end)  # (3)!
+        for start, end in chunks
+    )
+
+    print(f"Primes below {total:,}: {sum(results):,}")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+1. `joblib` is not in the standard library. Install it with `uv add joblib` or get it automatically when you install scikit-learn.
+2. `Parallel(n_jobs=N)` creates a parallel executor. The parentheses after it accept a generator of `delayed` calls.
+3. `delayed(func)(args)` captures a function call without executing it. Joblib collects all of them, then dispatches them to worker processes.
+
+The `Parallel(n_jobs=...)(delayed(func)(args) for ...)` pattern reads almost like a list comprehension, which makes it appealing for quick parallelization. Joblib also handles progress bars (`verbose=10`), automatic memory-mapping of large NumPy arrays, and configurable backends (processes or threads).
+
+## Which one should you use?
+
+| Feature | `multiprocessing.Pool` | `concurrent.futures` | `Joblib` |
+|---|---|---|---|
+| API style | Lower-level, more control | Higher-level, cleaner | One-liner list comprehension style |
+| Standard library | Yes | Yes | No (`uv add joblib`) |
+| Multiple arguments | `starmap()` | Direct function arguments | Direct function arguments |
+| Results as they finish | `imap_unordered()` | `as_completed()` | No (returns all at once) |
+| Shared memory, Queues, Pipes | Yes | No | No |
+| Exception handling | Manual | Exceptions propagate from `future.result()` | Exceptions propagate automatically |
+| Progress reporting | No | No | `verbose=N` parameter |
+| NumPy memory-mapping | No | No | Automatic for large arrays |
+
+**Quick decision guide:**
+
+- **Joblib** is the fastest path from a sequential loop to a parallel one. One expression, minimal boilerplate, good defaults. Start here if you just need to parallelize independent function calls.
+- **`concurrent.futures`** gives you more control: `as_completed()` for results as they arrive, `Future` objects for cancellation and callbacks, and clean exception handling. Use it when you need to react to individual results or manage task lifecycle.
+- **`multiprocessing`** is the power tool. Reach for it when you need shared memory, `Queue`, `Pipe`, or other low-level IPC primitives that the higher-level APIs don't expose.
 
 ## Submitting to Slurm
 
