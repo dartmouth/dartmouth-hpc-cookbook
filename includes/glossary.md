@@ -1,4 +1,5 @@
 <!-- AUTO-GENERATED from includes/glossary.yml — do not edit by hand -->
+*[BLAS]: Basic Linear Algebra Subprograms — A standard interface for low-level linear algebra routines (matrix multiply, dot products, etc.). NumPy and SciPy delegate heavy math to a BLAS implementation (OpenBLAS or Intel MKL) that runs in native threads, bypassing Python's GIL. Control thread count with ``OMP_NUM_THREADS``.
 *[CI/CD]: Continuous Integration / Continuous Deployment — Automated build, test, and deployment pipelines.
 *[compute node]: A node dedicated to running jobs — where your code actually executes.
 *[compute nodes]: A node dedicated to running jobs — where your code actually executes.
@@ -20,11 +21,16 @@
 *[Lmod]: A Lua-based module system for managing software environments on HPC clusters. Lmod provides commands like ``module load``, ``module avail``, and ``module list`` to load and switch between software versions.
 *[MGHPCC]: Massachusetts Green High Performance Computing Center — A data center in Holyoke, MA that hosts shared HPC infrastructure for a consortium of universities, including the Unity cluster.
 *[I/O]: Input/Output — Abbreviation for data input and output processes, like reading/writing to a file or database.
+*[JIT]: Just-In-Time compilation — A technique where code is compiled to machine instructions at runtime rather than ahead of time. Numba uses JIT compilation to turn Python functions into fast native code on first call.
+*[Joblib]: A Python library for lightweight pipelining and parallel execution. scikit-learn uses Joblib internally when you set ``n_jobs`` on an estimator. Its default backend (loky) spawns worker processes similar to ``multiprocessing``.
 *[job]: A unit of work that a user submits to a scheduler. A job script specifies what to run and what resources are needed.
 *[jobs]: A unit of work that a user submits to a scheduler. A job script specifies what to run and what resources are needed.
+*[LAPACK]: Linear Algebra PACKage — A library of routines for solving systems of linear equations, eigenvalue problems, and singular value decompositions. NumPy and SciPy call LAPACK through the BLAS implementation (OpenBLAS or MKL) for operations like ``np.linalg.svd()`` and ``np.linalg.eig()``.
+*[LAPACK]: Linear Algebra PACKage — A library of routines for solving systems of linear equations, eigenvalue problems, and singular value decompositions. NumPy and SciPy call LAPACK through the BLAS implementation (OpenBLAS or MKL) for operations like ``np.linalg.svd()`` and ``np.linalg.eig()``.
 *[login node]: The node you connect to via SSH — used for preparing and submitting jobs, not running them.
 *[memory]: The fast but volatile working memory (RAM) available to a node, used by running processes to hold data and code while a job executes. Memory is different from storage because it is cleared when power is removed, but is much faster to access for the CPU or GPU.
 *[MPI]: Message Passing Interface — A standard for writing programs that run as many simultaneous processes spread across multiple nodes, communicating by sending messages over the network. Each process has its own private memory and a unique integer ID called a rank. Open MPI is the most common implementation on HPC clusters.
+*[MKL]: Intel Math Kernel Library — Intel's optimized implementation of BLAS and LAPACK, used by NumPy and SciPy on systems with Intel CPUs. Thread count is controlled by ``MKL_NUM_THREADS``.
 *[Open MPI]: A widely used open-source implementation of the MPI standard, available on Unity. Provides the mpicc compiler wrapper (which links the MPI libraries into your program) and the mpirun launcher (which starts your processes across allocated nodes).
 *[rank]: A unique integer ID assigned to each process in an MPI job, starting at 0. If you launch 8 MPI processes, they are numbered rank 0 through 7. Rank 0 is conventionally used as the "root" for coordination tasks like gathering results from all other ranks.
 *[ranks]: A unique integer ID assigned to each process in an MPI job, starting at 0. If you launch 8 MPI processes, they are numbered rank 0 through 7. Rank 0 is conventionally used as the "root" for coordination tasks like gathering results from all other ranks.
@@ -32,6 +38,7 @@
 *[nodes]: An individual machine within a cluster. Each node has its own CPUs, memory, and (sometimes) GPUs.
 *[OOD]: Open OnDemand — Web portal for cluster access.
 *[OOM]: Out of Memory — When a job exceeds its allocated memory.
+*[OpenBLAS]: An open-source implementation of BLAS and LAPACK, commonly used as the linear algebra backend for NumPy on Linux. Thread count is controlled by ``OPENBLAS_NUM_THREADS``.
 *[partition]: A logical grouping of nodes, often organized by hardware type or intended use (e.g., standard CPU nodes, GPU nodes).
 *[partitions]: A logical grouping of nodes, often organized by hardware type or intended use (e.g., standard CPU nodes, GPU nodes).
 *[PBS]: Portable Batch System — A legacy job scheduler (this site uses Slurm).

@@ -161,6 +161,8 @@ nav:
       - recipes/python/transformers.md
       # - recipes/python/multi-gpu.md
       - recipes/python/conda.md
+      - recipes/python/parallel.md
+      - recipes/python/parallel-libraries.md
     - R:
       - recipes/r/getting-started.md
       - recipes/r/batch-job.md

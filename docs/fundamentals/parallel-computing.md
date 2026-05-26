@@ -198,5 +198,7 @@ For these problems, you often don't even need a parallel programming framework. 
 
 Or jump to a recipe:
 
+- [**Parallel Python**](../recipes/python/parallel.md) — multiprocessing and concurrent.futures on a single node
+- [**Parallelism in the Scientific Python Stack**](../recipes/python/parallel-libraries.md) — how NumPy, scikit-learn, and friends handle parallel work
 - [**MPI Hello World**](../recipes/mpi/hello-world.md) — Distributed parallelism on {{ cluster.name }}
 - [**mpi4py**](../recipes/mpi/mpi4py.md) — MPI in Python

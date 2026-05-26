@@ -13,7 +13,7 @@ Recipes are self-contained, task-oriented guides. Each one walks you through a s
 
     ---
 
-    Manage environments with uv or Conda, run PyTorch and Hugging Face Transformers workloads, and scale training across multiple GPUs.
+    Manage environments with uv or Conda, parallelize CPU-bound work across multiple cores, run PyTorch and Hugging Face Transformers workloads, and scale training across multiple GPUs.
 
     [:octicons-arrow-right-24: Python recipes](python/uv.md)
 
