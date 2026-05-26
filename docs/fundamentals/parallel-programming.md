@@ -94,5 +94,6 @@ Dive into the paradigm that matches your problem:
 
 Or jump straight to a recipe:
 
+- [**Parallel Python**](../recipes/python/parallel.md) — CPU-bound parallelism on a single node
 - [**MPI Hello World**](../recipes/mpi/hello-world.md) — Your first distributed program on {{ cluster.name }}
 - [**mpi4py**](../recipes/mpi/mpi4py.md) — Distributed computing in Python with MPI

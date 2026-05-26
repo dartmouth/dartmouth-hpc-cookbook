@@ -15,6 +15,14 @@
 # You can use {{ variable }} placeholders from site.yml in definitions.
 # They are resolved at build time by hooks/macros.py.
 
+- term: BLAS
+  full: Basic Linear Algebra Subprograms
+  definition: >-
+    A standard interface for low-level linear algebra routines (matrix multiply,
+    dot products, etc.). NumPy and SciPy delegate heavy math to a BLAS
+    implementation (OpenBLAS or Intel MKL) that runs in native threads,
+    bypassing Python's GIL. Control thread count with ``OMP_NUM_THREADS``.
+
 - term: CI/CD
   full: Continuous Integration / Continuous Deployment
   definition: Automated build, test, and deployment pipelines.
@@ -102,11 +110,41 @@
   full: Input/Output
   definition: Abbreviation for data input and output processes, like reading/writing to a file or database.
 
+- term: JIT
+  full: Just-In-Time compilation
+  definition: >-
+    A technique where code is compiled to machine instructions at runtime
+    rather than ahead of time. Numba uses JIT compilation to turn Python
+    functions into fast native code on first call.
+
+- term: Joblib
+  definition: >-
+    A Python library for lightweight pipelining and parallel execution.
+    scikit-learn uses Joblib internally when you set ``n_jobs`` on an
+    estimator. Its default backend (loky) spawns worker processes similar
+    to ``multiprocessing``.
+
 - term: job
   definition: >-
     A unit of work that a user submits to a scheduler. A job script specifies
     what to run and what resources are needed.
   plurals: [jobs]
+
+- term: LAPACK
+  full: Linear Algebra PACKage
+  definition: >-
+    A library of routines for solving systems of linear equations, eigenvalue
+    problems, and singular value decompositions. NumPy and SciPy call LAPACK
+    through the BLAS implementation (OpenBLAS or MKL) for operations like
+    ``np.linalg.svd()`` and ``np.linalg.eig()``.
+
+- term: LAPACK
+  full: Linear Algebra PACKage
+  definition: >-
+    A library of routines for solving systems of linear equations, eigenvalue
+    problems, and singular value decompositions. NumPy and SciPy call LAPACK
+    through the BLAS implementation (OpenBLAS or MKL) for operations like
+    ``np.linalg.svd()`` and ``np.linalg.eig()``.
 
 - term: login node
   definition: >-
@@ -128,6 +166,13 @@
     spread across multiple nodes, communicating by sending messages over the
     network. Each process has its own private memory and a unique integer ID
     called a rank. Open MPI is the most common implementation on HPC clusters.
+
+- term: MKL
+  full: Intel Math Kernel Library
+  definition: >-
+    Intel's optimized implementation of BLAS and LAPACK, used by NumPy
+    and SciPy on systems with Intel CPUs. Thread count is controlled by
+    ``MKL_NUM_THREADS``.
 
 - term: Open MPI
   definition: >-
@@ -158,6 +203,12 @@
   full: Out of Memory
   definition: When a job exceeds its allocated memory.
 
+- term: OpenBLAS
+  definition: >-
+    An open-source implementation of BLAS and LAPACK, commonly used as
+    the linear algebra backend for NumPy on Linux. Thread count is
+    controlled by ``OPENBLAS_NUM_THREADS``.
+
 - term: partition
   definition: >-
     A logical grouping of nodes, often organized by hardware type or intended
@@ -167,6 +218,15 @@
 - term: PBS
   full: Portable Batch System
   definition: A legacy job scheduler (this site uses {{ cluster.scheduler }}).
+
+- term: pickle
+  definition: >-
+    Python's built-in serialization format for converting objects to a byte
+    stream and back. The ``multiprocessing`` module uses pickle to send
+    functions and data to worker processes. Lambdas, nested functions, and
+    some complex objects can't be pickled, which causes ``PicklingError``
+    when used with ``multiprocessing`` or ``concurrent.futures``.
+  no_tooltip: true
 
 - term: process
   definition: >-
