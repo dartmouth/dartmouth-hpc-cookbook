@@ -39,6 +39,8 @@ echo "Running as: $USER"
 date
 ```
 
+1. Sleep for 30 seconds so you have some time to catch the job in the queue.
+
 Save and exit (`Ctrl+O`, `Enter`, `Ctrl+X` in nano).
 
 Here's what each part does:
