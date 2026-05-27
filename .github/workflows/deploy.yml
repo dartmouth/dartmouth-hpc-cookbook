@@ -3,9 +3,6 @@ name: Deploy HPC Cookbook
 on:
     push:
         branches: [main]
-    # Scheduled rebuild for dynamic content freshness
-    schedule:
-        - cron: "0 0 * * *"
     workflow_dispatch:
 
 permissions:
