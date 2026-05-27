@@ -34,3 +34,10 @@ jobs:
 
             - name: Build and deploy
               run: uv run mkdocs gh-deploy --force
+
+            - name: Trigger rc-website-docs rebuild
+              env:
+                GH_TOKEN: ${{ secrets.RC_WEBSITE_DISPATCH_TOKEN }}
+              run: |
+                gh api repos/dartmouth/rc-website-docs/dispatches \
+                  -f event_type=cookbook-updated
